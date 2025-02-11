@@ -51,6 +51,7 @@ import jakarta.json.JsonValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FlowResponse  {
 
@@ -65,7 +66,7 @@ public class FlowResponse  {
      *
      * @return List of PartialFlowResponse
      */
-    public List<PartialFlowResponse> partialFlowResponse() {
+    public List<PartialFlowResponse> partialFlowResponses() {
         List<PartialFlowResponse> partialFlowResponses = new ArrayList<>();
         for (JsonValue flow : jsonArray) {
             partialFlowResponses.add(new PartialFlowResponse(flow.asJsonObject()));
@@ -75,11 +76,17 @@ public class FlowResponse  {
     }
 
     @Override
-    public String toString() {
-        return "FlowResponse{" +
-                "jsonArray=" + jsonArray +
-                '}';
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        FlowResponse that = (FlowResponse) o;
+        return Objects.equals(jsonArray, that.jsonArray);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonArray);
+    }
+
 }
 
 

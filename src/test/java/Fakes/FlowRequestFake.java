@@ -43,18 +43,19 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.flow;
+package Fakes;
 
+import com.teragrep.flow.FlowResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 
 import java.io.IOException;
 
-public class FkFlowRequest implements Flow {
+public class FlowRequestFake {
 
 
-    public FkFlowRequest() {
+    public FlowRequestFake() {
     }
 
     public FlowResponse flowResponse() throws IOException {

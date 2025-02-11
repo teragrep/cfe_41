@@ -43,8 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-import com.teragrep.flow.FkFlowRequest;
-import com.teragrep.flow.Flow;
+import Fakes.FlowRequestFake;
 import com.teragrep.flow.FlowResponse;
 import com.teragrep.flow.PartialFlowResponse;
 import jakarta.json.Json;
@@ -62,7 +61,7 @@ public class FlowTest {
     @Test
     public void flowRequestTest()  {
         // Create fake request
-        Flow fakeFlow = new FkFlowRequest();
+        FlowRequestFake fakeFlow = new FlowRequestFake();
 
         // Build data for expected response
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -76,7 +75,7 @@ public class FlowTest {
         // Assertions
         Assertions.assertFalse(flowsArray.isEmpty());
         // Asserting that contents equal to each other
-        Assertions.assertEquals(realFlowResponse.toString(), fakeFlowResponse.toString());
+        Assertions.assertEquals(realFlowResponse.hashCode(), fakeFlowResponse.hashCode());
 
     }
 
@@ -92,7 +91,7 @@ public class FlowTest {
         JsonArray flowsArray = arrayBuilder.build();
 
         FlowResponse flowResponse = new FlowResponse(flowsArray);
-        List<PartialFlowResponse> actualFlowResponseList =  flowResponse.partialFlowResponse();
+        List<PartialFlowResponse> actualFlowResponseList =  flowResponse.partialFlowResponses();
 
         JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
         objectBuilder1.add("id",1).add("name","flow1");

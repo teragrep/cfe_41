@@ -52,7 +52,7 @@ import jakarta.json.JsonArray;
 
 import java.io.IOException;
 
-public class FlowRequest implements Flow {
+public class FlowRequest {
 
     private final ApiConfig apiConfig;
 
