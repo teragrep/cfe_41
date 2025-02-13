@@ -43,49 +43,25 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.host;
 
-import com.teragrep.cfe_41.flow.FlowRequest;
-import com.teragrep.cfe_41.flow.FlowResponse;
-import com.teragrep.cfe_41.flow.PartialFlowResponse;
-import com.teragrep.cfe_41.host.HostRequest;
-import com.teragrep.cfe_41.host.HostResponse;
-import com.teragrep.cfe_41.hostGroup.HostGroupRequest;
-import com.teragrep.cfe_41.hostGroup.HostGroupResponse;
-import com.teragrep.cfe_41.hostGroup.PartialHostResponse;
+import jakarta.json.JsonObject;
 
-import java.util.*;
+public final class HostResponse implements Host {
 
-public class Main {
+    private final JsonObject response;
 
-    public static void main(String[] args) throws Exception {
+    public HostResponse(JsonObject response) {
+        this.response = response;
+    }
 
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
+    @Override
+    public String md5() {
+        return response.getString("md5");
+    }
 
-        HostGroupRequest hostGroupRequests = new HostGroupRequest("string", apiConfig);
-        HostGroupResponse hostGroupResponse = hostGroupRequests.hostGroupResponse();
-        // List consisting of all hosts in a host group
-        List<PartialHostResponse> partialHostResponses = hostGroupResponse.partialHostResponses();
-
-        // List of all requests towards singular hosts
-        List<HostRequest> hostRequests = new ArrayList<>();
-        for (PartialHostResponse partialHostResponse : partialHostResponses) {
-            // Create single list element of new HostRequest with host_id, host_type and parameters required for creating external requests
-            hostRequests.add( new HostRequest(partialHostResponse.hostId(),partialHostResponse.hostGroupType(),apiConfig));
-        }
-
-        // List of responds from request
-        List<HostResponse> hostResponses = new ArrayList<>();
-        for (HostRequest hostRequest : hostRequests) {
-            // Add the results from request to list of responds
-            hostResponses.add(hostRequest.hostResponse());
-        }
-
-        // Loop through the responds and pick what is needed for config creation
-        for(HostResponse hostResponse : hostResponses) {
-            hostResponse.fqHost();
-            hostResponse.md5();
-        }
+    @Override
+    public String fqHost() {
+        return response.getString("fqHost");
     }
 }
