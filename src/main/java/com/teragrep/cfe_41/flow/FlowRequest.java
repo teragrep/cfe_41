@@ -43,53 +43,34 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep;
+package com.teragrep.flow;
 
-/*
-Should take any generic JSONObject passed from request and convert the values into map for later parsing.
- */
-
-import jakarta.json.Json;
+import com.teragrep.ApiConfig;
+import com.teragrep.RequestData;
+import com.teragrep.Response;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.StringReader;
 
-public class Response {
-    final private HttpResponse jsonResponse;
+public final class FlowRequest {
 
-    public Response(HttpResponse jsonResponse) {
-        this.jsonResponse = jsonResponse;
+    private final ApiConfig apiConfig;
+
+    public FlowRequest(ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
     }
 
-    // parse response that comes in array
-    public JsonArray parseArrayResponse() throws IOException {
-        // Convert Http response to JsonReader
-        String response = EntityUtils.toString(jsonResponse.getEntity());
-        System.out.println(response);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
-        // Return the JSONArray back to the object
-        return jsonReader.readArray();
-    }
+    /**
+     * Returns all flows uses GET
+     *
+     * @return
+     * @throws IOException
+     */
 
-    // Different method for single object response
-    public JsonObject parseResponse() throws IOException {
-        // Convert Http response to JsonReader
-        String response = EntityUtils.toString(jsonResponse.getEntity());
-        System.out.println(response);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
-        // Return the JSONArray back to the object
-        return jsonReader.readObject();
-    }
+    public FlowResponse flowResponse() throws IOException {
+        // Get all
+        JsonArray flowsArray = new Response(new RequestData("/flow", apiConfig).doRequest()).parseArrayResponse();
+        return new FlowResponse(flowsArray);
 
-    @Override
-    public String toString() {
-        return "Response{" +
-                "jsonResponse=" + jsonResponse +
-                '}';
     }
 }

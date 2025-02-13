@@ -43,31 +43,30 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.flow;
+package com.teragrep;
 
+import com.teragrep.capture.*;
+import com.teragrep.flow.FlowRequest;
+import com.teragrep.flow.FlowResponse;
+import com.teragrep.flow.PartialFlowResponse;
 
-import jakarta.json.JsonObject;
+import java.util.*;
 
-import java.util.Objects;
+public class Main {
 
-/*
-Flow from JsonObject
- */
-public class PartialFlowResponse {
+    public static void main(String[] args) throws Exception {
 
-    final private JsonObject jsonObject;
+        // Creates new ApiConfig from commandline args
+        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
 
-    public PartialFlowResponse(JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
+        FlowRequest flowRequest = new FlowRequest(apiConfig);
+        FlowResponse flowResponse = flowRequest.flowResponse();
+
+        List<PartialFlowResponse> partialFlowResponse = new ArrayList<>(flowResponse.partialFlowResponses());
+
+        for (PartialFlowResponse a : partialFlowResponse) {
+            System.out.println(a.flowName());
+        }
+
     }
-
-    public int flowId() {
-        return jsonObject.getInt("id");
-    }
-
-    public String flowName() {
-        return jsonObject.getString("name");
-    }
-
 }
-

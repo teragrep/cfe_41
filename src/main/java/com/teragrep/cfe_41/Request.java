@@ -43,50 +43,13 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.flow;
+package com.teragrep;
 
+import org.apache.http.HttpResponse;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonValue;
+import java.io.IOException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+public interface Request {
 
-public class FlowResponse  {
-
-    private final JsonArray jsonArray;
-
-    public FlowResponse(JsonArray jsonArray) {
-        this.jsonArray = jsonArray;
-    }
-
-    /**
-     * Turns JsonArray of flows into {@link PartialFlowResponse}
-     *
-     * @return List of PartialFlowResponse
-     */
-    public List<PartialFlowResponse> partialFlowResponses() {
-        List<PartialFlowResponse> partialFlowResponses = new ArrayList<>();
-        for (JsonValue flow : jsonArray) {
-            partialFlowResponses.add(new PartialFlowResponse(flow.asJsonObject()));
-        }
-        return partialFlowResponses;
-
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        FlowResponse that = (FlowResponse) o;
-        return Objects.equals(jsonArray, that.jsonArray);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(jsonArray);
-    }
-
+    HttpResponse doRequest() throws IOException;
 }
-
-

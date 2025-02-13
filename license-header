@@ -43,38 +43,3 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.flow;
-
-import com.teragrep.ApiConfig;
-import com.teragrep.RequestData;
-import com.teragrep.Response;
-import jakarta.json.JsonArray;
-
-import java.io.IOException;
-
-public class FlowRequest {
-
-    private final ApiConfig apiConfig;
-
-
-    public FlowRequest(ApiConfig apiConfig) {
-        this.apiConfig = apiConfig;
-    }
-
-    /**
-     * Returns all flows
-     * uses GET
-     *
-     * @return
-     * @throws IOException
-     */
-
-    public FlowResponse flowResponse() throws IOException {
-        // Get all
-        JsonArray flowsArray = new Response(
-                new RequestData("/flow", apiConfig).doRequest()
-        ).parseArrayResponse();
-        return new FlowResponse(flowsArray);
-
-    }
-}

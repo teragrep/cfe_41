@@ -43,35 +43,48 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep;
+package com.teragrep.flow;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonValue;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-// Generic class for requesting CFE-18
-public class RequestData implements Request {
+public final class FlowResponse {
 
-    final private ApiConfig apiConfig;
+    private final JsonArray jsonArray;
 
-    final private String endpoint;
-
-
-    public RequestData(String endpoint, ApiConfig apiConfig) {
-        this.apiConfig = apiConfig;
-        this.endpoint = endpoint;
+    public FlowResponse(JsonArray jsonArray) {
+        this.jsonArray = jsonArray;
     }
 
+    /**
+     * Turns JsonArray of flows into {@link PartialFlowResponse}
+     *
+     * @return List of PartialFlowResponse
+     */
+    public List<PartialFlowResponse> partialFlowResponses() {
+        List<PartialFlowResponse> partialFlowResponses = new ArrayList<>();
+        for (JsonValue flow : jsonArray) {
+            partialFlowResponses.add(new PartialFlowResponse(flow.asJsonObject()));
+        }
+        return partialFlowResponses;
+
+    }
 
     @Override
-    public HttpResponse doRequest() throws IOException {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet request = new HttpGet(apiConfig.url() + endpoint);
-        request.setHeader("Authorization", "Bearer " + apiConfig.token());
-        return httpClient.execute(request);
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        FlowResponse that = (FlowResponse) o;
+        return Objects.equals(jsonArray, that.jsonArray);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonArray);
     }
 
 }

@@ -43,52 +43,27 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep;
+package com.teragrep.flow;
 
-
-import com.teragrep.capture.*;
-import com.teragrep.captureGroup.CaptureGroup;
-import com.teragrep.captureGroup.CaptureGroupRequest;
-import com.teragrep.captureGroup.CaptureGroupResponse;
-import com.teragrep.captureGroup.PartialCaptureResponse;
-import com.teragrep.flow.FlowRequest;
-import com.teragrep.flow.FlowResponse;
-import com.teragrep.flow.PartialFlowResponse;
-import com.teragrep.host.HostRequest;
-import com.teragrep.host.HostResponse;
-import com.teragrep.hostGroup.HostGroupRequest;
-import com.teragrep.hostGroup.HostGroupResponse;
-import com.teragrep.hostGroup.PartialHostResponse;
-import com.teragrep.linkage.LinkageRequest;
-import com.teragrep.linkage.LinkageResponse;
-import com.teragrep.linkage.PartialLinkageResponse;
-import com.teragrep.relpHost.CompleteRelpHost;
-import com.teragrep.relpHost.RelpHost;
-import com.teragrep.sink.SinkRequest;
-import com.teragrep.sink.SinkResponse;
 import jakarta.json.JsonObject;
 
-import java.util.*;
+/*
+Flow from JsonObject
+ */
+public final class PartialFlowResponse {
 
-public class Main {
-    public static void main(String[] args) throws Exception {
+    final private JsonObject jsonObject;
 
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
-
-
-
-        FlowRequest flowRequest = new FlowRequest(apiConfig);
-        FlowResponse flowResponse = flowRequest.flowResponse();
-
-        List<PartialFlowResponse> partialFlowResponse = new ArrayList<>(flowResponse.partialFlowResponses());
-
-        for (PartialFlowResponse a : partialFlowResponse) {
-            System.out.println(a.flowName());
-        }
-
-
-
-
+    public PartialFlowResponse(JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
     }
+
+    public int flowId() {
+        return jsonObject.getInt("id");
+    }
+
+    public String flowName() {
+        return jsonObject.getString("name");
+    }
+
 }
