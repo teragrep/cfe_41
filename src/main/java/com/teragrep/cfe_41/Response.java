@@ -43,7 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep;
+package com.teragrep.cfe_41;
 
 /*
 Should take any generic JSONObject passed from request and convert the values into map for later parsing.
@@ -61,7 +61,7 @@ import java.io.StringReader;
 
 public final class Response {
 
-    final private HttpResponse jsonResponse;
+    private final HttpResponse jsonResponse;
 
     public Response(HttpResponse jsonResponse) {
         this.jsonResponse = jsonResponse;

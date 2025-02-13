@@ -43,7 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep;
+package com.teragrep.cfe_41;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -55,9 +55,9 @@ import java.io.IOException;
 // Generic class for requesting CFE-18
 public final class RequestData implements Request {
 
-    final private ApiConfig apiConfig;
+    private final ApiConfig apiConfig;
 
-    final private String endpoint;
+    private final String endpoint;
 
     public RequestData(String endpoint, ApiConfig apiConfig) {
         this.apiConfig = apiConfig;

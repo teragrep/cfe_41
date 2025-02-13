@@ -45,15 +45,14 @@
  */
 package Fakes;
 
-import com.teragrep.flow.FlowResponse;
+import com.teragrep.cfe_41.flow.FlowResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 
 import java.io.IOException;
 
-public class FlowRequestFake {
-
+public final class FlowRequestFake {
 
     public FlowRequestFake() {
     }
@@ -62,8 +61,9 @@ public class FlowRequestFake {
         // Create fake flowlist for endpoint testing
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         // Add jsonArray of 2 JsonObjects with 2 different flows to simulate real-life example instead of doing http request to CFE_18
-        arrayBuilder.add(Json.createObjectBuilder().add("id",1).add("name","flow1"))
-                .add(Json.createObjectBuilder().add("id",2).add("name","flow2"));
+        arrayBuilder
+                .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
+                .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
         // Form into array
         JsonArray flowsArray = arrayBuilder.build();
         return new FlowResponse(flowsArray);

@@ -43,7 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.flow;
+package com.teragrep.cfe_41.flow;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
@@ -76,8 +76,9 @@ public final class FlowResponse {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass())
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         FlowResponse that = (FlowResponse) o;
         return Objects.equals(jsonArray, that.jsonArray);
     }

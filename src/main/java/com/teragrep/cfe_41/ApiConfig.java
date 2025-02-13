@@ -43,27 +43,21 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.flow;
+package com.teragrep.cfe_41;
 
-import jakarta.json.JsonObject;
+public final class ApiConfig {
 
-/*
-Flow from JsonObject
- */
-public final class PartialFlowResponse {
+    private final Arguments arguments;
 
-    private final JsonObject jsonObject;
-
-    public PartialFlowResponse(JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
+    public ApiConfig(Arguments arguments) {
+        this.arguments = arguments;
     }
 
-    public int flowId() {
-        return jsonObject.getInt("id");
+    public String url() {
+        return arguments.get("url");
     }
 
-    public String flowName() {
-        return jsonObject.getString("name");
+    public String token() {
+        return arguments.get("token");
     }
-
 }

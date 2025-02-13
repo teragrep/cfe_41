@@ -44,12 +44,13 @@
  * a licensee so wish it.
  */
 import Fakes.FlowRequestFake;
-import com.teragrep.flow.FlowResponse;
-import com.teragrep.flow.PartialFlowResponse;
+import com.teragrep.cfe_41.flow.FlowResponse;
+import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -59,14 +60,20 @@ import java.util.List;
 public class FlowTest {
 
     @Test
-    public void flowRequestTest()  {
+    public void testContract() {
+        EqualsVerifier.forClass(FlowResponse.class).verify();
+    }
+
+    @Test
+    public void flowRequestTest() {
         // Create fake request
         FlowRequestFake fakeFlow = new FlowRequestFake();
 
         // Build data for expected response
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        arrayBuilder.add(Json.createObjectBuilder().add("id",1).add("name","flow1"))
-                .add(Json.createObjectBuilder().add("id",2).add("name","flow2"));
+        arrayBuilder
+                .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
+                .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
         JsonArray flowsArray = arrayBuilder.build();
 
         FlowResponse fakeFlowResponse = Assertions.assertDoesNotThrow(fakeFlow::flowResponse);
@@ -79,25 +86,25 @@ public class FlowTest {
 
     }
 
-
     // tests that flowResponse can produce List of PartialFlowResponses accordingly when fed JsonArray
     // tests partialFlowResponse object at the same time?
     @Test
     public void flowResponseTest() {
         // Build data for expected response
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        arrayBuilder.add(Json.createObjectBuilder().add("id",1).add("name","flow1"))
-                .add(Json.createObjectBuilder().add("id",2).add("name","flow2"));
+        arrayBuilder
+                .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
+                .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
         JsonArray flowsArray = arrayBuilder.build();
 
         FlowResponse flowResponse = new FlowResponse(flowsArray);
-        List<PartialFlowResponse> actualFlowResponseList =  flowResponse.partialFlowResponses();
+        List<PartialFlowResponse> actualFlowResponseList = flowResponse.partialFlowResponses();
 
         JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
-        objectBuilder1.add("id",1).add("name","flow1");
+        objectBuilder1.add("id", 1).add("name", "flow1");
 
         JsonObjectBuilder objectBuilder2 = Json.createObjectBuilder();
-        objectBuilder2.add("id",2).add("name","flow2");
+        objectBuilder2.add("id", 2).add("name", "flow2");
 
         PartialFlowResponse partialFlowResponse1 = new PartialFlowResponse(objectBuilder1.build());
         PartialFlowResponse partialFlowResponse2 = new PartialFlowResponse(objectBuilder2.build());
@@ -105,16 +112,15 @@ public class FlowTest {
         expectedFlowResponseList.add(partialFlowResponse1);
         expectedFlowResponseList.add(partialFlowResponse2);
 
-
+        Assertions.assertEquals(2, actualFlowResponseList.size());
         int loopsExecuted = 0;
-        for(PartialFlowResponse response : expectedFlowResponseList) {
-           Assertions.assertEquals(actualFlowResponseList.get(loopsExecuted).flowId(), response.flowId());
-           Assertions.assertEquals(actualFlowResponseList.get(loopsExecuted).flowName(), response.flowName());
-           loopsExecuted++;
+        for (PartialFlowResponse response : actualFlowResponseList) {
+            Assertions.assertEquals(expectedFlowResponseList.get(loopsExecuted).flowId(), response.flowId());
+            Assertions.assertEquals(expectedFlowResponseList.get(loopsExecuted).flowName(), response.flowName());
+            loopsExecuted++;
         }
         Assertions.assertEquals(2, loopsExecuted);
 
     }
-
 
 }

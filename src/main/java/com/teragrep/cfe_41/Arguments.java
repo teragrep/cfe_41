@@ -43,27 +43,58 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.flow;
+package com.teragrep.cfe_41;
 
-import jakarta.json.JsonObject;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /*
-Flow from JsonObject
+ Class for handling command line arguments. CNF_01 tool will replace this class completely.
  */
-public final class PartialFlowResponse {
+final class Arguments {
 
-    private final JsonObject jsonObject;
+    private final Map<String, String> arguments;
 
-    public PartialFlowResponse(JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
+    Arguments(final String ... args) {
+        this(Arrays.asList(args));
     }
 
-    public int flowId() {
-        return jsonObject.getInt("id");
+    Arguments(final Iterable<String> args) {
+        this.arguments = Arguments.asMap(args);
     }
 
-    public String flowName() {
-        return jsonObject.getString("name");
+    // Might not be allowed due to straight up copy pasta from Takes project...?
+    private static Map<String, String> asMap(final Iterable<String> args) {
+        // Initialize empty map object
+        final Map<String, String> map = new HashMap<>(0);
+        // Initialize pattern object to check if argument is in valid form
+        final Pattern ptn = Pattern.compile("--([a-z\\-]+)(=.+)?");
+        // Loops through args
+        for (final String arg : args) {
+            // Initialize matcher object to check if Pattern object (regex) matches
+            final Matcher matcher = ptn.matcher(arg);
+            // If does not match, then throw IllegalState
+            if (!matcher.matches()) {
+                throw new IllegalStateException(String.format("Can't parse this argument: '%s'", arg));
+            }
+            // Assign args value as variable from matcher that happens after equal sign
+            final String value = matcher.group(2);
+            // If argument does not have value then empty string is inserted.
+            if (value == null) {
+                map.put(matcher.group(1), "");
+            }
+            else {
+                // In other cases key is inserted before equal sign and value is substringed by one so the equal sign does not come along.
+                map.put(matcher.group(1), value.substring(1));
+            }
+        }
+        return map;
     }
 
+    public String get(String key) {
+        return arguments.get(key);
+    }
 }

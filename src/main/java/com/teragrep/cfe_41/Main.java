@@ -43,12 +43,11 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep;
+package com.teragrep.cfe_41;
 
-import com.teragrep.capture.*;
-import com.teragrep.flow.FlowRequest;
-import com.teragrep.flow.FlowResponse;
-import com.teragrep.flow.PartialFlowResponse;
+import com.teragrep.cfe_41.flow.FlowRequest;
+import com.teragrep.cfe_41.flow.FlowResponse;
+import com.teragrep.cfe_41.flow.PartialFlowResponse;
 
 import java.util.*;
 

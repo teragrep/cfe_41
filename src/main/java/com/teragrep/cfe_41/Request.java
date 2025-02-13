@@ -43,7 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep;
+package com.teragrep.cfe_41;
 
 import org.apache.http.HttpResponse;
 
@@ -51,5 +51,5 @@ import java.io.IOException;
 
 public interface Request {
 
-    HttpResponse doRequest() throws IOException;
+    public abstract HttpResponse doRequest() throws IOException;
 }
