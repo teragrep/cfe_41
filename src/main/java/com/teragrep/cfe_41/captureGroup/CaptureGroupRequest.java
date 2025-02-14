@@ -52,7 +52,6 @@ import jakarta.json.JsonArray;
 
 import java.io.IOException;
 
-
 public final class CaptureGroupRequest {
 
     private final String groupName;
@@ -74,7 +73,5 @@ public final class CaptureGroupRequest {
                 .parseArrayResponse();
         return new CaptureGroupResponse(a);
     }
-
-
 
 }
