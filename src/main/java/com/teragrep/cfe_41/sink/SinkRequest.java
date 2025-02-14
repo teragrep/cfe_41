@@ -43,35 +43,42 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.captureGroup;
+package com.teragrep.cfe_41.sink;
 
 import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cfe_41.RequestData;
 import com.teragrep.cfe_41.Response;
 import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 
 import java.io.IOException;
 
-public final class CaptureGroupRequest {
+public final class SinkRequest {
 
-    private final String groupName;
+    private final String flow;
+    private final String protocol;
     private final ApiConfig apiConfig;
 
-    public CaptureGroupRequest(String groupName, ApiConfig apiConfig) {
-        this.groupName = groupName;
+    public SinkRequest(String flow, String protocol, ApiConfig apiConfig) {
+        this.flow = flow;
+        this.protocol = protocol;
         this.apiConfig = apiConfig;
     }
 
-    /**
-     * Returns all captures included in Capture group Uses GET
-     *
-     * @return
-     * @throws IOException
-     */
-    public CaptureGroupResponse captureGroupResponse() throws IOException {
-        JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
-                .parseArrayResponse();
-        return new CaptureGroupResponse(a);
-    }
+    public SinkResponse sinkResponse() throws IOException {
+        JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).parseArrayResponse();
 
+        for (JsonValue sinkjson : sinksArray) {
+            JsonObject sinkJsonObject = sinkjson.asJsonObject();
+            // If flow and protocol match the object attributes then return ip address and port for configuration file
+            SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
+            if (flow.equals(sinkResponse.flow()) && protocol.equals(sinkResponse.protocol())) {
+                return sinkResponse;
+            }
+        }
+
+        throw new IllegalStateException("No sink found");
+
+    }
 }

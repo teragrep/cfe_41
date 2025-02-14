@@ -43,35 +43,55 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.captureGroup;
+package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 
-import java.io.IOException;
+import java.util.Objects;
 
-public final class CaptureGroupRequest {
+public final class SinkResponse implements Sink {
 
-    private final String groupName;
-    private final ApiConfig apiConfig;
+    private final JsonObject sinkResponse;
 
-    public CaptureGroupRequest(String groupName, ApiConfig apiConfig) {
-        this.groupName = groupName;
-        this.apiConfig = apiConfig;
+    public SinkResponse(JsonObject sinkResponse) {
+        this.sinkResponse = sinkResponse;
     }
 
-    /**
-     * Returns all captures included in Capture group Uses GET
-     *
-     * @return
-     * @throws IOException
-     */
-    public CaptureGroupResponse captureGroupResponse() throws IOException {
-        JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
-                .parseArrayResponse();
-        return new CaptureGroupResponse(a);
+    @Override
+    public String flow() {
+        return sinkResponse.getString("flow");
     }
 
+    @Override
+    public String protocol() {
+        return sinkResponse.getString("protocol");
+    }
+
+    @Override
+    public String ip() {
+        return sinkResponse.getString("ip_address");
+    }
+
+    @Override
+    public String port() {
+        return sinkResponse.getString("port");
+    }
+
+    public int id() {
+        return sinkResponse.getInt("id");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SinkResponse that = (SinkResponse) o;
+        return Objects.equals(sinkResponse, that.sinkResponse);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(sinkResponse);
+    }
 }

@@ -50,6 +50,8 @@ import com.teragrep.cfe_41.capture.CaptureResponse;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.sink.SinkRequest;
+import com.teragrep.cfe_41.sink.SinkResponse;
 
 import java.util.*;
 
@@ -60,13 +62,20 @@ public class Main {
         // Creates new ApiConfig from commandline args
         ApiConfig apiConfig = new ApiConfig(new Arguments(args));
 
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string",apiConfig);
+        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string", apiConfig);
         CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
 
         List<CaptureRequest> captureRequests = new ArrayList<>();
 
-        for(PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests.add(new CaptureRequest(captureRequest.captureDefinitionId(),captureRequest.captureGroupType(),apiConfig));
+        for (PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
+            captureRequests
+                    .add(
+                            new CaptureRequest(
+                                    captureRequest.captureDefinitionId(),
+                                    captureRequest.captureGroupType(),
+                                    apiConfig
+                            )
+                    );
         }
 
         List<CaptureResponse> captureResponses = new ArrayList<>();
@@ -79,6 +88,16 @@ public class Main {
             captureResponse.id();
         }
 
+        List<SinkRequest> sinkRequests = new ArrayList<>();
+        // Loop through captures which are in the current group and request sink for each individual capture
+        for (CaptureResponse sinkRequest : captureResponses) {
+            sinkRequests.add(new SinkRequest(sinkRequest.flow(), sinkRequest.protocol(), apiConfig));
+        }
+
+        Set<SinkResponse> sinkResponses = new HashSet<>();
+        for (SinkRequest sinkRequest : sinkRequests) {
+            sinkResponses.add(sinkRequest.sinkResponse());
+        }
 
     }
 }

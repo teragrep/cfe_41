@@ -43,35 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.captureGroup;
+package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
+public interface Sink {
 
-import java.io.IOException;
+    public abstract String flow();
 
-public final class CaptureGroupRequest {
+    public abstract String protocol();
 
-    private final String groupName;
-    private final ApiConfig apiConfig;
+    public abstract String ip();
 
-    public CaptureGroupRequest(String groupName, ApiConfig apiConfig) {
-        this.groupName = groupName;
-        this.apiConfig = apiConfig;
-    }
-
-    /**
-     * Returns all captures included in Capture group Uses GET
-     *
-     * @return
-     * @throws IOException
-     */
-    public CaptureGroupResponse captureGroupResponse() throws IOException {
-        JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
-                .parseArrayResponse();
-        return new CaptureGroupResponse(a);
-    }
-
+    public abstract String port();
 }

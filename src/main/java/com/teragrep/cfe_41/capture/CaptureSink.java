@@ -46,16 +46,13 @@
 package com.teragrep.cfe_41.capture;
 
 import com.teragrep.cfe_41.sink.SinkResponse;
-import com.teragrep.cfe_41.sink.SinkRuleset;
+import com.teragrep.cfe_41.relpCapture.SinkRuleset;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
 import java.util.List;
 
-/*
-
- */
 public final class CaptureSink {
 
     private final List<SinkResponse> sink;
