@@ -43,42 +43,28 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Main {
+public final class CaptureStorageResponse {
 
-    public static void main(String[] args) throws Exception {
+    private final JsonArray jsonArray;
 
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
-
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string",apiConfig);
-        CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
-
-        List<CaptureRequest> captureRequests = new ArrayList<>();
-
-        for(PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests.add(new CaptureRequest(captureRequest.captureDefinitionId(),captureRequest.captureGroupType(),apiConfig));
-        }
-
-        List<CaptureResponse> captureResponses = new ArrayList<>();
-        for (CaptureRequest captureResponse : captureRequests) {
-            captureResponses.add(captureResponse.captureResponse());
-        }
-
-        for (CaptureResponse captureResponse : captureResponses) {
-            // Now provides capture_id for later usage
-            captureResponse.id();
-        }
-
-
+    public CaptureStorageResponse(JsonArray jsonArray) {
+        this.jsonArray = jsonArray;
     }
+
+    public List<PartialCaptureStorageResponse> partialCaptureStorageResponses() {
+        List<PartialCaptureStorageResponse> partialCaptureStorageResponses = new ArrayList<>();
+        for (JsonValue captureStorage : jsonArray) {
+            partialCaptureStorageResponses.add(new PartialCaptureStorageResponse(captureStorage.asJsonObject()));
+        }
+        return partialCaptureStorageResponses;
+    }
+
 }

@@ -43,42 +43,32 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.captureGroup;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import jakarta.json.JsonObject;
 
-import java.util.*;
+public final class PartialCaptureResponse {
 
-public class Main {
+    private final JsonObject jsonObject;
 
-    public static void main(String[] args) throws Exception {
-
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
-
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string",apiConfig);
-        CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
-
-        List<CaptureRequest> captureRequests = new ArrayList<>();
-
-        for(PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests.add(new CaptureRequest(captureRequest.captureDefinitionId(),captureRequest.captureGroupType(),apiConfig));
-        }
-
-        List<CaptureResponse> captureResponses = new ArrayList<>();
-        for (CaptureRequest captureResponse : captureRequests) {
-            captureResponses.add(captureResponse.captureResponse());
-        }
-
-        for (CaptureResponse captureResponse : captureResponses) {
-            // Now provides capture_id for later usage
-            captureResponse.id();
-        }
-
-
+    public PartialCaptureResponse(JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
     }
+
+    public String groupName() {
+        return jsonObject.getString("capture_def_group_name");
+    }
+
+    public int captureDefinitionId() {
+        return jsonObject.getInt("capture_definition_id");
+    }
+
+    public String captureGroupType() {
+        return jsonObject.getString("capture_group_type");
+    }
+
+    public int groupId() {
+        return jsonObject.getInt("id");
+    }
+
 }

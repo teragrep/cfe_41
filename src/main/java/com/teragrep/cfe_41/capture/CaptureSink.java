@@ -43,42 +43,45 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.sink.SinkResponse;
+import com.teragrep.cfe_41.sink.SinkRuleset;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 
-import java.util.*;
+import java.util.List;
 
-public class Main {
+/*
 
-    public static void main(String[] args) throws Exception {
+ */
+public final class CaptureSink {
 
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
+    private final List<SinkResponse> sink;
+    private final String flow;
+    private final String protocol;
 
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string",apiConfig);
-        CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
-
-        List<CaptureRequest> captureRequests = new ArrayList<>();
-
-        for(PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests.add(new CaptureRequest(captureRequest.captureDefinitionId(),captureRequest.captureGroupType(),apiConfig));
-        }
-
-        List<CaptureResponse> captureResponses = new ArrayList<>();
-        for (CaptureRequest captureResponse : captureRequests) {
-            captureResponses.add(captureResponse.captureResponse());
-        }
-
-        for (CaptureResponse captureResponse : captureResponses) {
-            // Now provides capture_id for later usage
-            captureResponse.id();
-        }
-
-
+    public CaptureSink(List<SinkResponse> sink, String flow, String protocol) {
+        this.sink = sink;
+        this.flow = flow;
+        this.protocol = protocol;
     }
+
+    public SinkRuleset buildSink() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        for (SinkResponse sinkResponse : sink) {
+            if (sinkResponse.flow().equals(flow) && sinkResponse.protocol().equals(protocol)) {
+                String name = sinkResponse.flow() + sinkResponse.ip() + sinkResponse.port() + sinkResponse.protocol();
+                builder.add("target", sinkResponse.ip());
+                builder.add("port", sinkResponse.port());
+                // TODO swap this name to appropriate one. Not currently stored but is/should/how? # ISSUE 22 Github
+                builder.add("name", name);
+                JsonObject resultSink = builder.build();
+                return new SinkRuleset(name, resultSink);
+            }
+        }
+        throw new IllegalStateException("Sink not found");
+    }
+
 }

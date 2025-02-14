@@ -43,42 +43,29 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
 
-import java.util.*;
+import java.io.IOException;
 
-public class Main {
+public final class CaptureStorageRequest {
 
-    public static void main(String[] args) throws Exception {
+    private final int captureDefinitionId;
+    private final ApiConfig apiConfig;
 
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
+    public CaptureStorageRequest(int captureDefinitionId, ApiConfig apiConfig) {
+        this.captureDefinitionId = captureDefinitionId;
+        this.apiConfig = apiConfig;
+    }
 
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string",apiConfig);
-        CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
-
-        List<CaptureRequest> captureRequests = new ArrayList<>();
-
-        for(PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests.add(new CaptureRequest(captureRequest.captureDefinitionId(),captureRequest.captureGroupType(),apiConfig));
-        }
-
-        List<CaptureResponse> captureResponses = new ArrayList<>();
-        for (CaptureRequest captureResponse : captureRequests) {
-            captureResponses.add(captureResponse.captureResponse());
-        }
-
-        for (CaptureResponse captureResponse : captureResponses) {
-            // Now provides capture_id for later usage
-            captureResponse.id();
-        }
-
-
+    public CaptureStorageResponse captureStorageResponse() throws IOException {
+        JsonArray captureStorageArray = new Response(
+                new RequestData("/storage/capture/" + captureDefinitionId, apiConfig).doRequest()
+        ).parseArrayResponse();
+        return new CaptureStorageResponse(captureStorageArray);
     }
 }

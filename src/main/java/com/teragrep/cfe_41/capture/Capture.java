@@ -43,42 +43,23 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+public interface Capture {
 
-import java.util.*;
+    public abstract String tag();
 
-public class Main {
+    public abstract String retention_time();
 
-    public static void main(String[] args) throws Exception {
+    public abstract String category();
 
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
+    public abstract String application();
 
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string",apiConfig);
-        CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
+    public abstract String index();
 
-        List<CaptureRequest> captureRequests = new ArrayList<>();
+    public abstract String source_type();
 
-        for(PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests.add(new CaptureRequest(captureRequest.captureDefinitionId(),captureRequest.captureGroupType(),apiConfig));
-        }
+    public abstract String protocol();
 
-        List<CaptureResponse> captureResponses = new ArrayList<>();
-        for (CaptureRequest captureResponse : captureRequests) {
-            captureResponses.add(captureResponse.captureResponse());
-        }
-
-        for (CaptureResponse captureResponse : captureResponses) {
-            // Now provides capture_id for later usage
-            captureResponse.id();
-        }
-
-
-    }
+    public abstract String flow();
 }

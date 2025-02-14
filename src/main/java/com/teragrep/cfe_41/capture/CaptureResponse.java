@@ -43,42 +43,65 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.Stored;
+import jakarta.json.JsonObject;
 
-import java.util.*;
+/*
+Takes Capture JsonObject and ṕarses it into Capture
+ */
+public final class CaptureResponse implements Capture, Stored {
 
-public class Main {
+    private final JsonObject jsonObject;
 
-    public static void main(String[] args) throws Exception {
-
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
-
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string",apiConfig);
-        CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
-
-        List<CaptureRequest> captureRequests = new ArrayList<>();
-
-        for(PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests.add(new CaptureRequest(captureRequest.captureDefinitionId(),captureRequest.captureGroupType(),apiConfig));
-        }
-
-        List<CaptureResponse> captureResponses = new ArrayList<>();
-        for (CaptureRequest captureResponse : captureRequests) {
-            captureResponses.add(captureResponse.captureResponse());
-        }
-
-        for (CaptureResponse captureResponse : captureResponses) {
-            // Now provides capture_id for later usage
-            captureResponse.id();
-        }
-
-
+    public CaptureResponse(JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
     }
+
+    @Override
+    public int id() {
+        return jsonObject.getInt("id");
+    }
+
+    @Override
+    public String tag() {
+        return jsonObject.getString("tag");
+    }
+
+    @Override
+    public String retention_time() {
+        return jsonObject.getString("retention_time");
+    }
+
+    @Override
+    public String category() {
+        return jsonObject.getString("category");
+    }
+
+    @Override
+    public String application() {
+        return jsonObject.getString("application");
+    }
+
+    @Override
+    public String index() {
+        return jsonObject.getString("index");
+    }
+
+    @Override
+    public String source_type() {
+        return jsonObject.getString("source_type");
+    }
+
+    @Override
+    public String protocol() {
+        return jsonObject.getString("protocol");
+    }
+
+    @Override
+    public String flow() {
+        return jsonObject.getString("flow");
+    }
+
 }

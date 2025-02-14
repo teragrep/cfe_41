@@ -43,42 +43,38 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.captureGroup;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
 
-import java.util.*;
-
-public class Main {
-
-    public static void main(String[] args) throws Exception {
-
-        // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
-
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string",apiConfig);
-        CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
-
-        List<CaptureRequest> captureRequests = new ArrayList<>();
-
-        for(PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests.add(new CaptureRequest(captureRequest.captureDefinitionId(),captureRequest.captureGroupType(),apiConfig));
-        }
-
-        List<CaptureResponse> captureResponses = new ArrayList<>();
-        for (CaptureRequest captureResponse : captureRequests) {
-            captureResponses.add(captureResponse.captureResponse());
-        }
-
-        for (CaptureResponse captureResponse : captureResponses) {
-            // Now provides capture_id for later usage
-            captureResponse.id();
-        }
+import java.io.IOException;
 
 
+public final class CaptureGroupRequest {
+
+    private final String groupName;
+    private final ApiConfig apiConfig;
+
+    public CaptureGroupRequest(String groupName, ApiConfig apiConfig) {
+        this.groupName = groupName;
+        this.apiConfig = apiConfig;
     }
+
+    /**
+     * Returns all captures included in Capture group Uses GET
+     *
+     * @return
+     * @throws IOException
+     */
+    public CaptureGroupResponse captureGroupResponse() throws IOException {
+        JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
+                .parseArrayResponse();
+        return new CaptureGroupResponse(a);
+    }
+
+
+
 }
