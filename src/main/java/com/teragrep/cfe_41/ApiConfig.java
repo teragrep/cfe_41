@@ -45,19 +45,21 @@
  */
 package com.teragrep.cfe_41;
 
+import java.util.Map;
+
 public final class ApiConfig {
 
-    private final Arguments arguments;
+    private final Map<String, String> config;
 
-    public ApiConfig(Arguments arguments) {
-        this.arguments = arguments;
+    public ApiConfig(Map<String, String> config) {
+        this.config = config;
     }
 
     public String url() {
-        return arguments.get("url");
+        return config.get("url");
     }
 
     public String token() {
-        return arguments.get("token");
+        return config.get("token");
     }
 }

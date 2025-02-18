@@ -48,6 +48,9 @@ package com.teragrep.cfe_41;
 import com.teragrep.cfe_41.flow.FlowRequest;
 import com.teragrep.cfe_41.flow.FlowResponse;
 import com.teragrep.cfe_41.flow.PartialFlowResponse;
+import com.teragrep.cnf_01.ArgsConfiguration;
+import com.teragrep.cnf_01.Configuration;
+import com.teragrep.cnf_01.ConfigurationException;
 
 import java.util.*;
 
@@ -56,7 +59,15 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
+        Configuration configuration = new ArgsConfiguration(args);
+        Map<String, String> configMap = new HashMap<>();
+        try {
+            configMap = configuration.asMap();
+        }
+        catch (ConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        ApiConfig apiConfig = new ApiConfig(configMap);
 
         FlowRequest flowRequest = new FlowRequest(apiConfig);
         FlowResponse flowResponse = flowRequest.flowResponse();
@@ -64,7 +75,8 @@ public class Main {
         List<PartialFlowResponse> partialFlowResponse = new ArrayList<>(flowResponse.partialFlowResponses());
 
         for (PartialFlowResponse a : partialFlowResponse) {
-            System.out.println(a.flowName());
+            a.flowName();
+            a.flowId();
         }
 
     }
