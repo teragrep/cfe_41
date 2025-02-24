@@ -43,28 +43,44 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package Fakes;
+package flow;
 
+import Fakes.FlowRequestFake;
+import com.teragrep.cfe_41.flow.FlowRequest;
 import com.teragrep.cfe_41.flow.FlowResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public final class FlowRequestFake {
+public class FlowRequestTest {
 
-    public FlowRequestFake() {
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(FlowRequest.class).verify();
     }
 
-    public FlowResponse flowResponse() {
-        // Create fake flowlist for endpoint testing
+    @Test
+    public void flowRequestTest() {
+        // Create fake request
+        FlowRequestFake fakeFlow = new FlowRequestFake();
+
+        // Build data for expected response
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        // Add jsonArray of 2 JsonObjects with 2 different flows to simulate real-life example instead of doing http request to CFE_18
         arrayBuilder
                 .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
                 .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
-        // Form into array
         JsonArray flowsArray = arrayBuilder.build();
-        return new FlowResponse(flowsArray);
+
+        FlowResponse fakeFlowResponse = Assertions.assertDoesNotThrow(fakeFlow::flowResponse);
+        FlowResponse realFlowResponse = new FlowResponse(flowsArray);
+
+        // Assertions
+        Assertions.assertFalse(flowsArray.isEmpty());
+        // Asserting that contents equal to each other
+        Assertions.assertEquals(realFlowResponse.hashCode(), fakeFlowResponse.hashCode());
 
     }
 

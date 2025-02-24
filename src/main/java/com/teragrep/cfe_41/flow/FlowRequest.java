@@ -51,6 +51,7 @@ import com.teragrep.cfe_41.Response;
 import jakarta.json.JsonArray;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public final class FlowRequest {
 
@@ -72,5 +73,19 @@ public final class FlowRequest {
         JsonArray flowsArray = new Response(new RequestData("/flow", apiConfig).doRequest()).parseArrayResponse();
         return new FlowResponse(flowsArray);
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        FlowRequest that = (FlowRequest) o;
+        return Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
     }
 }

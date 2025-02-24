@@ -43,28 +43,33 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package Fakes;
+package flow;
 
-import com.teragrep.cfe_41.flow.FlowResponse;
+import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public final class FlowRequestFake {
+public class PartialFlowResponseTest {
 
-    public FlowRequestFake() {
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(PartialFlowResponse.class).verify();
     }
 
-    public FlowResponse flowResponse() {
-        // Create fake flowlist for endpoint testing
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        // Add jsonArray of 2 JsonObjects with 2 different flows to simulate real-life example instead of doing http request to CFE_18
-        arrayBuilder
-                .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
-                .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
-        // Form into array
-        JsonArray flowsArray = arrayBuilder.build();
-        return new FlowResponse(flowsArray);
+    @Test
+    public void testPartialFlowResponse() {
+        JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
+        objectBuilder1.add("id", 1).add("name", "flow1");
+        JsonObject testJsonObject = objectBuilder1.build();
+
+        PartialFlowResponse partialFlowResponse = new PartialFlowResponse(testJsonObject);
+
+        Assertions.assertEquals(1, partialFlowResponse.flowId());
+        Assertions.assertEquals("flow1", partialFlowResponse.flowName());
 
     }
 

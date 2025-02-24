@@ -43,7 +43,8 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-import Fakes.FlowRequestFake;
+package flow;
+
 import com.teragrep.cfe_41.flow.FlowResponse;
 import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import jakarta.json.Json;
@@ -53,41 +54,21 @@ import jakarta.json.JsonObjectBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlowTest {
+public class FlowResponseTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(FlowResponseTest.class);
 
     @Test
     public void testContract() {
         EqualsVerifier.forClass(FlowResponse.class).verify();
     }
 
-    @Test
-    public void flowRequestTest() {
-        // Create fake request
-        FlowRequestFake fakeFlow = new FlowRequestFake();
-
-        // Build data for expected response
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        arrayBuilder
-                .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
-                .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
-        JsonArray flowsArray = arrayBuilder.build();
-
-        FlowResponse fakeFlowResponse = Assertions.assertDoesNotThrow(fakeFlow::flowResponse);
-        FlowResponse realFlowResponse = new FlowResponse(flowsArray);
-
-        // Assertions
-        Assertions.assertFalse(flowsArray.isEmpty());
-        // Asserting that contents equal to each other
-        Assertions.assertEquals(realFlowResponse.hashCode(), fakeFlowResponse.hashCode());
-
-    }
-
-    // tests that flowResponse can produce List of PartialFlowResponses accordingly when fed JsonArray
-    // tests partialFlowResponse object at the same time?
     @Test
     public void flowResponseTest() {
         // Build data for expected response
@@ -122,5 +103,4 @@ public class FlowTest {
         Assertions.assertEquals(2, loopsExecuted);
 
     }
-
 }

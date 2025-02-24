@@ -51,22 +51,27 @@ import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import com.teragrep.cnf_01.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-
+        Logger logger = LogManager.getLogger(Main.class);
         // Creates new ApiConfig from commandline args
         Configuration configuration = new ArgsConfiguration(args);
         Map<String, String> configMap = new HashMap<>();
         try {
+            logger.debug("Loading configuration...");
+            logger.debug(configuration.asMap().toString());
             configMap = configuration.asMap();
         }
         catch (ConfigurationException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage());
         }
+
         ApiConfig apiConfig = new ApiConfig(configMap);
 
         FlowRequest flowRequest = new FlowRequest(apiConfig);

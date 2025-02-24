@@ -47,6 +47,8 @@ package com.teragrep.cfe_41.flow;
 
 import jakarta.json.JsonObject;
 
+import java.util.Objects;
+
 /*
 Flow from JsonObject
  */
@@ -66,4 +68,17 @@ public final class PartialFlowResponse {
         return jsonObject.getString("name");
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PartialFlowResponse that = (PartialFlowResponse) o;
+        return Objects.equals(jsonObject, that.jsonObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonObject);
+    }
 }
