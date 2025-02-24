@@ -43,11 +43,9 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package flow;
+package com.teragrep.cfe_41.flow;
 
-import Fakes.FlowRequestFake;
-import com.teragrep.cfe_41.flow.FlowRequest;
-import com.teragrep.cfe_41.flow.FlowResponse;
+import com.teragrep.cfe_41.Fakes.FlowRequestFake;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;

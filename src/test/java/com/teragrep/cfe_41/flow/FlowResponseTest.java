@@ -43,29 +43,62 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package Fakes;
+package com.teragrep.cfe_41.flow;
 
-import com.teragrep.cfe_41.flow.FlowResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public final class FlowRequestFake {
+import java.util.ArrayList;
+import java.util.List;
 
-    public FlowRequestFake() {
+public class FlowResponseTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(FlowResponseTest.class);
+
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(FlowResponse.class).verify();
     }
 
-    public FlowResponse flowResponse() {
-        // Create fake flowlist for endpoint testing
+    @Test
+    public void flowResponseTest() {
+        // Build data for expected response
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        // Add jsonArray of 2 JsonObjects with 2 different flows to simulate real-life example instead of doing http request to CFE_18
         arrayBuilder
                 .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
                 .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
-        // Form into array
         JsonArray flowsArray = arrayBuilder.build();
-        return new FlowResponse(flowsArray);
+
+        FlowResponse flowResponse = new FlowResponse(flowsArray);
+        List<PartialFlowResponse> actualFlowResponseList = flowResponse.partialFlowResponses();
+
+        JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
+        objectBuilder1.add("id", 1).add("name", "flow1");
+
+        JsonObjectBuilder objectBuilder2 = Json.createObjectBuilder();
+        objectBuilder2.add("id", 2).add("name", "flow2");
+
+        PartialFlowResponse partialFlowResponse1 = new PartialFlowResponse(objectBuilder1.build());
+        PartialFlowResponse partialFlowResponse2 = new PartialFlowResponse(objectBuilder2.build());
+        List<PartialFlowResponse> expectedFlowResponseList = new ArrayList<>();
+        expectedFlowResponseList.add(partialFlowResponse1);
+        expectedFlowResponseList.add(partialFlowResponse2);
+
+        Assertions.assertEquals(2, actualFlowResponseList.size());
+        int loopsExecuted = 0;
+        for (PartialFlowResponse response : actualFlowResponseList) {
+            Assertions.assertEquals(expectedFlowResponseList.get(loopsExecuted).flowId(), response.flowId());
+            Assertions.assertEquals(expectedFlowResponseList.get(loopsExecuted).flowName(), response.flowName());
+            loopsExecuted++;
+        }
+        Assertions.assertEquals(2, loopsExecuted);
 
     }
-
 }
