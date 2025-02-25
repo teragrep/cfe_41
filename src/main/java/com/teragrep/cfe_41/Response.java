@@ -45,25 +45,22 @@
  */
 package com.teragrep.cfe_41;
 
-/*
-Should take any generic JSONObject passed from request and convert the values into map for later parsing.
- */
-
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Objects;
 
 public final class Response {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Response.class);
+    private static final Logger LOGGER = LogManager.getLogger(Response.class);
 
     private final HttpResponse jsonResponse;
 
@@ -92,7 +89,16 @@ public final class Response {
     }
 
     @Override
-    public String toString() {
-        return "Response{" + "jsonResponse=" + jsonResponse + '}';
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Response response = (Response) o;
+        return Objects.equals(jsonResponse, response.jsonResponse);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonResponse);
     }
 }
