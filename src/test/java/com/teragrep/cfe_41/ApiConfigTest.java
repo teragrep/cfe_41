@@ -45,36 +45,32 @@
  */
 package com.teragrep.cfe_41;
 
-import java.util.Map;
-import java.util.Objects;
+import com.teragrep.cnf_01.ArgsConfiguration;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public final class ApiConfig {
+public class ApiConfigTest {
 
-    private final Map<String, String> config;
-
-    public ApiConfig(Map<String, String> config) {
-        this.config = config;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(Response.class).verify();
     }
 
-    public String url() {
-        return config.get("url");
+    @Test
+    public void testApiConfig() {
+        // test that ApiConfig object can take ArgsConfiguration object and utilize it correctly with the given methods
+        String[] args = new String[] {
+                "url=http://localhost:1080", "token=testToken"
+        };
+
+        ArgsConfiguration cfg = new ArgsConfiguration(args);
+
+        ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
+
+        Assertions.assertNotNull(apiConfig);
+        Assertions.assertEquals("http://localhost:1080", apiConfig.url());
+        Assertions.assertEquals("testToken", apiConfig.token());
     }
 
-    public String token() {
-        return config.get("token");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ApiConfig apiConfig = (ApiConfig) o;
-        return Objects.equals(config, apiConfig.config);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(config);
-    }
 }
