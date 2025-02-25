@@ -51,6 +51,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
+import java.util.Objects;
 
 // Generic class for requesting CFE-18
 public final class RequestData implements Request {
@@ -72,4 +73,17 @@ public final class RequestData implements Request {
         return httpClient.execute(request);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RequestData that = (RequestData) o;
+        return Objects.equals(apiConfig, that.apiConfig) && Objects.equals(endpoint, that.endpoint);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(apiConfig, endpoint);
+    }
 }
