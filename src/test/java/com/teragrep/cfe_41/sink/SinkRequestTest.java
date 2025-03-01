@@ -43,11 +43,9 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package sink;
+package com.teragrep.cfe_41.sink;
 
-import Fakes.SinkRequestFake;
-import com.teragrep.cfe_41.flow.FlowResponse;
-import com.teragrep.cfe_41.sink.SinkResponse;
+import com.teragrep.cfe_41.Fakes.SinkRequestFake;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -59,7 +57,7 @@ public class SinkRequestTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(FlowResponse.class).verify();
+        EqualsVerifier.forClass(SinkRequest.class).verify();
     }
 
     @Test

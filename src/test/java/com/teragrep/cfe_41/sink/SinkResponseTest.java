@@ -43,31 +43,27 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package Fakes;
+package com.teragrep.cfe_41.sink;
 
 import com.teragrep.cfe_41.flow.FlowResponse;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+public class SinkResponseTest {
 
-public final class FlowRequestFake {
-
-    public FlowRequestFake() {
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(FlowResponse.class).verify();
     }
 
-    public FlowResponse flowResponse() throws IOException {
-        // Create fake flowlist for endpoint testing
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        // Add jsonArray of 2 JsonObjects with 2 different flows to simulate real-life example instead of doing http request to CFE_18
-        arrayBuilder
-                .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
-                .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
-        // Form into array
-        JsonArray flowsArray = arrayBuilder.build();
-        return new FlowResponse(flowsArray);
+
+    @Test
+    public void testSinkResponse() {
+
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+
 
     }
-
 }

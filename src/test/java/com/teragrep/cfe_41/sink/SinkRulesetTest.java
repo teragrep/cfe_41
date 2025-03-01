@@ -43,28 +43,17 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package Fakes;
+package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.sink.SinkResponse;
-import jakarta.json.*;
+import com.teragrep.cfe_41.flow.FlowResponse;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
-public final class SinkRequestFake {
+public class SinkRulesetTest {
 
-    public SinkRequestFake() {
-
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(FlowResponse.class).verify();
     }
 
-    public SinkResponse sinkResponse() {
-        // Create fake sinkList for endpoint testing
-        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        objectBuilder
-                .add("flow", "flow1")
-                .add("protocol", "protocol1")
-                .add("ip_address", "ip_address1")
-                .add("port", "port1")
-                .add("id", 1);
-
-        JsonObject sink = objectBuilder.build();
-        return new SinkResponse(sink);
-    }
 }
