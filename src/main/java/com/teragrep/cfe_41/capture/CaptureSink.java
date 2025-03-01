@@ -46,26 +46,26 @@
 package com.teragrep.cfe_41.capture;
 
 import com.teragrep.cfe_41.sink.SinkResponse;
-import com.teragrep.cfe_41.relpCapture.SinkRuleset;
+import com.teragrep.cfe_41.sink.SinkRuleset;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
-import java.util.List;
+import java.util.Set;
 
 public final class CaptureSink {
 
-    private final List<SinkResponse> sink;
+    private final Set<SinkResponse> sink;
     private final String flow;
     private final String protocol;
 
-    public CaptureSink(List<SinkResponse> sink, String flow, String protocol) {
+    public CaptureSink(Set<SinkResponse> sink, String flow, String protocol) {
         this.sink = sink;
         this.flow = flow;
         this.protocol = protocol;
     }
 
-    public SinkRuleset buildSink() {
+    public SinkRuleset sinkAsRuleset() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         for (SinkResponse sinkResponse : sink) {
             if (sinkResponse.flow().equals(flow) && sinkResponse.protocol().equals(protocol)) {
@@ -78,7 +78,7 @@ public final class CaptureSink {
                 return new SinkRuleset(name, resultSink);
             }
         }
-        throw new IllegalStateException("Sink not found");
+        throw new IllegalStateException("sink not found");
     }
 
 }

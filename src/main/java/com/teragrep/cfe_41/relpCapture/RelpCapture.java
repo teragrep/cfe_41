@@ -43,58 +43,60 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.sink;
+package com.teragrep.cfe_41.relpCapture;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
+import com.teragrep.cfe_41.capture.CaptureResponse;
+import com.teragrep.cfe_41.capture.PartialCaptureStorageResponse;
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
+import jakarta.json.JsonObjectBuilder;
 
-import java.io.IOException;
-import java.util.Objects;
+import java.util.List;
 
-public final class SinkRequest {
+public final class RelpCapture {
 
-    private final String flow;
-    private final String protocol;
-    private final ApiConfig apiConfig;
+    private final CaptureResponse capture;
+    private final List<PartialCaptureStorageResponse> captureStorage;
+    // Could be just String since name is only used here and not the whole object?
+    private final String rulesetName;
 
-    public SinkRequest(String flow, String protocol, ApiConfig apiConfig) {
-        this.flow = flow;
-        this.protocol = protocol;
-        this.apiConfig = apiConfig;
+    public RelpCapture(
+            CaptureResponse capture,
+            List<PartialCaptureStorageResponse> captureStorage,
+            String rulesetName
+    ) {
+        this.capture = capture;
+        this.captureStorage = captureStorage;
+        this.rulesetName = rulesetName;
     }
 
-    public SinkResponse sinkResponse() throws IOException {
-        JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).parseArrayResponse();
+    public JsonObject captureAsJson() {
+        JsonObject storage = addStorage(capture.id());
+        JsonObjectBuilder captureBuilder = Json.createObjectBuilder();
+        captureBuilder
+                .add("file", capture.tag())
+                .add("index", capture.index())
+                .add("sourcetype", capture.source_type())
+                .add("application", capture.application())
+                .add("retention_time", capture.retention_time())
+                .add("category", capture.category())
+                .add("tag", capture.tag())
+                .add("tag_path", capture.tag())
+                .add("ruleset", rulesetName)
+                .add("targets", storage);
+        JsonObject captureAsJson = captureBuilder.build();
+        return captureAsJson;
+    }
 
-        for (JsonValue sinkjson : sinksArray) {
-            JsonObject sinkJsonObject = sinkjson.asJsonObject();
-            // If flow and protocol match the object attributes then return ip address and port for configuration file
-            SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
-            if (flow.equals(sinkResponse.flow()) && protocol.equals(sinkResponse.protocol())) {
-                return sinkResponse;
+    // Retrieves targets for capture against ID.
+    private JsonObject addStorage(final int captureId) {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        for (PartialCaptureStorageResponse captureStorageLocation : captureStorage) {
+            if (captureStorageLocation.captureId() == captureId) {
+                builder.add(captureStorageLocation.storageName(), true);
             }
         }
-
-        throw new IllegalStateException("No sink found");
-
+        return builder.build();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        SinkRequest that = (SinkRequest) o;
-        return Objects.equals(flow, that.flow) && Objects.equals(protocol, that.protocol)
-                && Objects.equals(apiConfig, that.apiConfig);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(flow, protocol, apiConfig);
-    }
 }

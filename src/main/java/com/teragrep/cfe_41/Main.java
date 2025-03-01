@@ -52,16 +52,34 @@ import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
 import com.teragrep.cfe_41.sink.SinkRequest;
 import com.teragrep.cfe_41.sink.SinkResponse;
+import com.teragrep.cnf_01.ArgsConfiguration;
+import com.teragrep.cnf_01.Configuration;
+import com.teragrep.cnf_01.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class Main {
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws Exception {
-
+        Logger logger = LogManager.getLogger(Main.class);
         // Creates new ApiConfig from commandline args
-        ApiConfig apiConfig = new ApiConfig(new Arguments(args));
+        Configuration configuration = new ArgsConfiguration(args);
+        Map<String, String> configMap = new HashMap<>();
+        try {
+            logger.debug("Loading configuration...");
+            logger.debug(configuration.asMap().toString());
+            configMap = configuration.asMap();
+        }
+        catch (ConfigurationException e) {
+            logger.error(e.getMessage());
+        }
 
+        ApiConfig apiConfig = new ApiConfig(configMap);
         CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string", apiConfig);
         CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
 

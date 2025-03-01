@@ -45,42 +45,31 @@
  */
 package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
 
-import java.io.IOException;
 import java.util.Objects;
 
-public final class SinkRequest {
+/*
+Object that ties one Ruleset object with the ruleset name.
+Differentiated since name is formed in CaptureSink
+ */
+public final class SinkRuleset {
 
-    private final String flow;
-    private final String protocol;
-    private final ApiConfig apiConfig;
+    private final String rulesetName;
+    private final JsonObject ruleset;
 
-    public SinkRequest(String flow, String protocol, ApiConfig apiConfig) {
-        this.flow = flow;
-        this.protocol = protocol;
-        this.apiConfig = apiConfig;
+    public SinkRuleset(String rulesetName, JsonObject rulesetSink) {
+        this.rulesetName = rulesetName;
+        this.ruleset = rulesetSink;
     }
 
-    public SinkResponse sinkResponse() throws IOException {
-        JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).parseArrayResponse();
+    public String sinkName() {
+        return rulesetName;
+    }
 
-        for (JsonValue sinkjson : sinksArray) {
-            JsonObject sinkJsonObject = sinkjson.asJsonObject();
-            // If flow and protocol match the object attributes then return ip address and port for configuration file
-            SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
-            if (flow.equals(sinkResponse.flow()) && protocol.equals(sinkResponse.protocol())) {
-                return sinkResponse;
-            }
-        }
-
-        throw new IllegalStateException("No sink found");
-
+    // Change this name
+    public JsonObject omrelp() {
+        return ruleset;
     }
 
     @Override
@@ -88,13 +77,12 @@ public final class SinkRequest {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SinkRequest that = (SinkRequest) o;
-        return Objects.equals(flow, that.flow) && Objects.equals(protocol, that.protocol)
-                && Objects.equals(apiConfig, that.apiConfig);
+        SinkRuleset that = (SinkRuleset) o;
+        return Objects.equals(rulesetName, that.rulesetName) && Objects.equals(ruleset, that.ruleset);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flow, protocol, apiConfig);
+        return Objects.hash(rulesetName, ruleset);
     }
 }

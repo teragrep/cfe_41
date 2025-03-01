@@ -43,58 +43,28 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.sink;
+package Fakes;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
+import com.teragrep.cfe_41.sink.SinkResponse;
+import jakarta.json.*;
 
-import java.io.IOException;
-import java.util.Objects;
+public final class SinkRequestFake {
 
-public final class SinkRequest {
-
-    private final String flow;
-    private final String protocol;
-    private final ApiConfig apiConfig;
-
-    public SinkRequest(String flow, String protocol, ApiConfig apiConfig) {
-        this.flow = flow;
-        this.protocol = protocol;
-        this.apiConfig = apiConfig;
-    }
-
-    public SinkResponse sinkResponse() throws IOException {
-        JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).parseArrayResponse();
-
-        for (JsonValue sinkjson : sinksArray) {
-            JsonObject sinkJsonObject = sinkjson.asJsonObject();
-            // If flow and protocol match the object attributes then return ip address and port for configuration file
-            SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
-            if (flow.equals(sinkResponse.flow()) && protocol.equals(sinkResponse.protocol())) {
-                return sinkResponse;
-            }
-        }
-
-        throw new IllegalStateException("No sink found");
+    public SinkRequestFake() {
 
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        SinkRequest that = (SinkRequest) o;
-        return Objects.equals(flow, that.flow) && Objects.equals(protocol, that.protocol)
-                && Objects.equals(apiConfig, that.apiConfig);
-    }
+    public SinkResponse sinkResponse() {
+        // Create fake sinkList for endpoint testing
+        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+        objectBuilder
+                .add("flow", "flow1")
+                .add("protocol", "protocol1")
+                .add("ip_address", "ip_address1")
+                .add("port", "port1")
+                .add("id", 1);
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(flow, protocol, apiConfig);
+        JsonObject sink = objectBuilder.build();
+        return new SinkResponse(sink);
     }
 }

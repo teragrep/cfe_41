@@ -43,58 +43,43 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package sink;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import Fakes.SinkRequestFake;
+import com.teragrep.cfe_41.flow.FlowResponse;
+import com.teragrep.cfe_41.sink.SinkResponse;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-/*
- Class for handling command line arguments. CNF_01 tool will replace this class completely.
- */
-final class Arguments {
+public class SinkRequestTest {
 
-    private final Map<String, String> arguments;
-
-    Arguments(final String ... args) {
-        this(Arrays.asList(args));
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(FlowResponse.class).verify();
     }
 
-    Arguments(final Iterable<String> args) {
-        this.arguments = Arguments.asMap(args);
-    }
+    @Test
+    public void testSinkRequest() {
+        SinkRequestFake fakeRequest = new SinkRequestFake();
 
-    // Might not be allowed due to straight up copy pasta from Takes project...?
-    private static Map<String, String> asMap(final Iterable<String> args) {
-        // Initialize empty map object
-        final Map<String, String> map = new HashMap<>(0);
-        // Initialize pattern object to check if argument is in valid form
-        final Pattern ptn = Pattern.compile("--([a-z\\-]+)(=.+)?");
-        // Loops through args
-        for (final String arg : args) {
-            // Initialize matcher object to check if Pattern object (regex) matches
-            final Matcher matcher = ptn.matcher(arg);
-            // If does not match, then throw IllegalState
-            if (!matcher.matches()) {
-                throw new IllegalStateException(String.format("Can't parse this argument: '%s'", arg));
-            }
-            // Assign args value as variable from matcher that happens after equal sign
-            final String value = matcher.group(2);
-            // If argument does not have value then empty string is inserted.
-            if (value == null) {
-                map.put(matcher.group(1), "");
-            }
-            else {
-                // In other cases key is inserted before equal sign and value is substringed by one so the equal sign does not come along.
-                map.put(matcher.group(1), value.substring(1));
-            }
-        }
-        return map;
-    }
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder
+                .add("flow", "flow1")
+                .add("protocol", "protocol1")
+                .add("ip_address", "ip_address1")
+                .add("port", "port1")
+                .add("id", 1);
+        JsonObject expectedSink = builder.build();
 
-    public String get(String key) {
-        return arguments.get(key);
+        SinkResponse fakeSinkResponse = fakeRequest.sinkResponse();
+        SinkResponse realSinkResponse = new SinkResponse(expectedSink);
+
+        Assertions.assertFalse(expectedSink.isEmpty());
+        Assertions.assertEquals(realSinkResponse, fakeSinkResponse);
+
     }
 }
