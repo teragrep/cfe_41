@@ -45,15 +45,35 @@
  */
 package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.flow.FlowResponse;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class SinkRulesetTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(FlowResponse.class).verify();
+        EqualsVerifier.forClass(SinkRuleset.class).verify();
     }
 
+    @Test
+    public void sinkRulesetTest() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder
+                .add("flow", "flow1")
+                .add("protocol", "protocol1")
+                .add("ip_address", "ip_address1")
+                .add("port", "port1")
+                .add("id", 1);
+        JsonObject sink = builder.build();
+
+        SinkRuleset sinkRuleset = new SinkRuleset("sinkName", sink);
+
+        Assertions.assertEquals("sinkName", sinkRuleset.sinkName());
+        Assertions.assertEquals(sink, sinkRuleset.omrelp());
+
+    }
 }
