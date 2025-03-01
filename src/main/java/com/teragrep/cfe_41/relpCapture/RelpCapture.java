@@ -43,42 +43,60 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.relpCapture;
 
-import com.teragrep.cfe_41.sink.SinkResponse;
-import com.teragrep.cfe_41.sink.SinkRuleset;
+import com.teragrep.cfe_41.capture.CaptureResponse;
+import com.teragrep.cfe_41.capture.PartialCaptureStorageResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
-import java.util.Set;
+import java.util.List;
 
-public final class CaptureSink {
+public final class RelpCapture {
 
-    private final Set<SinkResponse> sink;
-    private final String flow;
-    private final String protocol;
+    private final CaptureResponse capture;
+    private final List<PartialCaptureStorageResponse> captureStorage;
+    // Could be just String since name is only used here and not the whole object?
+    private final String rulesetName;
 
-    public CaptureSink(Set<SinkResponse> sink, String flow, String protocol) {
-        this.sink = sink;
-        this.flow = flow;
-        this.protocol = protocol;
+    public RelpCapture(
+            CaptureResponse capture,
+            List<PartialCaptureStorageResponse> captureStorage,
+            String rulesetName
+    ) {
+        this.capture = capture;
+        this.captureStorage = captureStorage;
+        this.rulesetName = rulesetName;
     }
 
-    public SinkRuleset sinkAsRuleset() {
+    public JsonObject captureAsJson() {
+        JsonObject storage = addStorage(capture.id());
+        JsonObjectBuilder captureBuilder = Json.createObjectBuilder();
+        captureBuilder
+                .add("file", capture.tag())
+                .add("index", capture.index())
+                .add("sourcetype", capture.source_type())
+                .add("application", capture.application())
+                .add("retention_time", capture.retention_time())
+                .add("category", capture.category())
+                .add("tag", capture.tag())
+                .add("tag_path", capture.tag())
+                .add("ruleset", rulesetName)
+                .add("targets", storage);
+        JsonObject captureAsJson = captureBuilder.build();
+        return captureAsJson;
+    }
+
+    // Retrieves targets for capture against ID.
+    private JsonObject addStorage(final int captureId) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        for (SinkResponse sinkResponse : sink) {
-            if (sinkResponse.flow().equals(flow) && sinkResponse.protocol().equals(protocol)) {
-                String name = sinkResponse.flow() + sinkResponse.ip() + sinkResponse.port() + sinkResponse.protocol();
-                builder.add("target", sinkResponse.ip());
-                builder.add("port", sinkResponse.port());
-                // TODO swap this name to appropriate one. Not currently stored but is/should/how? # ISSUE 22 Github
-                builder.add("name", name);
-                JsonObject resultSink = builder.build();
-                return new SinkRuleset(name, resultSink);
+        for (PartialCaptureStorageResponse captureStorageLocation : captureStorage) {
+            if (captureStorageLocation.captureId() == captureId) {
+                builder.add(captureStorageLocation.storageName(), true);
             }
         }
-        throw new IllegalStateException("sink not found");
+        return builder.build();
     }
 
 }
