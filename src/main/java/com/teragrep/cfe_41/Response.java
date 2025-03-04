@@ -72,7 +72,7 @@ public final class Response {
     public JsonArray parseArrayResponse() throws IOException {
         // Convert Http response to JsonReader
         String response = EntityUtils.toString(jsonResponse.getEntity());
-        LOGGER.debug(response);
+        LOGGER.debug("Response array contains <{}>", response);
         JsonReader jsonReader = Json.createReader(new StringReader(response));
         // Return the JSONArray back to the object
         return jsonReader.readArray();
@@ -82,7 +82,7 @@ public final class Response {
     public JsonObject parseResponse() throws IOException {
         // Convert Http response to JsonReader
         String response = EntityUtils.toString(jsonResponse.getEntity());
-        LOGGER.debug(response);
+        LOGGER.debug("Response object contains <{}>", response);
         JsonReader jsonReader = Json.createReader(new StringReader(response));
         // Return the JSONArray back to the object
         return jsonReader.readObject();

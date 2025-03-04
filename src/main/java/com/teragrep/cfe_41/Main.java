@@ -64,12 +64,11 @@ public class Main {
         Configuration configuration = new ArgsConfiguration(args);
         Map<String, String> configMap = new HashMap<>();
         try {
-            logger.debug("Loading configuration...");
-            logger.debug(configuration.asMap().toString());
+            logger.debug("Loaded configuration <{}>", configuration.asMap());
             configMap = configuration.asMap();
         }
         catch (ConfigurationException e) {
-            logger.error(e.getMessage());
+            logger.error("Error loading configuration <{}>", e.getMessage());
         }
 
         ApiConfig apiConfig = new ApiConfig(configMap);
