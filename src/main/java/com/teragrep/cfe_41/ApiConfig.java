@@ -52,7 +52,7 @@ public final class ApiConfig {
 
     private final Map<String, String> config;
 
-    public ApiConfig(Map<String, String> config) {
+    public ApiConfig(final Map<String, String> config) {
         this.config = config;
     }
 
@@ -65,11 +65,11 @@ public final class ApiConfig {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ApiConfig apiConfig = (ApiConfig) o;
+        final ApiConfig apiConfig = (ApiConfig) o;
         return Objects.equals(config, apiConfig.config);
     }
 

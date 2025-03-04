@@ -54,14 +54,17 @@ import com.teragrep.cnf_01.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Main {
 
-    public static void main(String[] args) throws Exception {
-        Logger logger = LogManager.getLogger(Main.class);
+    public static void main(final String[] args) throws Exception {
+        final Logger logger = LogManager.getLogger(Main.class);
         // Creates new ApiConfig from commandline args
-        Configuration configuration = new ArgsConfiguration(args);
+        final Configuration configuration = new ArgsConfiguration(args);
         Map<String, String> configMap = new HashMap<>();
         try {
             logger.debug("Loaded configuration <{}>", configuration.asMap());
@@ -71,14 +74,14 @@ public class Main {
             logger.error("Error loading configuration <{}>", e.getMessage());
         }
 
-        ApiConfig apiConfig = new ApiConfig(configMap);
+        final ApiConfig apiConfig = new ApiConfig(configMap);
 
-        FlowRequest flowRequest = new FlowRequest(apiConfig);
-        FlowResponse flowResponse = flowRequest.flowResponse();
+        final FlowRequest flowRequest = new FlowRequest(apiConfig);
+        final FlowResponse flowResponse = flowRequest.flowResponse();
 
-        List<PartialFlowResponse> partialFlowResponse = new ArrayList<>(flowResponse.partialFlowResponses());
+        final List<PartialFlowResponse> partialFlowResponse = new ArrayList<>(flowResponse.partialFlowResponses());
 
-        for (PartialFlowResponse a : partialFlowResponse) {
+        for (final PartialFlowResponse a : partialFlowResponse) {
             a.flowName();
             a.flowId();
         }

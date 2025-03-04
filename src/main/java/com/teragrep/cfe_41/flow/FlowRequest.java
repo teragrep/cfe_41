@@ -57,30 +57,29 @@ public final class FlowRequest {
 
     private final ApiConfig apiConfig;
 
-    public FlowRequest(ApiConfig apiConfig) {
+    public FlowRequest(final ApiConfig apiConfig) {
         this.apiConfig = apiConfig;
     }
 
     /**
      * Returns all flows uses GET
      *
-     * @return
+     * @return {@link FlowResponse} with the requested flows
      * @throws IOException
      */
-
     public FlowResponse flowResponse() throws IOException {
         // Get all
-        JsonArray flowsArray = new Response(new RequestData("/flow", apiConfig).doRequest()).parseArrayResponse();
+        final JsonArray flowsArray = new Response(new RequestData("/flow", apiConfig).doRequest()).parseArrayResponse();
         return new FlowResponse(flowsArray);
 
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        FlowRequest that = (FlowRequest) o;
+        final FlowRequest that = (FlowRequest) o;
         return Objects.equals(apiConfig, that.apiConfig);
     }
 

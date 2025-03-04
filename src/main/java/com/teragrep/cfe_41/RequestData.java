@@ -60,25 +60,25 @@ public final class RequestData implements Request {
 
     private final String endpoint;
 
-    public RequestData(String endpoint, ApiConfig apiConfig) {
+    public RequestData(final String endpoint, final ApiConfig apiConfig) {
         this.apiConfig = apiConfig;
         this.endpoint = endpoint;
     }
 
     @Override
     public HttpResponse doRequest() throws IOException {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet request = new HttpGet(apiConfig.url() + endpoint);
+        final CloseableHttpClient httpClient = HttpClients.createDefault();
+        final HttpGet request = new HttpGet(apiConfig.url() + endpoint);
         request.setHeader("Authorization", "Bearer " + apiConfig.token());
         return httpClient.execute(request);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RequestData that = (RequestData) o;
+        final RequestData that = (RequestData) o;
         return Objects.equals(apiConfig, that.apiConfig) && Objects.equals(endpoint, that.endpoint);
     }
 

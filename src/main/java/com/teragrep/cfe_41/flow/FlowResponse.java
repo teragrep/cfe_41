@@ -56,7 +56,7 @@ public final class FlowResponse {
 
     private final JsonArray jsonArray;
 
-    public FlowResponse(JsonArray jsonArray) {
+    public FlowResponse(final JsonArray jsonArray) {
         this.jsonArray = jsonArray;
     }
 
@@ -66,7 +66,7 @@ public final class FlowResponse {
      * @return List of PartialFlowResponse
      */
     public List<PartialFlowResponse> partialFlowResponses() {
-        List<PartialFlowResponse> partialFlowResponses = new ArrayList<>();
+        final List<PartialFlowResponse> partialFlowResponses = new ArrayList<>();
         for (JsonValue flow : jsonArray) {
             partialFlowResponses.add(new PartialFlowResponse(flow.asJsonObject()));
         }
@@ -75,11 +75,11 @@ public final class FlowResponse {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        FlowResponse that = (FlowResponse) o;
+        final FlowResponse that = (FlowResponse) o;
         return Objects.equals(jsonArray, that.jsonArray);
     }
 

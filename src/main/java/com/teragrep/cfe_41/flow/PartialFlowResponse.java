@@ -56,7 +56,7 @@ public final class PartialFlowResponse {
 
     private final JsonObject jsonObject;
 
-    public PartialFlowResponse(JsonObject jsonObject) {
+    public PartialFlowResponse(final JsonObject jsonObject) {
         this.jsonObject = jsonObject;
     }
 
@@ -69,11 +69,11 @@ public final class PartialFlowResponse {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PartialFlowResponse that = (PartialFlowResponse) o;
+        final PartialFlowResponse that = (PartialFlowResponse) o;
         return Objects.equals(jsonObject, that.jsonObject);
     }
 

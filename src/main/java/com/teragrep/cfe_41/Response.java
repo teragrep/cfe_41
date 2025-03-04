@@ -64,16 +64,16 @@ public final class Response {
 
     private final HttpResponse jsonResponse;
 
-    public Response(HttpResponse jsonResponse) {
+    public Response(final HttpResponse jsonResponse) {
         this.jsonResponse = jsonResponse;
     }
 
     // parse response that comes in array
     public JsonArray parseArrayResponse() throws IOException {
         // Convert Http response to JsonReader
-        String response = EntityUtils.toString(jsonResponse.getEntity());
+        final String response = EntityUtils.toString(jsonResponse.getEntity());
         LOGGER.debug("Response array contains <{}>", response);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
+        final JsonReader jsonReader = Json.createReader(new StringReader(response));
         // Return the JSONArray back to the object
         return jsonReader.readArray();
     }
@@ -81,19 +81,19 @@ public final class Response {
     // Different method for single object response
     public JsonObject parseResponse() throws IOException {
         // Convert Http response to JsonReader
-        String response = EntityUtils.toString(jsonResponse.getEntity());
+        final String response = EntityUtils.toString(jsonResponse.getEntity());
         LOGGER.debug("Response object contains <{}>", response);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
+        final JsonReader jsonReader = Json.createReader(new StringReader(response));
         // Return the JSONArray back to the object
         return jsonReader.readObject();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Response response = (Response) o;
+        final Response response = (Response) o;
         return Objects.equals(jsonResponse, response.jsonResponse);
     }
 
