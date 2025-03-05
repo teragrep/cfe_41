@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -102,7 +102,7 @@ public class ResponseTest {
 
         Response response = Assertions.assertDoesNotThrow(() -> new Response(requestData.doRequest()));
 
-        JsonArray result = Assertions.assertDoesNotThrow(() -> response.parseArrayResponse());
+        JsonArray result = Assertions.assertDoesNotThrow(() -> response.asJsonArray());
 
         Assertions.assertEquals(flowsArray.hashCode(), result.hashCode());
     }
@@ -130,7 +130,7 @@ public class ResponseTest {
 
         Response response = Assertions.assertDoesNotThrow(() -> new Response(requestData.doRequest()));
 
-        JsonObject actual = Assertions.assertDoesNotThrow(() -> response.parseResponse());
+        JsonObject actual = Assertions.assertDoesNotThrow(() -> response.asJsonObject());
 
         Assertions.assertEquals(expected.hashCode(), actual.hashCode());
     }

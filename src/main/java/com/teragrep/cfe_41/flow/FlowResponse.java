@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -79,8 +79,8 @@ public final class FlowResponse {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final FlowResponse that = (FlowResponse) o;
-        return Objects.equals(jsonArray, that.jsonArray);
+        final FlowResponse other = (FlowResponse) o;
+        return Objects.equals(jsonArray, other.jsonArray);
     }
 
     @Override

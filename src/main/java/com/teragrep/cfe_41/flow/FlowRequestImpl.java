@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,29 +43,49 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.Fakes;
+package com.teragrep.cfe_41.flow;
 
-import com.teragrep.cfe_41.flow.FlowResponse;
-import jakarta.json.Json;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
 
-public final class FlowRequestFake {
+import java.io.IOException;
+import java.util.Objects;
 
-    public FlowRequestFake() {
+public final class FlowRequestImpl implements FlowRequest {
+
+    private final ApiConfig apiConfig;
+
+    public FlowRequestImpl(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
     }
 
-    public FlowResponse flowResponse() {
-        // Create fake flowlist for endpoint testing
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        // Add jsonArray of 2 JsonObjects with 2 different flows to simulate real-life example instead of doing http request to CFE_18
-        arrayBuilder
-                .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
-                .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
-        // Form into array
-        JsonArray flowsArray = arrayBuilder.build();
+    /**
+     * Returns all flows uses GET
+     *
+     * @return {@link FlowResponse} with the requested flows
+     * @throws IOException
+     */
+    @Override
+    public FlowResponse flowResponse() throws IOException {
+        // Get all
+        final JsonArray flowsArray = new Response(new RequestData("/flow", apiConfig).doRequest()).asJsonArray();
         return new FlowResponse(flowsArray);
 
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final FlowRequestImpl other = (FlowRequestImpl) o;
+        return Objects.equals(apiConfig, other.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
+    }
 }

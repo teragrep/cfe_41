@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,24 +45,20 @@
  */
 package com.teragrep.cfe_41;
 
-import com.teragrep.cfe_41.flow.FlowRequest;
-import com.teragrep.cfe_41.flow.FlowResponse;
-import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import com.teragrep.cnf_01.ConfigurationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
 
 public class Main {
 
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(final String[] args) throws Exception {
-        final Logger logger = LogManager.getLogger(Main.class);
         // Creates new ApiConfig from commandline args
         final Configuration configuration = new ArgsConfiguration(args);
         Map<String, String> configMap = new HashMap<>();
@@ -72,19 +68,10 @@ public class Main {
         }
         catch (ConfigurationException e) {
             logger.error("Error loading configuration <{}>", e.getMessage());
+            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
         }
 
         final ApiConfig apiConfig = new ApiConfig(configMap);
-
-        final FlowRequest flowRequest = new FlowRequest(apiConfig);
-        final FlowResponse flowResponse = flowRequest.flowResponse();
-
-        final List<PartialFlowResponse> partialFlowResponse = new ArrayList<>(flowResponse.partialFlowResponses());
-
-        for (final PartialFlowResponse a : partialFlowResponse) {
-            a.flowName();
-            a.flowId();
-        }
 
     }
 }

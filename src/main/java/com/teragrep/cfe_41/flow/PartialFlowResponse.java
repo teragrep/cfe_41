@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -73,12 +73,13 @@ public final class PartialFlowResponse {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final PartialFlowResponse that = (PartialFlowResponse) o;
-        return Objects.equals(jsonObject, that.jsonObject);
+        final PartialFlowResponse other = (PartialFlowResponse) o;
+        return Objects.equals(jsonObject, other.jsonObject);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(jsonObject);
     }
+
 }

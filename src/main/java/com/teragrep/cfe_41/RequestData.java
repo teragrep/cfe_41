@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -78,8 +78,8 @@ public final class RequestData implements Request {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final RequestData that = (RequestData) o;
-        return Objects.equals(apiConfig, that.apiConfig) && Objects.equals(endpoint, that.endpoint);
+        final RequestData other = (RequestData) o;
+        return Objects.equals(apiConfig, other.apiConfig) && Objects.equals(endpoint, other.endpoint);
     }
 
     @Override
