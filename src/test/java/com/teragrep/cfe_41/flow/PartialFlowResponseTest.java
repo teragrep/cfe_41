@@ -45,47 +45,31 @@
  */
 package com.teragrep.cfe_41.flow;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonValue;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+public class PartialFlowResponseTest {
 
-public final class FlowResponse {
-
-    private final JsonArray jsonArray;
-
-    public FlowResponse(final JsonArray jsonArray) {
-        this.jsonArray = jsonArray;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(PartialFlowResponse.class).verify();
     }
 
-    /**
-     * Turns JsonArray of flows into {@link PartialFlowResponse}
-     *
-     * @return List of PartialFlowResponse
-     */
-    public List<PartialFlowResponse> partialFlowResponses() {
-        final List<PartialFlowResponse> partialFlowResponses = new ArrayList<>();
-        for (JsonValue flow : jsonArray) {
-            partialFlowResponses.add(new PartialFlowResponse(flow.asJsonObject()));
-        }
-        return partialFlowResponses;
+    @Test
+    public void testPartialFlowResponse() {
+        JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
+        objectBuilder1.add("id", 1).add("name", "flow1");
+        JsonObject testJsonObject = objectBuilder1.build();
 
-    }
+        PartialFlowResponse partialFlowResponse = new PartialFlowResponse(testJsonObject);
 
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final FlowResponse other = (FlowResponse) o;
-        return Objects.equals(jsonArray, other.jsonArray);
-    }
+        Assertions.assertEquals(1, partialFlowResponse.flowId());
+        Assertions.assertEquals("flow1", partialFlowResponse.flowName());
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(jsonArray);
     }
 
 }

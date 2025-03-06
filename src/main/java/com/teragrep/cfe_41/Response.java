@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,50 +45,60 @@
  */
 package com.teragrep.cfe_41;
 
-/*
-Should take any generic JSONObject passed from request and convert the values into map for later parsing.
- */
-
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Objects;
 
 public final class Response {
 
-    private final HttpResponse jsonResponse;
+    private static final Logger LOGGER = LogManager.getLogger(Response.class);
 
-    public Response(HttpResponse jsonResponse) {
-        this.jsonResponse = jsonResponse;
+    private final HttpResponse httpResponse;
+
+    public Response(final HttpResponse jsonResponse) {
+        this.httpResponse = jsonResponse;
     }
 
     // parse response that comes in array
-    public JsonArray parseArrayResponse() throws IOException {
+    public JsonArray asJsonArray() throws IOException {
         // Convert Http response to JsonReader
-        String response = EntityUtils.toString(jsonResponse.getEntity());
-        System.out.println(response);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
+        final String response = EntityUtils.toString(httpResponse.getEntity());
+        LOGGER.debug("Response array contains <{}>", response);
+        final JsonReader jsonReader = Json.createReader(new StringReader(response));
         // Return the JSONArray back to the object
         return jsonReader.readArray();
     }
 
     // Different method for single object response
-    public JsonObject parseResponse() throws IOException {
+    public JsonObject asJsonObject() throws IOException {
         // Convert Http response to JsonReader
-        String response = EntityUtils.toString(jsonResponse.getEntity());
-        System.out.println(response);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
+        final String response = EntityUtils.toString(httpResponse.getEntity());
+        LOGGER.debug("Response object contains <{}>", response);
+        final JsonReader jsonReader = Json.createReader(new StringReader(response));
         // Return the JSONArray back to the object
         return jsonReader.readObject();
     }
 
     @Override
-    public String toString() {
-        return "Response{" + "jsonResponse=" + jsonResponse + '}';
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Response other = (Response) o;
+        return Objects.equals(httpResponse, other.httpResponse);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(httpResponse);
     }
 }

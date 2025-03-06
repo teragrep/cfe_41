@@ -47,31 +47,61 @@ package com.teragrep.cfe_41;
 
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
+import org.junit.jupiter.api.*;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
 
-import java.util.Map;
-import java.util.HashMap;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
-public class Main {
+public class RequestDataTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static ClientAndServer mockServer;
+    private static MockServerClient mockClient;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(RequestData.class).verify();
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+    @BeforeAll
+    public static void startMockServer() {
+        mockServer = ClientAndServer.startClientAndServer(1080);
+        mockClient = new MockServerClient("localhost", 1080);
+    }
 
+    @AfterAll
+    public static void stopMockServer() {
+        mockServer.stop();
+    }
+
+    @Test
+    public void requestDataTest() {
+        // Simulates successful return on endpoint
+        mockClient
+                .when(request().withMethod("GET").withPath("/test"))
+                .respond(response().withStatusCode(200).withBody("test"));
+
+        String[] args = new String[] {
+                "url=http://localhost:1080", "test=test"
+        };
+
+        Configuration cfg = new ArgsConfiguration(args);
+
+        ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
+
+        RequestData requestData = new RequestData("/test", apiConfig);
+
+        // Does request
+        HttpResponse response = Assertions.assertDoesNotThrow(() -> requestData.doRequest());
+
+        // Retrieves content from response of the request
+        String endpointContent = Assertions.assertDoesNotThrow(() -> EntityUtils.toString(response.getEntity()));
+
+        Assertions.assertEquals(200, response.getStatusLine().getStatusCode());
+        Assertions.assertEquals("test", endpointContent);
     }
 }

@@ -43,49 +43,34 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.flow;
+package com.teragrep.cfe_41;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonValue;
+import com.teragrep.cnf_01.ArgsConfiguration;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+public class ApiConfigTest {
 
-public final class FlowResponse {
-
-    private final JsonArray jsonArray;
-
-    public FlowResponse(final JsonArray jsonArray) {
-        this.jsonArray = jsonArray;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(Response.class).verify();
     }
 
-    /**
-     * Turns JsonArray of flows into {@link PartialFlowResponse}
-     *
-     * @return List of PartialFlowResponse
-     */
-    public List<PartialFlowResponse> partialFlowResponses() {
-        final List<PartialFlowResponse> partialFlowResponses = new ArrayList<>();
-        for (JsonValue flow : jsonArray) {
-            partialFlowResponses.add(new PartialFlowResponse(flow.asJsonObject()));
-        }
-        return partialFlowResponses;
+    @Test
+    public void testApiConfig() {
+        // test that ApiConfig object can take ArgsConfiguration object and utilize it correctly with the given methods
+        String[] args = new String[] {
+                "url=http://localhost:1080", "token=testToken"
+        };
 
-    }
+        ArgsConfiguration cfg = new ArgsConfiguration(args);
 
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final FlowResponse other = (FlowResponse) o;
-        return Objects.equals(jsonArray, other.jsonArray);
-    }
+        ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(jsonArray);
+        Assertions.assertNotNull(apiConfig);
+        Assertions.assertEquals("http://localhost:1080", apiConfig.url());
+        Assertions.assertEquals("testToken", apiConfig.token());
     }
 
 }

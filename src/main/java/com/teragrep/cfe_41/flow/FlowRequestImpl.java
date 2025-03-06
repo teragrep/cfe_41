@@ -45,32 +45,33 @@
  */
 package com.teragrep.cfe_41.flow;
 
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonValue;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 import java.util.Objects;
 
-public final class FlowResponse {
+public final class FlowRequestImpl implements FlowRequest {
 
-    private final JsonArray jsonArray;
+    private final ApiConfig apiConfig;
 
-    public FlowResponse(final JsonArray jsonArray) {
-        this.jsonArray = jsonArray;
+    public FlowRequestImpl(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
     }
 
     /**
-     * Turns JsonArray of flows into {@link PartialFlowResponse}
+     * Returns all flows uses GET
      *
-     * @return List of PartialFlowResponse
+     * @return {@link FlowResponse} with the requested flows
+     * @throws IOException
      */
-    public List<PartialFlowResponse> partialFlowResponses() {
-        final List<PartialFlowResponse> partialFlowResponses = new ArrayList<>();
-        for (JsonValue flow : jsonArray) {
-            partialFlowResponses.add(new PartialFlowResponse(flow.asJsonObject()));
-        }
-        return partialFlowResponses;
+    @Override
+    public FlowResponse flowResponse() throws IOException {
+        // Get all
+        final JsonArray flowsArray = new Response(new RequestData("/flow", apiConfig).doRequest()).asJsonArray();
+        return new FlowResponse(flowsArray);
 
     }
 
@@ -79,13 +80,12 @@ public final class FlowResponse {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final FlowResponse other = (FlowResponse) o;
-        return Objects.equals(jsonArray, other.jsonArray);
+        final FlowRequestImpl other = (FlowRequestImpl) o;
+        return Objects.equals(apiConfig, other.apiConfig);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(jsonArray);
+        return Objects.hashCode(apiConfig);
     }
-
 }

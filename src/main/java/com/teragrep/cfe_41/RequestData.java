@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,6 +51,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
+import java.util.Objects;
 
 // Generic class for requesting CFE-18
 public final class RequestData implements Request {
@@ -59,17 +60,30 @@ public final class RequestData implements Request {
 
     private final String endpoint;
 
-    public RequestData(String endpoint, ApiConfig apiConfig) {
+    public RequestData(final String endpoint, final ApiConfig apiConfig) {
         this.apiConfig = apiConfig;
         this.endpoint = endpoint;
     }
 
     @Override
     public HttpResponse doRequest() throws IOException {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet request = new HttpGet(apiConfig.url() + endpoint);
+        final CloseableHttpClient httpClient = HttpClients.createDefault();
+        final HttpGet request = new HttpGet(apiConfig.url() + endpoint);
         request.setHeader("Authorization", "Bearer " + apiConfig.token());
         return httpClient.execute(request);
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final RequestData other = (RequestData) o;
+        return Objects.equals(apiConfig, other.apiConfig) && Objects.equals(endpoint, other.endpoint);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(apiConfig, endpoint);
+    }
 }

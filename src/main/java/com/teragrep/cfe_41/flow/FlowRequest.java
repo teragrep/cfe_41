@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,32 +45,9 @@
  */
 package com.teragrep.cfe_41.flow;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
-
 import java.io.IOException;
 
-public final class FlowRequest {
+public interface FlowRequest {
 
-    private final ApiConfig apiConfig;
-
-    public FlowRequest(ApiConfig apiConfig) {
-        this.apiConfig = apiConfig;
-    }
-
-    /**
-     * Returns all flows uses GET
-     *
-     * @return
-     * @throws IOException
-     */
-
-    public FlowResponse flowResponse() throws IOException {
-        // Get all
-        JsonArray flowsArray = new Response(new RequestData("/flow", apiConfig).doRequest()).parseArrayResponse();
-        return new FlowResponse(flowsArray);
-
-    }
+    public abstract FlowResponse flowResponse() throws IOException;
 }

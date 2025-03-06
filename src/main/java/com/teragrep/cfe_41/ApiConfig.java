@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,19 +45,36 @@
  */
 package com.teragrep.cfe_41;
 
+import java.util.Map;
+import java.util.Objects;
+
 public final class ApiConfig {
 
-    private final Arguments arguments;
+    private final Map<String, String> config;
 
-    public ApiConfig(Arguments arguments) {
-        this.arguments = arguments;
+    public ApiConfig(final Map<String, String> config) {
+        this.config = config;
     }
 
     public String url() {
-        return arguments.get("url");
+        return config.get("url");
     }
 
     public String token() {
-        return arguments.get("token");
+        return config.get("token");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final ApiConfig other = (ApiConfig) o;
+        return Objects.equals(config, other.config);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(config);
     }
 }

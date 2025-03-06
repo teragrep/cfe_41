@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,6 +47,8 @@ package com.teragrep.cfe_41.flow;
 
 import jakarta.json.JsonObject;
 
+import java.util.Objects;
+
 /*
 Flow from JsonObject
  */
@@ -54,7 +56,7 @@ public final class PartialFlowResponse {
 
     private final JsonObject jsonObject;
 
-    public PartialFlowResponse(JsonObject jsonObject) {
+    public PartialFlowResponse(final JsonObject jsonObject) {
         this.jsonObject = jsonObject;
     }
 
@@ -64,6 +66,20 @@ public final class PartialFlowResponse {
 
     public String flowName() {
         return jsonObject.getString("name");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PartialFlowResponse other = (PartialFlowResponse) o;
+        return Objects.equals(jsonObject, other.jsonObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonObject);
     }
 
 }
