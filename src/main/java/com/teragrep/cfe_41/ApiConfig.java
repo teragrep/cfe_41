@@ -69,8 +69,8 @@ public final class ApiConfig {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final ApiConfig apiConfig = (ApiConfig) o;
-        return Objects.equals(config, apiConfig.config);
+        final ApiConfig other = (ApiConfig) o;
+        return Objects.equals(config, other.config);
     }
 
     @Override

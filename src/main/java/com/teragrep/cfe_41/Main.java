@@ -48,6 +48,7 @@ package com.teragrep.cfe_41;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import com.teragrep.cnf_01.ConfigurationException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
@@ -55,19 +56,19 @@ import java.util.HashMap;
 
 public class Main {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(final String[] args) throws Exception {
         // Creates new ApiConfig from commandline args
         final Configuration configuration = new ArgsConfiguration(args);
         Map<String, String> configMap = new HashMap<>();
         try {
-            log.debug("Loading configuration...");
-            log.debug(configuration.asMap().toString());
+            logger.debug("Loaded configuration <{}>", configuration.asMap());
             configMap = configuration.asMap();
         }
         catch (ConfigurationException e) {
-            log.error(e.getMessage());
+            logger.error("Error loading configuration <{}>", e.getMessage());
+            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
         }
 
         final ApiConfig apiConfig = new ApiConfig(configMap);

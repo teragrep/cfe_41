@@ -52,11 +52,15 @@ import jakarta.json.JsonObjectBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FlowResponseTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(FlowResponseTest.class);
 
     @Test
     public void testContract() {
