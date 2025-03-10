@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.teragrep</groupId>
+  <artifactId>cfe_41</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>cfe_41</name>
+  <description>Integration Command-line tool for Teragrep</description>
+  <properties>
+    <changelist>-SNAPSHOT</changelist>
+    <java.version>11</java.version>
+    <junit.jupiter.version>5.6.2</junit.jupiter.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <revision>0.0.1</revision>
+    <sha1></sha1>
+  </properties>
+  <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/jakarta.json/jakarta.json-api -->
+    <dependency>
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
+      <version>2.1.3</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.glassfish/jakarta.json -->
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>jakarta.json</artifactId>
+      <version>2.0.1</version>
+      <classifier>module</classifier>
+    </dependency>
+    <!-- Joogari -->
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+      <version>3.14.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.jupiter.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>nl.jqno.equalsverifier</groupId>
+      <artifactId>equalsverifier</artifactId>
+      <version>3.17.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.teragrep</groupId>
+      <artifactId>cnf_01</artifactId>
+      <version>1.3.0</version>
+    </dependency>
+    <!-- logging -->
+    <!-- SLF4J API -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <!-- Log4j2 SLF4J Binding -->
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j2-impl</artifactId>
+      <version>2.20.0</version>
+    </dependency>
+    <!-- Log4j2 Core -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.20.0</version>
+    </dependency>
+    <!-- Log4j2 API -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.20.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-nop -->
+    <dependency>
+      <groupId>org.mock-server</groupId>
+      <artifactId>mockserver-netty-no-dependencies</artifactId>
+      <version>5.15.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <directory>${project.basedir}/target</directory>
+    <finalName>cfe_41</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <parallel>all</parallel>
+          <useUnlimitedThreads>true</useUnlimitedThreads>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>0.15</version>
+        <inherited>false</inherited>
+        <configuration>
+          <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
+          <licenses>
+            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
+              <notes>Also allow the license url to be https.</notes>
+              <patterns>
+                <pattern>Integration Command-line tool for Teragrep</pattern>
+              </patterns>
+            </license>
+          </licenses>
+          <consoleOutput>true</consoleOutput>
+          <excludeSubProjects>false</excludeSubProjects>
+          <excludes>
+            <!-- git -->
+            <exclude>.git/**</exclude>
+            <exclude>.github/**</exclude>
+            <exclude>.gitattributes</exclude>
+            <exclude>.gitignore</exclude>
+            <exclude>.gitmodules</exclude>
+            <!-- ci -->
+            <exclude>.github/workflows/*</exclude>
+            <exclude>.github/ISSUE_TEMPLATE/*</exclude>
+            <exclude>toolchains.xml</exclude>
+            <exclude>settings.xml</exclude>
+            <exclude>.idea/**</exclude>
+            <!-- readme -->
+            <exclude>README.adoc</exclude>
+            <!-- formatter -->
+            <exclude>eclipse-java-formatter.xml</exclude>
+            <!-- log4j.xml -->
+            <exclude>src/main/resources/log4j2.xml</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>test</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>11</source>
+          <target>11</target>
+          <verbose>true</verbose>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <!-- These are all errors that will fail the build if triggered -->
+          <execution>
+            <id>scan-errors</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <violationSeverity>error</violationSeverity>
+              <logViolationsToConsole>true</logViolationsToConsole>
+              <failOnViolation>true</failOnViolation>
+              <failsOnError>false</failsOnError>
+              <checkstyleRules>
+                <module name="Checker">
+                  <module name="TreeWalker">
+                    <module name="ClassMemberImpliedModifier"></module>
+                    <module name="CovariantEquals"></module>
+                    <module name="DefaultComesLast"></module>
+                    <module name="EmptyBlock"></module>
+                    <module name="EmptyCatchBlock"></module>
+                    <module name="EmptyStatement"></module>
+                    <module name="EqualsAvoidNull"></module>
+                    <module name="EqualsHashCode"></module>
+                    <module name="FallThrough"></module>
+                    <module name="FinalClass"></module>
+                    <module name="HiddenField">
+                      <property name="ignoreConstructorParameter" value="true"></property>
+                      <property name="ignoreSetter" value="true"></property>
+                    </module>
+                    <module name="IllegalCatch"></module>
+                    <module name="IllegalImport"></module>
+                    <module name="IllegalThrows"></module>
+                    <module name="IllegalToken"></module>
+                    <module name="IllegalType"></module>
+                    <module name="InnerAssignment"></module>
+                    <module name="InterfaceMemberImpliedModifier"></module>
+                    <module name="MissingOverride"></module>
+                    <module name="MissingSwitchDefault"></module>
+                    <module name="ModifiedControlVariable">
+                      <property name="skipEnhancedForLoopVariable" value="true"></property>
+                    </module>
+                    <module name="ModifierOrder"></module>
+                    <module name="MutableException"></module>
+                    <module name="NeedBraces"></module>
+                    <module name="NestedForDepth">
+                      <property name="max" value="2"></property>
+                    </module>
+                    <module name="NestedTryDepth"></module>
+                    <module name="NoClone"></module>
+                    <module name="NoFinalizer"></module>
+                    <module name="OneTopLevelClass"></module>
+                    <module name="PackageDeclaration"></module>
+                    <module name="PackageName">
+                      <property name="format" value="^com\.teragrep\.[a-z]{3}_\d{2}(?:.[a-zA-Z]\w*)*$"></property>
+                    </module>
+                    <module name="ReturnCount">
+                      <property name="max" value="5"></property>
+                    </module>
+                    <module name="StringLiteralEquality"></module>
+                    <module name="SuperClone"></module>
+                    <module name="SuperFinalize"></module>
+                    <module name="TypeName"></module>
+                    <module name="UpperEll"></module>
+                    <module name="VisibilityModifier">
+                      <property name="allowPublicFinalFields" value="true"></property>
+                    </module>
+                  </module>
+                  <module name="Translation"></module>
+                  <module name="UniqueProperties"></module>
+                </module>
+              </checkstyleRules>
+            </configuration>
+          </execution>
+          <!-- These are warnings but will not fail the build -->
+          <execution>
+            <id>scan-warnings</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <violationSeverity>warning</violationSeverity>
+              <logViolationsToConsole>true</logViolationsToConsole>
+              <failOnViolation>false</failOnViolation>
+              <failsOnError>false</failsOnError>
+              <checkstyleRules>
+                <module name="Checker">
+                  <module name="TreeWalker">
+                    <module name="ArrayTypeStyle">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="AvoidNestedBlocks">
+                      <property name="allowInSwitchCase" value="true"></property>
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="AvoidNoArgumentSuperConstructorCall">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="AvoidStarImport">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="AvoidStaticImport">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="DeclarationOrder">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="FinalLocalVariable">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="FinalParameters">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="MagicNumber">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="MissingDeprecated">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="MultipleVariableDeclarations">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="NestedForDepth">
+                      <property name="max" value="1"></property>
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="NestedIfDepth">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="NoArrayTrailingComma">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="NoCodeInFile">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="NoEnumTrailingComma">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="OneStatementPerLine">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="OuterTypeFilename">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="ParameterAssignment">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="RedundantImport">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="RequireThis">
+                      <property name="checkFields" value="false"></property>
+                      <property name="checkMethods" value="false"></property>
+                      <property name="validateOnlyOverlapping" value="true"></property>
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="ReturnCount">
+                      <property name="max" value="1"></property>
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="SimplifyBooleanExpression">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="SimplifyBooleanReturn">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="UnnecessarySemicolonAfterOuterTypeDeclaration">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="UnnecessarySemicolonAfterTypeMemberDeclaration">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="UnnecessarySemicolonInEnumeration">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="UnnecessarySemicolonInTryWithResources">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="UnusedLocalVariable">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="VariableDeclarationUsageDistance">
+                      <property name="severity" value="warning"></property>
+                    </module>
+                    <module name="VisibilityModifier">
+                      <property name="allowPublicFinalFields" value="false"></property>
+                      <property name="severity" value="warning"></property>
+                    </module>
+                  </module>
+                  <module name="NewlineAtEndOfFile">
+                    <property name="severity" value="warning"></property>
+                  </module>
+                  <module name="OrderedProperties">
+                    <property name="severity" value="warning"></property>
+                  </module>
+                </module>
+              </checkstyleRules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce-settings</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <!-- We generally do not want to use junit4, only junit5 -->
+                    <exclude>junit:junit</exclude>
+                  </excludes>
+                </bannedDependencies>
+                <requireMavenVersion>
+                  <version>3.2.5</version>
+                </requireMavenVersion>
+                <banDynamicVersions>
+                  <ignores>
+                    <!-- Allow only local development builds by default -->
+                    <ignore>com.teragrep:*:0.0.1-SNAPSHOT</ignore>
+                  </ignores>
+                </banDynamicVersions>
+                <requirePluginVersions>
+                  <message>All plugins are required to contain specific version.</message>
+                  <unCheckedPluginList>org.apache.maven.plugins:maven-site-plugin,org.apache.maven.plugins:maven-resources-plugin,org.apache.maven.plugins:maven-clean-plugin,org.apache.maven.plugins:maven-install-plugin,org.apache.maven.plugins:maven-deploy-plugin,org.apache.maven.plugins:maven-compiler-plugin,org.apache.maven.plugins:maven-jar-plugin</unCheckedPluginList>
+                </requirePluginVersions>
+                <requireNoRepositories>
+                  <message>Do not use any external repositories.</message>
+                </requireNoRepositories>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <!-- Java 11+ -->
+        <version>2.43.0</version>
+        <!-- With Java 8 -->
+        <!-- <version>2.30.0</version> -->
+        <configuration>
+          <java>
+            <eclipse>
+              <file>${project.basedir}/eclipse-java-formatter.xml</file>
+              <version>4.10.0</version>
+            </eclipse>
+            <removeUnusedImports></removeUnusedImports>
+            <licenseHeader>
+              <file>${project.basedir}/license-header</file>
+              <delimiter>(package )|(import )</delimiter>
+            </licenseHeader>
+          </java>
+          <pom>
+            <sortPom>
+              <!-- see https://github.com/diffplug/spotless/blob/main/plugin-maven/README.md#sortpom -->
+              <encoding>UTF-8</encoding>
+              <lineSeparator>\n</lineSeparator>
+              <expandEmptyElements>true</expandEmptyElements>
+              <keepBlankLines>false</keepBlankLines>
+              <nrOfIndentSpace>2</nrOfIndentSpace>
+              <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
+              <sortProperties>true</sortProperties>
+              <sortModules>true</sortModules>
+              <sortExecutions>true</sortExecutions>
+            </sortPom>
+          </pom>
+          <formats>
+            <format>
+              <includes>
+                <include>.gitattributes</include>
+                <include>.gitignore</include>
+              </includes>
+              <trimTrailingWhitespace></trimTrailingWhitespace>
+              <endWithNewline></endWithNewline>
+              <indent>
+                <tabs>true</tabs>
+                <spacesPerTab>4</spacesPerTab>
+              </indent>
+            </format>
+          </formats>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.12</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
