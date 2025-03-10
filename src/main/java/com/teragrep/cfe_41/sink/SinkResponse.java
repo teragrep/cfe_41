@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,15 +45,16 @@
  */
 package com.teragrep.cfe_41.sink;
 
+import com.teragrep.cfe_41.Stored;
 import jakarta.json.JsonObject;
 
 import java.util.Objects;
 
-public final class SinkResponse implements Sink {
+public final class SinkResponse implements Sink, Stored {
 
     private final JsonObject sinkResponse;
 
-    public SinkResponse(JsonObject sinkResponse) {
+    public SinkResponse(final JsonObject sinkResponse) {
         this.sinkResponse = sinkResponse;
     }
 
@@ -77,16 +78,17 @@ public final class SinkResponse implements Sink {
         return sinkResponse.getString("port");
     }
 
+    @Override
     public int id() {
         return sinkResponse.getInt("id");
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SinkResponse that = (SinkResponse) o;
+        final SinkResponse that = (SinkResponse) o;
         return Objects.equals(sinkResponse, that.sinkResponse);
     }
 

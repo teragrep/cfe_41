@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -58,7 +58,7 @@ public final class SinkRuleset {
     private final String rulesetName;
     private final JsonObject ruleset;
 
-    public SinkRuleset(String rulesetName, JsonObject rulesetSink) {
+    public SinkRuleset(final String rulesetName, final JsonObject rulesetSink) {
         this.rulesetName = rulesetName;
         this.ruleset = rulesetSink;
     }
@@ -73,11 +73,11 @@ public final class SinkRuleset {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SinkRuleset that = (SinkRuleset) o;
+        final SinkRuleset that = (SinkRuleset) o;
         return Objects.equals(rulesetName, that.rulesetName) && Objects.equals(ruleset, that.ruleset);
     }
 

@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,15 +45,36 @@
  */
 package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.Fakes.SinkRequestFake;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cnf_01.ArgsConfiguration;
+import com.teragrep.cnf_01.Configuration;
+import jakarta.json.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
+
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 public class SinkRequestTest {
+
+    private static ClientAndServer mockServer;
+    private static MockServerClient mockClient;
+
+    @BeforeAll
+    public static void startMockServer() {
+        mockServer = ClientAndServer.startClientAndServer(1080);
+        mockClient = new MockServerClient("localhost", 1080);
+    }
+
+    @AfterAll
+    public static void stopMockServer() {
+        mockServer.stop();
+    }
 
     @Test
     public void testContract() {
@@ -62,19 +83,29 @@ public class SinkRequestTest {
 
     @Test
     public void testSinkRequest() {
-        SinkRequestFake fakeRequest = new SinkRequestFake();
 
-        JsonObjectBuilder builder = Json.createObjectBuilder();
+        JsonArrayBuilder builder = Json.createArrayBuilder();
         builder
-                .add("flow", "flow1")
-                .add("protocol", "protocol1")
-                .add("ip_address", "ip_address1")
-                .add("port", "port1")
-                .add("id", 1);
-        JsonObject expectedSink = builder.build();
+                .add(Json.createObjectBuilder().add("flow", "flow1").add("protocol", "protocol1").add("ip_address", "ip_address1").add("port", "port1").add("id", 1));
+        JsonArray expectedSink = builder.build();
 
-        SinkResponse fakeSinkResponse = fakeRequest.sinkResponse();
-        SinkResponse realSinkResponse = new SinkResponse(expectedSink);
+        mockClient
+                .when(request().withMethod("GET").withPath("/sink"))
+                .respond(response().withStatusCode(200).withBody(expectedSink.toString()));
+
+        String[] args = new String[] {
+                "url=http://localhost:1080", "test=test"
+        };
+        Configuration cfg = new ArgsConfiguration(args);
+
+        // Create ApiConfig so that request can be made
+        ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
+
+        SinkRequest fakeRequest = new SinkRequest("flow1", "protocol1", apiConfig);
+
+        SinkResponse fakeSinkResponse = Assertions.assertDoesNotThrow(() -> fakeRequest.sinkResponse());
+        // Get first object from array since it is expected that first and only object from array is the correct one.
+        SinkResponse realSinkResponse = new SinkResponse(expectedSink.get(0).asJsonObject());
 
         Assertions.assertFalse(expectedSink.isEmpty());
         Assertions.assertEquals(realSinkResponse, fakeSinkResponse);

@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -61,19 +61,19 @@ public final class SinkRequest {
     private final String protocol;
     private final ApiConfig apiConfig;
 
-    public SinkRequest(String flow, String protocol, ApiConfig apiConfig) {
+    public SinkRequest(final String flow, final String protocol, final ApiConfig apiConfig) {
         this.flow = flow;
         this.protocol = protocol;
         this.apiConfig = apiConfig;
     }
 
     public SinkResponse sinkResponse() throws IOException {
-        JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).parseArrayResponse();
+        final JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).asJsonArray();
 
         for (JsonValue sinkjson : sinksArray) {
-            JsonObject sinkJsonObject = sinkjson.asJsonObject();
+            final JsonObject sinkJsonObject = sinkjson.asJsonObject();
             // If flow and protocol match the object attributes then return ip address and port for configuration file
-            SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
+            final SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
             if (flow.equals(sinkResponse.flow()) && protocol.equals(sinkResponse.protocol())) {
                 return sinkResponse;
             }
@@ -84,11 +84,11 @@ public final class SinkRequest {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SinkRequest that = (SinkRequest) o;
+        final SinkRequest that = (SinkRequest) o;
         return Objects.equals(flow, that.flow) && Objects.equals(protocol, that.protocol)
                 && Objects.equals(apiConfig, that.apiConfig);
     }
