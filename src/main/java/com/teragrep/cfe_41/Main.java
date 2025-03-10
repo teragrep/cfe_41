@@ -45,77 +45,32 @@
  */
 package com.teragrep.cfe_41;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
-import com.teragrep.cfe_41.sink.SinkRequest;
-import com.teragrep.cfe_41.sink.SinkResponse;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import com.teragrep.cnf_01.ConfigurationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Main {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws Exception {
-        Logger logger = LogManager.getLogger(Main.class);
+    public static void main(final String[] args) throws Exception {
         // Creates new ApiConfig from commandline args
-        Configuration configuration = new ArgsConfiguration(args);
+        final Configuration configuration = new ArgsConfiguration(args);
         Map<String, String> configMap = new HashMap<>();
         try {
-            logger.debug("Loading configuration...");
-            logger.debug(configuration.asMap().toString());
+            log.debug("Loading configuration...");
+            log.debug(configuration.asMap().toString());
             configMap = configuration.asMap();
         }
         catch (ConfigurationException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
 
-        ApiConfig apiConfig = new ApiConfig(configMap);
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequest("string", apiConfig);
-        CaptureGroupResponse captureGroupResponse = captureGroupRequest.captureGroupResponse();
-
-        List<CaptureRequest> captureRequests = new ArrayList<>();
-
-        for (PartialCaptureResponse captureRequest : captureGroupResponse.partialCaptureResponses()) {
-            captureRequests
-                    .add(
-                            new CaptureRequest(
-                                    captureRequest.captureDefinitionId(),
-                                    captureRequest.captureGroupType(),
-                                    apiConfig
-                            )
-                    );
-        }
-
-        List<CaptureResponse> captureResponses = new ArrayList<>();
-        for (CaptureRequest captureResponse : captureRequests) {
-            captureResponses.add(captureResponse.captureResponse());
-        }
-
-        for (CaptureResponse captureResponse : captureResponses) {
-            // Now provides capture_id for later usage
-            captureResponse.id();
-        }
-
-        List<SinkRequest> sinkRequests = new ArrayList<>();
-        // Loop through captures which are in the current group and request sink for each individual capture
-        for (CaptureResponse sinkRequest : captureResponses) {
-            sinkRequests.add(new SinkRequest(sinkRequest.flow(), sinkRequest.protocol(), apiConfig));
-        }
-
-        Set<SinkResponse> sinkResponses = new HashSet<>();
-        for (SinkRequest sinkRequest : sinkRequests) {
-            sinkResponses.add(sinkRequest.sinkResponse());
-        }
+        final ApiConfig apiConfig = new ApiConfig(configMap);
 
     }
 }

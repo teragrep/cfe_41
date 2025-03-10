@@ -62,43 +62,43 @@ public final class Response {
 
     private static final Logger LOGGER = LogManager.getLogger(Response.class);
 
-    private final HttpResponse jsonResponse;
+    private final HttpResponse httpResponse;
 
-    public Response(HttpResponse jsonResponse) {
-        this.jsonResponse = jsonResponse;
+    public Response(final HttpResponse jsonResponse) {
+        this.httpResponse = jsonResponse;
     }
 
     // parse response that comes in array
-    public JsonArray parseArrayResponse() throws IOException {
+    public JsonArray asJsonArray() throws IOException {
         // Convert Http response to JsonReader
-        String response = EntityUtils.toString(jsonResponse.getEntity());
+        final String response = EntityUtils.toString(httpResponse.getEntity());
         LOGGER.debug(response);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
+        final JsonReader jsonReader = Json.createReader(new StringReader(response));
         // Return the JSONArray back to the object
         return jsonReader.readArray();
     }
 
     // Different method for single object response
-    public JsonObject parseResponse() throws IOException {
+    public JsonObject asJsonObject() throws IOException {
         // Convert Http response to JsonReader
-        String response = EntityUtils.toString(jsonResponse.getEntity());
+        final String response = EntityUtils.toString(httpResponse.getEntity());
         LOGGER.debug(response);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
+        final JsonReader jsonReader = Json.createReader(new StringReader(response));
         // Return the JSONArray back to the object
         return jsonReader.readObject();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Response response = (Response) o;
-        return Objects.equals(jsonResponse, response.jsonResponse);
+        final Response response = (Response) o;
+        return Objects.equals(httpResponse, response.httpResponse);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(jsonResponse);
+        return Objects.hashCode(httpResponse);
     }
 }

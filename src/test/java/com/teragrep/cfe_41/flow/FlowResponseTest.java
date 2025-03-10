@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2025  Suomen Kanuuna Oy
+ * Copyright (C) 2021  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -59,8 +59,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlowResponseTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(FlowResponseTest.class);
 
     @Test
     public void testContract() {
