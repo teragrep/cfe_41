@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,6 +51,7 @@ import com.teragrep.cfe_41.Response;
 import jakarta.json.JsonObject;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public final class CaptureRequest {
 
@@ -58,16 +59,31 @@ public final class CaptureRequest {
     private final String captureType;
     private final ApiConfig apiConfig;
 
-    public CaptureRequest(int id, String captureType, ApiConfig apiConfig) {
+    public CaptureRequest(final int id, final String captureType, final ApiConfig apiConfig) {
         this.id = id;
         this.captureType = captureType;
         this.apiConfig = apiConfig;
     }
 
     public CaptureResponse captureResponse() throws IOException {
-        JsonObject jsonObject = new Response(
+        final JsonObject jsonObject = new Response(
                 new RequestData("/capture/" + captureType + "/" + id, apiConfig).doRequest()
-        ).parseResponse();
+        ).asJsonObject();
         return new CaptureResponse(jsonObject);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureRequest that = (CaptureRequest) o;
+        return id == that.id && Objects.equals(captureType, that.captureType)
+                && Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, captureType, apiConfig);
     }
 }

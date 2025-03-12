@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,28 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.hostGroup;
+package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
+public interface Sink {
 
-import java.io.IOException;
+    public abstract String flow();
 
-public final class HostGroupRequest {
+    public abstract String protocol();
 
-    private final String hostGroupName;
-    private final ApiConfig apiConfig;
+    public abstract String ip();
 
-    public HostGroupRequest(String hostGroupName, ApiConfig apiConfig) {
-        this.hostGroupName = hostGroupName;
-        this.apiConfig = apiConfig;
-    }
-
-    public HostGroupResponse hostGroupResponse() throws IOException {
-        JsonArray a = new Response(new RequestData("/host/group/" + hostGroupName, apiConfig).doRequest())
-                .parseArrayResponse();
-        return new HostGroupResponse(a);
-    }
+    public abstract String port();
 }

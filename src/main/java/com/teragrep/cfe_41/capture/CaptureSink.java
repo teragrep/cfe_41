@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,43 +45,58 @@
  */
 package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cfe_41.sink.SinkResponse;
+import com.teragrep.cfe_41.sink.Sink;
 import com.teragrep.cfe_41.sink.SinkRuleset;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /*
 
  */
 public final class CaptureSink {
 
-    private final List<SinkResponse> sink;
+    private final Set<Sink> sinks;
     private final String flow;
     private final String protocol;
 
-    public CaptureSink(List<SinkResponse> sink, String flow, String protocol) {
-        this.sink = sink;
+    public CaptureSink(final Set<Sink> sink, final String flow, final String protocol) {
+        this.sinks = sink;
         this.flow = flow;
         this.protocol = protocol;
     }
 
     public SinkRuleset buildSink() {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        for (SinkResponse sinkResponse : sink) {
-            if (sinkResponse.flow().equals(flow) && sinkResponse.protocol().equals(protocol)) {
-                String name = sinkResponse.flow() + sinkResponse.ip() + sinkResponse.port() + sinkResponse.protocol();
-                builder.add("target", sinkResponse.ip());
-                builder.add("port", sinkResponse.port());
+        final JsonObjectBuilder builder = Json.createObjectBuilder();
+        for (Sink sink : sinks) {
+            if (sink.flow().equals(flow) && sink.protocol().equals(protocol)) {
+                final String name = sink.flow() + sink.ip() + sink.port() + sink.protocol();
+                builder.add("target", sink.ip());
+                builder.add("port", sink.port());
                 // TODO swap this name to appropriate one. Not currently stored but is/should/how? # ISSUE 22 Github
                 builder.add("name", name);
-                JsonObject resultSink = builder.build();
+                final JsonObject resultSink = builder.build();
                 return new SinkRuleset(name, resultSink);
             }
         }
         throw new IllegalStateException("Sink not found");
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureSink that = (CaptureSink) o;
+        return Objects.equals(sinks, that.sinks) && Objects.equals(flow, that.flow)
+                && Objects.equals(protocol, that.protocol);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sinks, flow, protocol);
+    }
 }

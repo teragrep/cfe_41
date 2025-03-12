@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,31 +43,50 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package Fakes;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cfe_41.flow.FlowResponse;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+public class CaptureResponseTest {
 
-public final class FlowRequestFake {
-
-    public FlowRequestFake() {
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(CaptureResponse.class).verify();
     }
 
-    public FlowResponse flowResponse() throws IOException {
-        // Create fake flowlist for endpoint testing
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        // Add jsonArray of 2 JsonObjects with 2 different flows to simulate real-life example instead of doing http request to CFE_18
-        arrayBuilder
-                .add(Json.createObjectBuilder().add("id", 1).add("name", "flow1"))
-                .add(Json.createObjectBuilder().add("id", 2).add("name", "flow2"));
-        // Form into array
-        JsonArray flowsArray = arrayBuilder.build();
-        return new FlowResponse(flowsArray);
+    @Test
+    public void captureResponseTest() {
+
+        // Build the expected outcome
+        JsonObjectBuilder captureBuilder = Json.createObjectBuilder();
+        captureBuilder.add("id", 1);
+        captureBuilder.add("tag", "tag");
+        captureBuilder.add("retention_time", "retention_time");
+        captureBuilder.add("category", "category");
+        captureBuilder.add("application", "application");
+        captureBuilder.add("index", "index");
+        captureBuilder.add("source_type", "source_type");
+        captureBuilder.add("protocol", "protocol");
+        captureBuilder.add("flow", "flow");
+        JsonObject captureJsonObject = captureBuilder.build();
+
+        // Build object that needs to be tested
+        CaptureResponse captureResponse = new CaptureResponse(captureJsonObject);
+
+        Assertions.assertEquals(1, captureResponse.id());
+        Assertions.assertEquals("tag", captureResponse.tag());
+        Assertions.assertEquals("retention_time", captureResponse.retention_time());
+        Assertions.assertEquals("category", captureResponse.category());
+        Assertions.assertEquals("application", captureResponse.application());
+        Assertions.assertEquals("index", captureResponse.index());
+        Assertions.assertEquals("source_type", captureResponse.source_type());
+        Assertions.assertEquals("protocol", captureResponse.protocol());
+        Assertions.assertEquals("flow", captureResponse.flow());
 
     }
-
 }

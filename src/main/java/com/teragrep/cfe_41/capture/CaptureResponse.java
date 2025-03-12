@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,6 +48,8 @@ package com.teragrep.cfe_41.capture;
 import com.teragrep.cfe_41.Stored;
 import jakarta.json.JsonObject;
 
+import java.util.Objects;
+
 /*
 Takes Capture JsonObject and ṕarses it into Capture
  */
@@ -55,7 +57,7 @@ public final class CaptureResponse implements Capture, Stored {
 
     private final JsonObject jsonObject;
 
-    public CaptureResponse(JsonObject jsonObject) {
+    public CaptureResponse(final JsonObject jsonObject) {
         this.jsonObject = jsonObject;
     }
 
@@ -104,4 +106,17 @@ public final class CaptureResponse implements Capture, Stored {
         return jsonObject.getString("flow");
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureResponse that = (CaptureResponse) o;
+        return Objects.equals(jsonObject, that.jsonObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonObject);
+    }
 }

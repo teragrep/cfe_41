@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,14 +51,14 @@ import com.teragrep.cfe_41.Response;
 import jakarta.json.JsonArray;
 
 import java.io.IOException;
-
+import java.util.Objects;
 
 public final class CaptureGroupRequest {
 
     private final String groupName;
     private final ApiConfig apiConfig;
 
-    public CaptureGroupRequest(String groupName, ApiConfig apiConfig) {
+    public CaptureGroupRequest(final String groupName, final ApiConfig apiConfig) {
         this.groupName = groupName;
         this.apiConfig = apiConfig;
     }
@@ -66,15 +66,26 @@ public final class CaptureGroupRequest {
     /**
      * Returns all captures included in Capture group Uses GET
      *
-     * @return
-     * @throws IOException
+     * @return {@link CaptureGroupResponse}
+     * @throws IOException if group not found
      */
     public CaptureGroupResponse captureGroupResponse() throws IOException {
-        JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
-                .parseArrayResponse();
+        final JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
+                .asJsonArray();
         return new CaptureGroupResponse(a);
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureGroupRequest that = (CaptureGroupRequest) o;
+        return Objects.equals(groupName, that.groupName) && Objects.equals(apiConfig, that.apiConfig);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupName, apiConfig);
+    }
 }

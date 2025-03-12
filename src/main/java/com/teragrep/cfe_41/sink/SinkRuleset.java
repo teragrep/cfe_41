@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,27 +43,51 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.hostGroup;
+package com.teragrep.cfe_41.sink;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonValue;
+import jakarta.json.JsonObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-public final class HostGroupResponse {
+/*
+Object that ties one Ruleset object with the ruleset name.
+Differentiated since name is formed in CaptureSink
+ */
+public final class SinkRuleset {
 
-    private final JsonArray jsonArray;
+    private final String rulesetName;
+    private final JsonObject ruleset;
 
-    public HostGroupResponse(JsonArray jsonArray) {
-        this.jsonArray = jsonArray;
+    public SinkRuleset(final String rulesetName, final JsonObject rulesetSink) {
+        this.rulesetName = rulesetName;
+        this.ruleset = rulesetSink;
     }
 
-    public List<PartialHostResponse> partialHostResponses() {
-        List<PartialHostResponse> partialHostResponses = new ArrayList<>();
-        for (JsonValue key : jsonArray) {
-            partialHostResponses.add(new PartialHostResponse(key.asJsonObject()));
+    public String sinkName() {
+        return rulesetName;
+    }
+
+    // Change this name
+    public JsonObject omrelp() {
+        return ruleset;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        return partialHostResponses;
+        final SinkRuleset that = (SinkRuleset) o;
+        return Objects.equals(rulesetName, that.rulesetName) && Objects.equals(ruleset, that.ruleset);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rulesetName, ruleset);
+    }
+
+    @Override
+    public String toString() {
+        return "SinkRuleset{" + "rulesetName='" + rulesetName + '\'' + ", ruleset=" + ruleset + '}';
     }
 }

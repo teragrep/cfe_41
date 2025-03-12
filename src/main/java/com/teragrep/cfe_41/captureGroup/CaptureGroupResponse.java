@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,20 +50,35 @@ import jakarta.json.JsonValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class CaptureGroupResponse {
 
     private final JsonArray jsonArray;
 
-    public CaptureGroupResponse(JsonArray jsonArray) {
+    public CaptureGroupResponse(final JsonArray jsonArray) {
         this.jsonArray = jsonArray;
     }
 
     public List<PartialCaptureResponse> partialCaptureResponses() {
-        List<PartialCaptureResponse> partialCaptureResponses = new ArrayList<>();
+        final List<PartialCaptureResponse> partialCaptureResponses = new ArrayList<>();
         for (JsonValue key : jsonArray) {
             partialCaptureResponses.add(new PartialCaptureResponse(key.asJsonObject()));
         }
         return partialCaptureResponses;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureGroupResponse that = (CaptureGroupResponse) o;
+        return Objects.equals(jsonArray, that.jsonArray);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonArray);
     }
 }

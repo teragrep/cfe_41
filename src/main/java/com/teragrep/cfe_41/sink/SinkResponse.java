@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,25 +43,57 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.sink;
 
+import com.teragrep.cfe_41.Stored;
 import jakarta.json.JsonObject;
 
-public final class HostResponse implements Host {
+import java.util.Objects;
 
-    private final JsonObject response;
+public final class SinkResponse implements Sink, Stored {
 
-    public HostResponse(JsonObject response) {
-        this.response = response;
+    private final JsonObject sinkResponse;
+
+    public SinkResponse(final JsonObject sinkResponse) {
+        this.sinkResponse = sinkResponse;
     }
 
     @Override
-    public String md5() {
-        return response.getString("md5");
+    public String flow() {
+        return sinkResponse.getString("flow");
     }
 
     @Override
-    public String fqHost() {
-        return response.getString("fqHost");
+    public String protocol() {
+        return sinkResponse.getString("protocol");
+    }
+
+    @Override
+    public String ip() {
+        return sinkResponse.getString("ip_address");
+    }
+
+    @Override
+    public String port() {
+        return sinkResponse.getString("port");
+    }
+
+    @Override
+    public int id() {
+        return sinkResponse.getInt("id");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SinkResponse that = (SinkResponse) o;
+        return Objects.equals(sinkResponse, that.sinkResponse);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(sinkResponse);
     }
 }

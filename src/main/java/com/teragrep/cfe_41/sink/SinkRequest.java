@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,58 +43,58 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.sink;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 
-/*
- Class for handling command line arguments. CNF_01 tool will replace this class completely.
- */
-final class Arguments {
+import java.io.IOException;
+import java.util.Objects;
 
-    private final Map<String, String> arguments;
+public final class SinkRequest {
 
-    Arguments(final String ... args) {
-        this(Arrays.asList(args));
+    private final String flow;
+    private final String protocol;
+    private final ApiConfig apiConfig;
+
+    public SinkRequest(final String flow, final String protocol, final ApiConfig apiConfig) {
+        this.flow = flow;
+        this.protocol = protocol;
+        this.apiConfig = apiConfig;
     }
 
-    Arguments(final Iterable<String> args) {
-        this.arguments = Arguments.asMap(args);
-    }
+    public SinkResponse sinkResponse() throws IOException {
+        final JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).asJsonArray();
 
-    // Might not be allowed due to straight up copy pasta from Takes project...?
-    private static Map<String, String> asMap(final Iterable<String> args) {
-        // Initialize empty map object
-        final Map<String, String> map = new HashMap<>(0);
-        // Initialize pattern object to check if argument is in valid form
-        final Pattern ptn = Pattern.compile("--([a-z\\-]+)(=.+)?");
-        // Loops through args
-        for (final String arg : args) {
-            // Initialize matcher object to check if Pattern object (regex) matches
-            final Matcher matcher = ptn.matcher(arg);
-            // If does not match, then throw IllegalState
-            if (!matcher.matches()) {
-                throw new IllegalStateException(String.format("Can't parse this argument: '%s'", arg));
-            }
-            // Assign args value as variable from matcher that happens after equal sign
-            final String value = matcher.group(2);
-            // If argument does not have value then empty string is inserted.
-            if (value == null) {
-                map.put(matcher.group(1), "");
-            }
-            else {
-                // In other cases key is inserted before equal sign and value is substringed by one so the equal sign does not come along.
-                map.put(matcher.group(1), value.substring(1));
+        for (JsonValue sinkjson : sinksArray) {
+            final JsonObject sinkJsonObject = sinkjson.asJsonObject();
+            // If flow and protocol match the object attributes then return ip address and port for configuration file
+            final SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
+            if (flow.equals(sinkResponse.flow()) && protocol.equals(sinkResponse.protocol())) {
+                return sinkResponse;
             }
         }
-        return map;
+
+        throw new IllegalStateException("No sink found");
+
     }
 
-    public String get(String key) {
-        return arguments.get(key);
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SinkRequest that = (SinkRequest) o;
+        return Objects.equals(flow, that.flow) && Objects.equals(protocol, that.protocol)
+                && Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(flow, protocol, apiConfig);
     }
 }

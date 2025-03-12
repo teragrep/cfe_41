@@ -1,6 +1,6 @@
 /*
  * Integration Command-line tool for Teragrep
- * Copyright (C) 2021  Suomen Kanuuna Oy
+ * Copyright (C) 2025  Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,21 +51,36 @@ import com.teragrep.cfe_41.Response;
 import jakarta.json.JsonArray;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public final class CaptureStorageRequest {
 
     private final int captureDefinitionId;
     private final ApiConfig apiConfig;
 
-    public CaptureStorageRequest(int captureDefinitionId, ApiConfig apiConfig) {
+    public CaptureStorageRequest(final int captureDefinitionId, final ApiConfig apiConfig) {
         this.captureDefinitionId = captureDefinitionId;
         this.apiConfig = apiConfig;
     }
 
     public CaptureStorageResponse captureStorageResponse() throws IOException {
-        JsonArray captureStorageArray = new Response(
+        final JsonArray captureStorageArray = new Response(
                 new RequestData("/storage/capture/" + captureDefinitionId, apiConfig).doRequest()
-        ).parseArrayResponse();
+        ).asJsonArray();
         return new CaptureStorageResponse(captureStorageArray);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureStorageRequest that = (CaptureStorageRequest) o;
+        return captureDefinitionId == that.captureDefinitionId && Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(captureDefinitionId, apiConfig);
     }
 }
