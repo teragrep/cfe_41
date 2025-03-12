@@ -86,8 +86,4 @@ public final class SinkRuleset {
         return Objects.hash(rulesetName, ruleset);
     }
 
-    @Override
-    public String toString() {
-        return "SinkRuleset{" + "rulesetName='" + rulesetName + '\'' + ", ruleset=" + ruleset + '}';
-    }
 }
