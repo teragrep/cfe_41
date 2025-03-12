@@ -45,41 +45,33 @@
  */
 package com.teragrep.cfe_41.capture;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
+public class PartialCaptureStorageResponseTest {
 
-public final class PartialCaptureStorageResponse implements CaptureStorage {
-
-    private final JsonObject jsonObject;
-
-    public PartialCaptureStorageResponse(final JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(PartialCaptureStorageResponse.class).verify();
     }
 
-    public int storageId() {
-        return jsonObject.getInt("storage_id");
-    }
+    @Test
+    public void partialCaptureStorageResponseTest() {
+        JsonObjectBuilder partialCaptureStorageResponseBuilder = Json.createObjectBuilder();
+        partialCaptureStorageResponseBuilder.add("storage_id", 1);
+        partialCaptureStorageResponseBuilder.add("capture_id", 1);
+        partialCaptureStorageResponseBuilder.add("storage_name", "cfe_04");
+        JsonObject expected = partialCaptureStorageResponseBuilder.build();
 
-    public int captureId() {
-        return jsonObject.getInt("capture_id");
-    }
+        PartialCaptureStorageResponse partialCaptureStorageResponse = new PartialCaptureStorageResponse(expected);
 
-    public String storageName() {
-        return jsonObject.getString("storage_name");
-    }
+        Assertions.assertEquals(1, partialCaptureStorageResponse.storageId());
+        Assertions.assertEquals(1, partialCaptureStorageResponse.captureId());
+        Assertions.assertEquals("cfe_04", partialCaptureStorageResponse.storageName());
 
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final PartialCaptureStorageResponse that = (PartialCaptureStorageResponse) o;
-        return Objects.equals(jsonObject, that.jsonObject);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(jsonObject);
     }
 }
