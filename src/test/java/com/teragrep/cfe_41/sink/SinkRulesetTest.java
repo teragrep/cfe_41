@@ -65,12 +65,12 @@ public class SinkRulesetTest {
         Sink sink = new Sink() {
 
             @Override
-            public String flow() {
+            public String flowName() {
                 return "flow1";
             }
 
             @Override
-            public String protocol() {
+            public String protocolType() {
                 return "protocol1";
             }
 
@@ -86,8 +86,8 @@ public class SinkRulesetTest {
         };
 
         SinkRuleset sinkRuleset = new SinkRuleset("test", sink);
-        Assertions.assertEquals("flow1", sinkRuleset.flow());
-        Assertions.assertEquals("protocol1", sinkRuleset.protocol());
+        Assertions.assertEquals("flow1", sinkRuleset.flowName());
+        Assertions.assertEquals("protocol1", sinkRuleset.protocolType());
         Assertions.assertEquals("ip_address1", sinkRuleset.ip());
         Assertions.assertEquals("port1", sinkRuleset.port());
         Assertions.assertEquals("test", sinkRuleset.sinkName());
@@ -98,12 +98,12 @@ public class SinkRulesetTest {
         Sink sink2 = new Sink() {
 
             @Override
-            public String flow() {
+            public String flowName() {
                 return "flow";
             }
 
             @Override
-            public String protocol() {
+            public String protocolType() {
                 return "protocol";
             }
 

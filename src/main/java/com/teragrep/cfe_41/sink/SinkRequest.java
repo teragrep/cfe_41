@@ -57,13 +57,13 @@ import java.util.Objects;
 
 public final class SinkRequest {
 
-    private final String flow;
-    private final String protocol;
+    private final String flowName;
+    private final String protocolType;
     private final ApiConfig apiConfig;
 
-    public SinkRequest(final String flow, final String protocol, final ApiConfig apiConfig) {
-        this.flow = flow;
-        this.protocol = protocol;
+    public SinkRequest(final String flowName, final String protocolType, final ApiConfig apiConfig) {
+        this.flowName = flowName;
+        this.protocolType = protocolType;
         this.apiConfig = apiConfig;
     }
 
@@ -74,7 +74,7 @@ public final class SinkRequest {
             final JsonObject sinkJsonObject = sinkjson.asJsonObject();
             // If flow and protocol match the object attributes then return ip address and port for configuration file
             final SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
-            if (flow.equals(sinkResponse.flow()) && protocol.equals(sinkResponse.protocol())) {
+            if (flowName.equals(sinkResponse.flowName()) && protocolType.equals(sinkResponse.protocolType())) {
                 return sinkResponse;
             }
         }
@@ -89,12 +89,12 @@ public final class SinkRequest {
             return false;
         }
         final SinkRequest that = (SinkRequest) o;
-        return Objects.equals(flow, that.flow) && Objects.equals(protocol, that.protocol)
+        return Objects.equals(flowName, that.flowName) && Objects.equals(protocolType, that.protocolType)
                 && Objects.equals(apiConfig, that.apiConfig);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flow, protocol, apiConfig);
+        return Objects.hash(flowName, protocolType, apiConfig);
     }
 }

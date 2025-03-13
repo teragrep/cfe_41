@@ -65,8 +65,8 @@ public final class CaptureSink {
 
     public SinkRuleset buildSink() {
         for (Sink sink : sinks) {
-            if (sink.flow().equals(flowName) && sink.protocol().equals(protocolType)) {
-                final String name = sink.flow() + sink.ip() + sink.port() + sink.protocol();
+            if (sink.flowName().equals(flowName) && sink.protocolType().equals(protocolType)) {
+                final String name = sink.flowName() + sink.ip() + sink.port() + sink.protocolType();
                 return new SinkRuleset(name, sink);
             }
         }

@@ -59,12 +59,12 @@ public final class SinkResponse implements Sink, Stored {
     }
 
     @Override
-    public String flow() {
+    public String flowName() {
         return sinkResponse.getString("flow");
     }
 
     @Override
-    public String protocol() {
+    public String protocolType() {
         return sinkResponse.getString("protocol");
     }
 

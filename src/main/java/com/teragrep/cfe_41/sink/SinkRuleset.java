@@ -68,13 +68,13 @@ public final class SinkRuleset implements Sink {
     }
 
     @Override
-    public String flow() {
-        return ruleset.flow();
+    public String flowName() {
+        return ruleset.flowName();
     }
 
     @Override
-    public String protocol() {
-        return ruleset.protocol();
+    public String protocolType() {
+        return ruleset.protocolType();
     }
 
     @Override

@@ -47,9 +47,9 @@ package com.teragrep.cfe_41.sink;
 
 public interface Sink {
 
-    public abstract String flow();
+    public abstract String flowName();
 
-    public abstract String protocol();
+    public abstract String protocolType();
 
     public abstract String ip();
 
