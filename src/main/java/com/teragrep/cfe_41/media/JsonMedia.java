@@ -43,52 +43,34 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.sink;
+package com.teragrep.cfe_41.media;
 
-import com.teragrep.cfe_41.media.Media;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 
 import java.util.Objects;
 
-/*
-Object that ties one Ruleset object with the ruleset name.
-Differentiated since name is formed in CaptureSink
- */
-public final class SinkRuleset implements Sink {
+public final class JsonMedia implements Media {
 
-    private final String rulesetName;
-    private final Sink ruleset;
+    private final JsonObjectBuilder builder;
 
-    public SinkRuleset(final String rulesetName, final Sink rulesetSink) {
-        this.rulesetName = rulesetName;
-        this.ruleset = rulesetSink;
+    public JsonMedia() {
+        this(Json.createObjectBuilder());
     }
 
-    public String sinkName() {
-        return rulesetName;
+    public JsonMedia(final JsonObjectBuilder builder) {
+        this.builder = builder;
     }
 
     @Override
-    public String flow() {
-        return ruleset.flow();
+    public Media with(final String key, final String value) {
+        return new JsonMedia(this.builder.add(key, value));
     }
 
     @Override
-    public String protocol() {
-        return ruleset.protocol();
-    }
-
-    @Override
-    public String ip() {
-        return ruleset.ip();
-    }
-
-    @Override
-    public String port() {
-        return ruleset.port();
-    }
-
-    public Media asJson(final Media media) {
-        return media.with("target", this.ruleset.ip()).with("port", this.ruleset.port()).with("name", this.rulesetName);
+    public JsonObject asJson() {
+        return this.builder.build();
     }
 
     @Override
@@ -96,13 +78,12 @@ public final class SinkRuleset implements Sink {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final SinkRuleset that = (SinkRuleset) o;
-        return Objects.equals(rulesetName, that.rulesetName) && Objects.equals(ruleset, that.ruleset);
+        final JsonMedia jsonMedia = (JsonMedia) o;
+        return Objects.equals(builder, jsonMedia.builder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rulesetName, ruleset);
+        return Objects.hashCode(builder);
     }
-
 }

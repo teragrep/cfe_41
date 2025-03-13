@@ -43,62 +43,88 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.sink.Sink;
-import com.teragrep.cfe_41.sink.SinkResponse;
-import com.teragrep.cfe_41.sink.SinkRuleset;
-import jakarta.json.Json;
+import com.teragrep.cfe_41.media.JsonMedia;
+import com.teragrep.cfe_41.media.Media;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
-public class CaptureSinkTest {
+public class SinkRulesetTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(CaptureSink.class).verify();
+        EqualsVerifier.forClass(SinkRuleset.class).verify();
     }
 
     @Test
-    public void captureSinkTest() {
-        // Build two Sinks for set
-        JsonObjectBuilder sinkOneBuilder = Json.createObjectBuilder();
-        sinkOneBuilder.add("flow", "flow1");
-        sinkOneBuilder.add("protocol", "protocol1");
-        sinkOneBuilder.add("ip_address", "ip_address1");
-        sinkOneBuilder.add("port", "port1");
-        sinkOneBuilder.add("id", 1);
-        JsonObject sinkOneJsonObject = sinkOneBuilder.build();
+    public void sinkRulesetTest() {
+        // Declare Sink for testing purposes
+        Sink sink = new Sink() {
 
-        JsonObjectBuilder sinkTwoBuilder = Json.createObjectBuilder();
-        sinkTwoBuilder.add("flow", "flow2");
-        sinkTwoBuilder.add("protocol", "protocol2");
-        sinkTwoBuilder.add("ip_address", "ip_address2");
-        sinkTwoBuilder.add("port", "port2");
-        sinkTwoBuilder.add("id", 2);
-        JsonObject sinkTwoJsonObject = sinkTwoBuilder.build();
+            @Override
+            public String flow() {
+                return "flow1";
+            }
 
-        Sink sinkOne = new SinkResponse(sinkOneJsonObject);
-        Sink sinkTwo = new SinkResponse(sinkTwoJsonObject);
+            @Override
+            public String protocol() {
+                return "protocol1";
+            }
 
-        Set<Sink> sinks = Set.of(sinkOne, sinkTwo);
+            @Override
+            public String ip() {
+                return "ip_address1";
+            }
 
-        // Request flow2 and protocol2 which is expected to provide sink details
-        CaptureSink captureSink = new CaptureSink(sinks, "flow2", "protocol2");
+            @Override
+            public String port() {
+                return "port1";
+            }
+        };
 
-        SinkRuleset actual = captureSink.buildSink();
+        SinkRuleset sinkRuleset = new SinkRuleset("test", sink);
+        Assertions.assertEquals("flow1", sinkRuleset.flow());
+        Assertions.assertEquals("protocol1", sinkRuleset.protocol());
+        Assertions.assertEquals("ip_address1", sinkRuleset.ip());
+        Assertions.assertEquals("port1", sinkRuleset.port());
+        Assertions.assertEquals("test", sinkRuleset.sinkName());
+    }
 
-        // Expected to
-        SinkRuleset expected = new SinkRuleset("flow2ip_address2port2protocol2", sinkTwo);
+    @Test
+    public void sinkRulesetAsJsonTest() {
+        Sink sink2 = new Sink() {
 
-        Assertions.assertFalse(sinkOneJsonObject.isEmpty());
-        Assertions.assertFalse(sinkTwoJsonObject.isEmpty());
-        Assertions.assertEquals(expected.hashCode(), actual.hashCode());
+            @Override
+            public String flow() {
+                return "flow";
+            }
 
+            @Override
+            public String protocol() {
+                return "protocol";
+            }
+
+            @Override
+            public String ip() {
+                return "ip";
+            }
+
+            @Override
+            public String port() {
+                return "port";
+            }
+        };
+
+        SinkRuleset sink = new SinkRuleset("name", sink2);
+        Media media = new JsonMedia();
+        // Testable method "asJson"
+        media = sink.asJson(media);
+        JsonObject json = media.asJson();
+        Assertions.assertEquals("ip", json.getString("target"));
+        Assertions.assertEquals("port", json.getString("port"));
+        Assertions.assertEquals("name", json.getString("name"));
     }
 }

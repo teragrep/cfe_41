@@ -43,66 +43,39 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.sink;
+package com.teragrep.cfe_41.media;
 
-import com.teragrep.cfe_41.media.Media;
+import jakarta.json.JsonObject;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
+public class JsonMediaTest {
 
-/*
-Object that ties one Ruleset object with the ruleset name.
-Differentiated since name is formed in CaptureSink
- */
-public final class SinkRuleset implements Sink {
-
-    private final String rulesetName;
-    private final Sink ruleset;
-
-    public SinkRuleset(final String rulesetName, final Sink rulesetSink) {
-        this.rulesetName = rulesetName;
-        this.ruleset = rulesetSink;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(JsonMedia.class).verify();
     }
 
-    public String sinkName() {
-        return rulesetName;
+    @Test
+    public void jsonMediaTest() {
+        JsonMedia jsonMedia = new JsonMedia();
+        Media media = jsonMedia.with("testKey", "testValue");
+        JsonObject result = media.asJson();
+
+        // Expects to get value from testKey
+        Assertions.assertEquals("testValue", result.getString("testKey"));
     }
 
-    @Override
-    public String flow() {
-        return ruleset.flow();
-    }
+    @Test
+    public void jsonMediaMultiTest() {
+        JsonMedia jsonMedia = new JsonMedia();
+        Media media = jsonMedia.with("testKey", "testValue").with("testKey2", "testValue2");
+        JsonObject result = media.asJson();
 
-    @Override
-    public String protocol() {
-        return ruleset.protocol();
-    }
-
-    @Override
-    public String ip() {
-        return ruleset.ip();
-    }
-
-    @Override
-    public String port() {
-        return ruleset.port();
-    }
-
-    public Media asJson(final Media media) {
-        return media.with("target", this.ruleset.ip()).with("port", this.ruleset.port()).with("name", this.rulesetName);
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final SinkRuleset that = (SinkRuleset) o;
-        return Objects.equals(rulesetName, that.rulesetName) && Objects.equals(ruleset, that.ruleset);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(rulesetName, ruleset);
+        // Tests that multiple values can be inserted into JsonMedia
+        Assertions.assertEquals("testValue", result.getString("testKey"));
+        Assertions.assertEquals("testValue2", result.getString("testKey2"));
     }
 
 }

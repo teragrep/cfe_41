@@ -72,6 +72,5 @@ public class Main {
         }
 
         final ApiConfig apiConfig = new ApiConfig(configMap);
-
     }
 }

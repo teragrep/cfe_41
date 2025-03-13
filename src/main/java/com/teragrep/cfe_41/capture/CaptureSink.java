@@ -47,39 +47,27 @@ package com.teragrep.cfe_41.capture;
 
 import com.teragrep.cfe_41.sink.Sink;
 import com.teragrep.cfe_41.sink.SinkRuleset;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 
 import java.util.Objects;
 import java.util.Set;
 
-/*
-
- */
 public final class CaptureSink {
 
     private final Set<Sink> sinks;
-    private final String flow;
-    private final String protocol;
+    private final String flowName;
+    private final String protocolType;
 
-    public CaptureSink(final Set<Sink> sink, final String flow, final String protocol) {
+    public CaptureSink(final Set<Sink> sink, final String flowName, final String protocolType) {
         this.sinks = sink;
-        this.flow = flow;
-        this.protocol = protocol;
+        this.flowName = flowName;
+        this.protocolType = protocolType;
     }
 
     public SinkRuleset buildSink() {
-        final JsonObjectBuilder builder = Json.createObjectBuilder();
         for (Sink sink : sinks) {
-            if (sink.flow().equals(flow) && sink.protocol().equals(protocol)) {
+            if (sink.flow().equals(flowName) && sink.protocol().equals(protocolType)) {
                 final String name = sink.flow() + sink.ip() + sink.port() + sink.protocol();
-                builder.add("target", sink.ip());
-                builder.add("port", sink.port());
-                // TODO swap this name to appropriate one. Not currently stored but is/should/how? # ISSUE 22 Github
-                builder.add("name", name);
-                final JsonObject resultSink = builder.build();
-                return new SinkRuleset(name, resultSink);
+                return new SinkRuleset(name, sink);
             }
         }
         throw new IllegalStateException("Sink not found");
@@ -91,12 +79,12 @@ public final class CaptureSink {
             return false;
         }
         final CaptureSink that = (CaptureSink) o;
-        return Objects.equals(sinks, that.sinks) && Objects.equals(flow, that.flow)
-                && Objects.equals(protocol, that.protocol);
+        return Objects.equals(sinks, that.sinks) && Objects.equals(flowName, that.flowName)
+                && Objects.equals(protocolType, that.protocolType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sinks, flow, protocol);
+        return Objects.hash(sinks, flowName, protocolType);
     }
 }
