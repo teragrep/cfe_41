@@ -45,23 +45,41 @@
  */
 package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cfe_41.Stored;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonObject;
 
-public interface Capture extends Stored {
+import java.io.IOException;
+import java.util.Objects;
 
-    public abstract String tag();
+public final class CaptureRequestImpl implements CaptureRequest {
 
-    public abstract String retention_time();
+    private final ApiConfig apiConfig;
 
-    public abstract String category();
+    public CaptureRequestImpl(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
 
-    public abstract String application();
+    @Override
+    public CaptureResponse captureResponse(final int id, final String captureType) throws IOException {
+        final JsonObject jsonObject = new Response(
+                new RequestData("/capture/" + captureType + "/" + id, apiConfig).doRequest()
+        ).asJsonObject();
+        return new CaptureResponse(jsonObject);
+    }
 
-    public abstract String index();
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureRequestImpl that = (CaptureRequestImpl) o;
+        return Objects.equals(apiConfig, that.apiConfig);
+    }
 
-    public abstract String source_type();
-
-    public abstract String protocol();
-
-    public abstract String flow();
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
+    }
 }

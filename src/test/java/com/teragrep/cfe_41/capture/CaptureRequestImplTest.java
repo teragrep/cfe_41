@@ -43,13 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
+import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,14 +62,14 @@ import org.mockserver.integration.ClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-public class RequestDataTest {
+public class CaptureRequestImplTest {
 
     private static ClientAndServer mockServer;
     private static MockServerClient mockClient;
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(RequestData.class).verify();
+        EqualsVerifier.forClass(CaptureRequestImpl.class).verify();
     }
 
     @BeforeAll
@@ -82,29 +84,44 @@ public class RequestDataTest {
     }
 
     @Test
-    public void requestDataTest() {
-        // Simulates successful return on endpoint
+    public void captureRequest() {
+        // Build the expected outcome
+        JsonObjectBuilder captureBuilder = Json.createObjectBuilder();
+        captureBuilder.add("id", 1);
+        captureBuilder.add("tag", "tag");
+        captureBuilder.add("retention_time", "retention_time");
+        captureBuilder.add("category", "category");
+        captureBuilder.add("application", "application");
+        captureBuilder.add("index", "index");
+        captureBuilder.add("source_type", "source_type");
+        captureBuilder.add("protocol", "protocol");
+        captureBuilder.add("flow", "flow");
+        JsonObject captureJsonObject = captureBuilder.build();
+
+        // Mock client that simulates successful request from cfe_18
         mockClient
-                .when(request().withMethod("GET").withPath("/test"))
-                .respond(response().withStatusCode(200).withBody("test"));
+                .when(request().withMethod("GET").withPath("/capture/relp/1"))
+                .respond(response().withStatusCode(200).withBody(captureJsonObject.toString()));
 
         String[] args = new String[] {
                 "url=http://localhost:1080", "test=test"
         };
-
         Configuration cfg = new ArgsConfiguration(args);
 
+        // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        RequestData requestData = new RequestData("/test", apiConfig);
+        // Requesting capture with ID of one and relp since they are expected
+        CaptureRequest captureRequest = new CaptureRequestImpl(apiConfig);
 
-        // Does request
-        HttpResponse response = Assertions.assertDoesNotThrow(() -> requestData.doRequest());
+        CaptureResponse actualCaptureResponse = Assertions.assertDoesNotThrow(() -> captureRequest.captureResponse(1, "relp"));
 
-        // Retrieves content from response of the request
-        String endpointContent = Assertions.assertDoesNotThrow(() -> EntityUtils.toString(response.getEntity()));
+        CaptureResponse expectedCaptureResponse = new CaptureResponse(captureJsonObject);
 
-        Assertions.assertEquals(200, response.getStatusLine().getStatusCode());
-        Assertions.assertEquals("test", endpointContent);
+        // Assertions
+        Assertions.assertFalse(captureJsonObject.isEmpty());
+        // Asserting that contents equal to each other
+        Assertions.assertEquals(actualCaptureResponse.hashCode(), expectedCaptureResponse.hashCode());
+
     }
 }

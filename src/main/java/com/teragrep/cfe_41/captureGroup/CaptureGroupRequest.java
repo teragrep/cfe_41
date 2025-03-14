@@ -45,47 +45,8 @@
  */
 package com.teragrep.cfe_41.captureGroup;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
-
 import java.io.IOException;
-import java.util.Objects;
 
-public final class CaptureGroupRequest {
-
-    private final String groupName;
-    private final ApiConfig apiConfig;
-
-    public CaptureGroupRequest(final String groupName, final ApiConfig apiConfig) {
-        this.groupName = groupName;
-        this.apiConfig = apiConfig;
-    }
-
-    /**
-     * Returns all captures included in Capture group Uses GET
-     *
-     * @return {@link CaptureGroupResponse}
-     * @throws IOException if group not found
-     */
-    public CaptureGroupResponse captureGroupResponse() throws IOException {
-        final JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
-                .asJsonArray();
-        return new CaptureGroupResponse(a);
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final CaptureGroupRequest that = (CaptureGroupRequest) o;
-        return Objects.equals(groupName, that.groupName) && Objects.equals(apiConfig, that.apiConfig);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(groupName, apiConfig);
-    }
+public interface CaptureGroupRequest {
+    CaptureGroupResponse captureGroupResponse(String groupName) throws IOException;
 }

@@ -43,25 +43,64 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.fakes;
 
-import com.teragrep.cfe_41.Stored;
+import com.teragrep.cfe_41.capture.Capture;
 
-public interface Capture extends Stored {
+public final class CaptureFake implements Capture {
 
-    public abstract String tag();
+    private final int id;
 
-    public abstract String retention_time();
+    public CaptureFake() {
+        this(1);
+    }
 
-    public abstract String category();
+    public CaptureFake(final int id) {
+        this.id = id;
+    }
 
-    public abstract String application();
+    @Override
+    public String tag() {
+        return "fake-tag";
+    }
 
-    public abstract String index();
+    @Override
+    public String retention_time() {
+        return "fake-time";
+    }
 
-    public abstract String source_type();
+    @Override
+    public String category() {
+        return "fake-category";
+    }
 
-    public abstract String protocol();
+    @Override
+    public String application() {
+        return "fake-app";
+    }
 
-    public abstract String flow();
+    @Override
+    public String index() {
+        return "fake-index";
+    }
+
+    @Override
+    public String source_type() {
+        return "fake-sourcetype";
+    }
+
+    @Override
+    public String protocol() {
+        return "fake-protocol";
+    }
+
+    @Override
+    public String flow() {
+        return "fake-flow";
+    }
+
+    @Override
+    public int id() {
+        return id;
+    }
 }

@@ -43,25 +43,62 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.target;
 
-import com.teragrep.cfe_41.Stored;
+import com.teragrep.cfe_41.capture.Capture;
+import com.teragrep.cfe_41.media.Media;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
 
-public interface Capture extends Stored {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-    public abstract String tag();
+public final class PrintableCapturesImpl implements PrintableCaptures {
 
-    public abstract String retention_time();
+    private final List<Capture> captures;
 
-    public abstract String category();
+    public PrintableCapturesImpl() {
+        this(new ArrayList<>());
+    }
 
-    public abstract String application();
+    public PrintableCapturesImpl(final List<Capture> captures) {
+        this.captures = captures;
+    }
 
-    public abstract String index();
+    @Override
+    public List<Capture> captures() {
+        return captures;
+    }
 
-    public abstract String source_type();
+    @Override
+    public PrintableCaptures withCapture(final Capture capture) {
+        final List<Capture> newCaptures = new ArrayList<>(captures);
+        newCaptures.add(capture);
+        return new PrintableCapturesImpl(newCaptures);
+    }
 
-    public abstract String protocol();
+    @Override
+    public Media print(final Media media) {
+        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (final Capture capture : captures) {
+            arrayBuilder.add(Json.createObjectBuilder().add("index", capture.tag()).add("value", true).build());
+        }
 
-    public abstract String flow();
+        return media.with("table", arrayBuilder.build());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PrintableCapturesImpl that = (PrintableCapturesImpl) o;
+        return Objects.equals(captures, that.captures);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(captures);
+    }
 }

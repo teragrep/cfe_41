@@ -43,25 +43,11 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41;
 
-import com.teragrep.cfe_41.Stored;
+import com.teragrep.cfe_41.media.Media;
 
-public interface Capture extends Stored {
+public interface Printable {
 
-    public abstract String tag();
-
-    public abstract String retention_time();
-
-    public abstract String category();
-
-    public abstract String application();
-
-    public abstract String index();
-
-    public abstract String source_type();
-
-    public abstract String protocol();
-
-    public abstract String flow();
+    public abstract Media print(Media media);
 }

@@ -43,68 +43,58 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.target;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
+import com.teragrep.cfe_41.capture.Capture;
+import com.teragrep.cfe_41.fakes.CaptureFake;
+import com.teragrep.cfe_41.media.JsonMedia;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockserver.client.MockServerClient;
-import org.mockserver.integration.ClientAndServer;
 
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
+import java.util.Collections;
+import java.util.List;
 
-public class RequestDataTest {
-
-    private static ClientAndServer mockServer;
-    private static MockServerClient mockClient;
+public final class PrintableCapturesTest {
 
     @Test
-    public void testContract() {
-        EqualsVerifier.forClass(RequestData.class).verify();
-    }
+    void testStorageCapturePairImplIdealCase() {
+        final Capture capture = new CaptureFake();
+        final PrintableCaptures pair = new PrintableCapturesImpl(List.of(capture));
 
-    @BeforeAll
-    public static void startMockServer() {
-        mockServer = ClientAndServer.startClientAndServer(1080);
-        mockClient = new MockServerClient("localhost", 1080);
-    }
+        Assertions.assertFalse(pair.captures().isEmpty());
+        Assertions.assertEquals(capture, pair.captures().get(0));
 
-    @AfterAll
-    public static void stopMockServer() {
-        mockServer.stop();
+        final JsonObject result = pair.print(new JsonMedia()).asJson();
+
+        final JsonArray tableArray = Json
+                .createArrayBuilder()
+                .add(Json.createObjectBuilder().add("index", "fake-tag").add("value", true).build())
+                .build();
+        final JsonObject expected = Json.createObjectBuilder().add("table", tableArray).build();
+
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
-    public void requestDataTest() {
-        // Simulates successful return on endpoint
-        mockClient
-                .when(request().withMethod("GET").withPath("/test"))
-                .respond(response().withStatusCode(200).withBody("test"));
+    void testStorageCapturePairImplEmptyCaptureList() {
+        final PrintableCaptures pair = new PrintableCapturesImpl(Collections.emptyList());
 
-        String[] args = new String[] {
-                "url=http://localhost:1080", "test=test"
-        };
+        Assertions.assertTrue(pair.captures().isEmpty());
 
-        Configuration cfg = new ArgsConfiguration(args);
+        final JsonObject result = pair.print(new JsonMedia()).asJson();
 
-        ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
+        final JsonObject expected = Json.createObjectBuilder().add("table", JsonValue.EMPTY_JSON_ARRAY).build();
 
-        RequestData requestData = new RequestData("/test", apiConfig);
+        Assertions.assertEquals(expected, result);
+    }
 
-        // Does request
-        HttpResponse response = Assertions.assertDoesNotThrow(() -> requestData.doRequest());
-
-        // Retrieves content from response of the request
-        String endpointContent = Assertions.assertDoesNotThrow(() -> EntityUtils.toString(response.getEntity()));
-
-        Assertions.assertEquals(200, response.getStatusLine().getStatusCode());
-        Assertions.assertEquals("test", endpointContent);
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PrintableCapturesImpl.class).verify();
     }
 }

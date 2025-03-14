@@ -43,13 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
+import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,14 +62,14 @@ import org.mockserver.integration.ClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-public class RequestDataTest {
+public class CaptureStorageRequestImplTest {
 
     private static ClientAndServer mockServer;
     private static MockServerClient mockClient;
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(RequestData.class).verify();
+        EqualsVerifier.forClass(CaptureStorageRequestImpl.class).verify();
     }
 
     @BeforeAll
@@ -82,29 +84,38 @@ public class RequestDataTest {
     }
 
     @Test
-    public void requestDataTest() {
-        // Simulates successful return on endpoint
+    public void captureStorageRequestTest() {
+
+        // Expected to have capture with ID of 1 to have storages 1 and 2 (cfe_10 and cfe_11)
+        JsonArrayBuilder captureStorageBuilder = Json.createArrayBuilder();
+        captureStorageBuilder
+                .add(Json.createObjectBuilder().add("storage_id", 1).add("capture_id", 1).add("storage_name", "cfe_10"))
+                .add(Json.createObjectBuilder().add("storage_id", 2).add("capture_id", 1).add("storage_name", "cfe_11"));
+        JsonArray captureStoragesArray = captureStorageBuilder.build();
+
+        // Mock client that simulates successful request from cfe_18. Request should ask with capture_id of 1
         mockClient
-                .when(request().withMethod("GET").withPath("/test"))
-                .respond(response().withStatusCode(200).withBody("test"));
+                .when(request().withMethod("GET").withPath("/storage/capture/1"))
+                .respond(response().withStatusCode(200).withBody(captureStoragesArray.toString()));
 
         String[] args = new String[] {
                 "url=http://localhost:1080", "test=test"
         };
-
         Configuration cfg = new ArgsConfiguration(args);
 
+        // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        RequestData requestData = new RequestData("/test", apiConfig);
+        CaptureStorageRequest captureStorageRequest = new CaptureStorageRequestImpl(apiConfig);
 
-        // Does request
-        HttpResponse response = Assertions.assertDoesNotThrow(() -> requestData.doRequest());
+        CaptureStorageResponse actualCaptureStorageResponse = Assertions
+                .assertDoesNotThrow(() -> captureStorageRequest.captureStorageResponse(1));
 
-        // Retrieves content from response of the request
-        String endpointContent = Assertions.assertDoesNotThrow(() -> EntityUtils.toString(response.getEntity()));
+        CaptureStorageResponse expectedCaptureStorageResponse = new CaptureStorageResponse(captureStoragesArray);
 
-        Assertions.assertEquals(200, response.getStatusLine().getStatusCode());
-        Assertions.assertEquals("test", endpointContent);
+        // Assertions
+        Assertions.assertFalse(captureStoragesArray.isEmpty());
+        // Asserting that contents equal to each other
+        Assertions.assertEquals(actualCaptureStorageResponse.hashCode(), expectedCaptureStorageResponse.hashCode());
     }
 }

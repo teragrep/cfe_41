@@ -43,25 +43,26 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.fakes;
 
-import com.teragrep.cfe_41.Stored;
+import com.teragrep.cfe_41.capture.Capture;
 
-public interface Capture extends Stored {
+import java.util.ArrayList;
+import java.util.List;
 
-    public abstract String tag();
+public final class CaptureFakeListFactory {
 
-    public abstract String retention_time();
+    private final int count;
 
-    public abstract String category();
+    public CaptureFakeListFactory(final int count) {
+        this.count = count;
+    }
 
-    public abstract String application();
-
-    public abstract String index();
-
-    public abstract String source_type();
-
-    public abstract String protocol();
-
-    public abstract String flow();
+    public List<Capture> captures() {
+        final List<Capture> captures = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            captures.add(new CaptureFake(i));
+        }
+        return captures;
+    }
 }
