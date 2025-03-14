@@ -43,31 +43,43 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.linkage;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
 import jakarta.json.JsonObject;
 
-import java.io.IOException;
+public final class PartialLinkageResponse {
 
-public final class HostRequest {
+    private final JsonObject partialLinkage;
 
-    private final int id;
-    private final String hostType;
-    private final ApiConfig apiConfig;
-
-    public HostRequest(int id, String hostType, ApiConfig apiConfig) {
-        this.id = id;
-        this.hostType = hostType;
-        this.apiConfig = apiConfig;
+    public PartialLinkageResponse(JsonObject partialLinkage) {
+        this.partialLinkage = partialLinkage;
     }
 
-    public HostResponse hostResponse() throws IOException {
-        JsonObject jsonObject = new Response(new RequestData("/host/" + hostType + "/" + id, apiConfig).doRequest())
-                .asJsonObject();
-        return new HostResponse(jsonObject);
+    public int linkageId() {
+        return partialLinkage.getInt("id");
+    }
 
+    public String captureGroupName() {
+        return partialLinkage.getString("capture_group_name");
+    }
+
+    public String hostGroupName() {
+        return partialLinkage.getString("host_group_name");
+    }
+
+    public String hostGroupType() {
+        return partialLinkage.getString("host_group_type");
+    }
+
+    public String captureGroupType() {
+        return partialLinkage.getString("host_group_type");
+    }
+
+    public int hostGroupId() {
+        return partialLinkage.getInt("host_group_id");
+    }
+
+    public int captureGroupId() {
+        return partialLinkage.getInt("capture_group_id");
     }
 }

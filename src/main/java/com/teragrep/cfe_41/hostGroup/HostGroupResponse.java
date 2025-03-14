@@ -43,31 +43,27 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.hostGroup;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonObject;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonValue;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public final class HostRequest {
+public final class HostGroupResponse {
 
-    private final int id;
-    private final String hostType;
-    private final ApiConfig apiConfig;
+    private final JsonArray jsonArray;
 
-    public HostRequest(int id, String hostType, ApiConfig apiConfig) {
-        this.id = id;
-        this.hostType = hostType;
-        this.apiConfig = apiConfig;
+    public HostGroupResponse(JsonArray jsonArray) {
+        this.jsonArray = jsonArray;
     }
 
-    public HostResponse hostResponse() throws IOException {
-        JsonObject jsonObject = new Response(new RequestData("/host/" + hostType + "/" + id, apiConfig).doRequest())
-                .asJsonObject();
-        return new HostResponse(jsonObject);
-
+    public List<PartialHostResponse> partialHostResponses() {
+        List<PartialHostResponse> partialHostResponses = new ArrayList<>();
+        for (JsonValue key : jsonArray) {
+            partialHostResponses.add(new PartialHostResponse(key.asJsonObject()));
+        }
+        return partialHostResponses;
     }
 }

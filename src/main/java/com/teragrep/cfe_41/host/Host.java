@@ -45,29 +45,10 @@
  */
 package com.teragrep.cfe_41.host;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonObject;
+interface Host {
 
-import java.io.IOException;
+    public abstract String md5();
 
-public final class HostRequest {
-
-    private final int id;
-    private final String hostType;
-    private final ApiConfig apiConfig;
-
-    public HostRequest(int id, String hostType, ApiConfig apiConfig) {
-        this.id = id;
-        this.hostType = hostType;
-        this.apiConfig = apiConfig;
-    }
-
-    public HostResponse hostResponse() throws IOException {
-        JsonObject jsonObject = new Response(new RequestData("/host/" + hostType + "/" + id, apiConfig).doRequest())
-                .asJsonObject();
-        return new HostResponse(jsonObject);
-
-    }
+    public abstract String fqHost();
+    // String hostname(); TODO ISSUE #23 CFE_41 Github
 }
