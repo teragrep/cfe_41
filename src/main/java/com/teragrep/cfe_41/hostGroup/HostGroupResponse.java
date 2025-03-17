@@ -50,20 +50,35 @@ import jakarta.json.JsonValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class HostGroupResponse {
 
     private final JsonArray jsonArray;
 
-    public HostGroupResponse(JsonArray jsonArray) {
+    public HostGroupResponse(final JsonArray jsonArray) {
         this.jsonArray = jsonArray;
     }
 
     public List<PartialHostResponse> partialHostResponses() {
-        List<PartialHostResponse> partialHostResponses = new ArrayList<>();
+        final List<PartialHostResponse> partialHostResponses = new ArrayList<>();
         for (JsonValue key : jsonArray) {
             partialHostResponses.add(new PartialHostResponse(key.asJsonObject()));
         }
         return partialHostResponses;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final HostGroupResponse that = (HostGroupResponse) o;
+        return Objects.equals(jsonArray, that.jsonArray);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonArray);
     }
 }

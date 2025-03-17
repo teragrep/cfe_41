@@ -50,21 +50,35 @@ import jakarta.json.JsonValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class LinkageResponse {
 
     private final JsonArray jsonArray;
 
-    public LinkageResponse(JsonArray jsonArray) {
+    public LinkageResponse(final JsonArray jsonArray) {
         this.jsonArray = jsonArray;
     }
 
     public List<PartialLinkageResponse> partialLinkageResponses() {
-        List<PartialLinkageResponse> partialLinkageResponses = new ArrayList<>();
+        final List<PartialLinkageResponse> partialLinkageResponses = new ArrayList<>();
         for (JsonValue key : jsonArray) {
             partialLinkageResponses.add(new PartialLinkageResponse(key.asJsonObject()));
         }
         return partialLinkageResponses;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final LinkageResponse that = (LinkageResponse) o;
+        return Objects.equals(jsonArray, that.jsonArray);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonArray);
+    }
 }

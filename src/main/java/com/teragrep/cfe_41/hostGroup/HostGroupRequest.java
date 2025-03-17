@@ -45,26 +45,9 @@
  */
 package com.teragrep.cfe_41.hostGroup;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
-
 import java.io.IOException;
 
-public final class HostGroupRequest {
+public interface HostGroupRequest {
 
-    private final String hostGroupName;
-    private final ApiConfig apiConfig;
-
-    public HostGroupRequest(String hostGroupName, ApiConfig apiConfig) {
-        this.hostGroupName = hostGroupName;
-        this.apiConfig = apiConfig;
-    }
-
-    public HostGroupResponse hostGroupResponse() throws IOException {
-        JsonArray a = new Response(new RequestData("/host/group/" + hostGroupName, apiConfig).doRequest())
-                .asJsonArray();
-        return new HostGroupResponse(a);
-    }
+    public abstract HostGroupResponse hostGroupResponse() throws IOException;
 }

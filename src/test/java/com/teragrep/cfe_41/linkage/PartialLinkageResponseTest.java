@@ -43,12 +43,42 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.linkage;
 
-import java.io.IOException;
+import jakarta.json.Json;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-interface HostRequest {
+public class PartialLinkageResponseTest {
 
-    public abstract HostResponse hostResponse() throws IOException;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(PartialLinkageResponse.class).verify();
+    }
 
+    @Test
+    public void partialLinkageResponseTest() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder
+                .add("id", 1)
+                .add("capture_group_name", "group1")
+                .add("host_group_name", "group1")
+                .add("host_group_type", "relp")
+                .add("capture_group_type", "relp")
+                .add("host_group_id", 1)
+                .add("capture_group_id", 1);
+
+        PartialLinkageResponse response = new PartialLinkageResponse(builder.build());
+
+        Assertions.assertEquals(1, response.linkageId());
+        Assertions.assertEquals("group1", response.captureGroupName());
+        Assertions.assertEquals("group1", response.hostGroupName());
+        Assertions.assertEquals("relp", response.hostGroupType());
+        Assertions.assertEquals("relp", response.captureGroupType());
+        Assertions.assertEquals(1, response.hostGroupId());
+        Assertions.assertEquals(1, response.captureGroupId());
+
+    }
 }

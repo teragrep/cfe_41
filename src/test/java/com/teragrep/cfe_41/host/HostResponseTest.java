@@ -45,10 +45,31 @@
  */
 package com.teragrep.cfe_41.host;
 
-import java.io.IOException;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-interface HostRequest {
+public class HostResponseTest {
 
-    public abstract HostResponse hostResponse() throws IOException;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(HostResponse.class).verify();
+    }
+
+    @Test
+    public void hostResponseTest() {
+        // Build data for expected response
+        JsonObjectBuilder hostAsJsonObjectBuilder = Json.createObjectBuilder();
+        hostAsJsonObjectBuilder.add("md5", "md5").add("fqHost", "fqhost");
+        JsonObject hostAsJsonObject = hostAsJsonObjectBuilder.build();
+
+        HostResponse hostResponse = new HostResponse(hostAsJsonObject);
+
+        Assertions.assertEquals("md5", hostResponse.md5());
+        Assertions.assertEquals("fqhost", hostResponse.fqHost());
+    }
 
 }

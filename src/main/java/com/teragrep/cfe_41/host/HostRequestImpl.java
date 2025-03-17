@@ -45,10 +45,45 @@
  */
 package com.teragrep.cfe_41.host;
 
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonObject;
+
 import java.io.IOException;
+import java.util.Objects;
 
-interface HostRequest {
+public final class HostRequestImpl implements HostRequest {
 
-    public abstract HostResponse hostResponse() throws IOException;
+    private final int id;
+    private final String hostType;
+    private final ApiConfig apiConfig;
 
+    public HostRequestImpl(final int id, final String hostType, final ApiConfig apiConfig) {
+        this.id = id;
+        this.hostType = hostType;
+        this.apiConfig = apiConfig;
+    }
+
+    @Override
+    public HostResponse hostResponse() throws IOException {
+        final JsonObject jsonObject = new Response(
+                new RequestData("/host/" + hostType + "/" + id, apiConfig).doRequest()
+        ).asJsonObject();
+        return new HostResponse(jsonObject);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final HostRequestImpl that = (HostRequestImpl) o;
+        return id == that.id && Objects.equals(hostType, that.hostType) && Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, hostType, apiConfig);
+    }
 }

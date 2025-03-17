@@ -45,27 +45,9 @@
  */
 package com.teragrep.cfe_41.linkage;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
-
 import java.io.IOException;
 
-public final class LinkageRequest {
+public interface LinkageRequest {
 
-    private final String groupName;
-    private final ApiConfig apiConfig;
-
-    public LinkageRequest(String groupName, ApiConfig apiConfig) {
-        this.groupName = groupName;
-        this.apiConfig = apiConfig;
-    }
-
-    public LinkageResponse linkageResponse() throws IOException {
-        JsonArray a = new Response(new RequestData("/capture/groups/linkage/" + groupName, apiConfig).doRequest())
-                .asJsonArray();
-        return new LinkageResponse(a);
-    }
-
+    public abstract LinkageResponse linkageResponse() throws IOException;
 }

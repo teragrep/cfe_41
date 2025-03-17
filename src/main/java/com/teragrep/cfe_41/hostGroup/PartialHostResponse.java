@@ -47,11 +47,13 @@ package com.teragrep.cfe_41.hostGroup;
 
 import jakarta.json.JsonObject;
 
+import java.util.Objects;
+
 public final class PartialHostResponse {
 
     private final JsonObject response;
 
-    public PartialHostResponse(JsonObject response) {
+    public PartialHostResponse(final JsonObject response) {
         this.response = response;
     }
 
@@ -75,4 +77,17 @@ public final class PartialHostResponse {
         return response.getInt("id");
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PartialHostResponse that = (PartialHostResponse) o;
+        return Objects.equals(response, that.response);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(response);
+    }
 }

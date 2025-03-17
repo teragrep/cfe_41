@@ -43,12 +43,38 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.hostGroup;
 
-interface Host {
+import jakarta.json.Json;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-    public abstract String md5();
+public class PartialHostResponseTest {
 
-    public abstract String fqHost();
-    // String hostname(); TODO ISSUE #23 CFE_41 Github
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(PartialHostResponse.class).verify();
+    }
+
+    @Test
+    public void partialHostResponseTest() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder
+                .add("host_id", 1)
+                .add("host_group_name", "hostGroup1")
+                .add("host_group_type", "relp")
+                .add("md5", "md5first")
+                .add("id", 1);
+
+        PartialHostResponse response = new PartialHostResponse(builder.build());
+
+        Assertions.assertEquals(1, response.hostId());
+        Assertions.assertEquals("hostGroup1", response.hostGroupName());
+        Assertions.assertEquals("relp", response.hostGroupType());
+        Assertions.assertEquals("md5first", response.md5());
+        Assertions.assertEquals(1, response.groupId());
+    }
+
 }

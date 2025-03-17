@@ -47,11 +47,13 @@ package com.teragrep.cfe_41.linkage;
 
 import jakarta.json.JsonObject;
 
+import java.util.Objects;
+
 public final class PartialLinkageResponse {
 
     private final JsonObject partialLinkage;
 
-    public PartialLinkageResponse(JsonObject partialLinkage) {
+    public PartialLinkageResponse(final JsonObject partialLinkage) {
         this.partialLinkage = partialLinkage;
     }
 
@@ -72,7 +74,7 @@ public final class PartialLinkageResponse {
     }
 
     public String captureGroupType() {
-        return partialLinkage.getString("host_group_type");
+        return partialLinkage.getString("capture_group_type");
     }
 
     public int hostGroupId() {
@@ -81,5 +83,19 @@ public final class PartialLinkageResponse {
 
     public int captureGroupId() {
         return partialLinkage.getInt("capture_group_id");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PartialLinkageResponse that = (PartialLinkageResponse) o;
+        return Objects.equals(partialLinkage, that.partialLinkage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(partialLinkage);
     }
 }

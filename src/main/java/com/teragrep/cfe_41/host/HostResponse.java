@@ -47,21 +47,35 @@ package com.teragrep.cfe_41.host;
 
 import jakarta.json.JsonObject;
 
-public final class HostResponse implements Host {
+import java.util.Objects;
+
+public final class HostResponse {
 
     private final JsonObject response;
 
-    public HostResponse(JsonObject response) {
+    public HostResponse(final JsonObject response) {
         this.response = response;
     }
 
-    @Override
     public String md5() {
         return response.getString("md5");
     }
 
-    @Override
     public String fqHost() {
         return response.getString("fqHost");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final HostResponse that = (HostResponse) o;
+        return Objects.equals(response, that.response);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(response);
     }
 }

@@ -43,12 +43,44 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.linkage;
+
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
 
 import java.io.IOException;
+import java.util.Objects;
 
-interface HostRequest {
+public final class LinkageRequestImpl implements LinkageRequest {
 
-    public abstract HostResponse hostResponse() throws IOException;
+    private final String groupName;
+    private final ApiConfig apiConfig;
 
+    public LinkageRequestImpl(final String groupName, final ApiConfig apiConfig) {
+        this.groupName = groupName;
+        this.apiConfig = apiConfig;
+    }
+
+    @Override
+    public LinkageResponse linkageResponse() throws IOException {
+        final JsonArray a = new Response(new RequestData("/capture/groups/linkage/" + groupName, apiConfig).doRequest())
+                .asJsonArray();
+        return new LinkageResponse(a);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final LinkageRequestImpl that = (LinkageRequestImpl) o;
+        return Objects.equals(groupName, that.groupName) && Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupName, apiConfig);
+    }
 }
