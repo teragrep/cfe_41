@@ -45,8 +45,6 @@
  */
 package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.media.JsonMedia;
-import com.teragrep.cfe_41.media.Media;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -54,15 +52,16 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SinkRulesetTest {
+public class SinkResponseTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(SinkRuleset.class).verify();
+        EqualsVerifier.forClass(SinkResponse.class).verify();
     }
 
     @Test
-    public void sinkRulesetTest() {
+    public void testSinkResponse() {
+
         JsonObjectBuilder builder = Json.createObjectBuilder();
         builder
                 .add("flow", "flow1")
@@ -72,38 +71,13 @@ public class SinkRulesetTest {
                 .add("id", 1);
         JsonObject sink = builder.build();
 
-        Sink sink1 = new SinkResponse(sink);
-        SinkRuleset sinkRuleset = new SinkRuleset("sinkName", sink1);
+        SinkResponse response = new SinkResponse(sink);
 
-        Assertions.assertEquals("sinkName", sinkRuleset.sinkName());
-        Assertions.assertEquals("flow1", sinkRuleset.flowName());
-        Assertions.assertEquals("protocol1", sinkRuleset.protocolType());
-        Assertions.assertEquals("ip_address1", sinkRuleset.ip());
-        Assertions.assertEquals("port1", sinkRuleset.port());
+        Assertions.assertEquals("flow1", response.flowName());
+        Assertions.assertEquals("protocol1", response.protocolType());
+        Assertions.assertEquals("ip_address1", response.ip());
+        Assertions.assertEquals("port1", response.port());
+        Assertions.assertEquals(1, response.id());
 
-    }
-
-    @Test
-    public void sinkRulesetAsJsonTest() {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder
-                .add("flow", "flow1")
-                .add("protocol", "protocol1")
-                .add("ip_address", "ip_address1")
-                .add("port", "port1")
-                .add("id", 1);
-        JsonObject sinkJson = builder.build();
-        Sink sink1 = new SinkResponse(sinkJson);
-        SinkRuleset sinkRuleset = new SinkRuleset("sinkName", sink1);
-
-        Media media = new JsonMedia();
-        Media jsonMedia = sinkRuleset.asJson(media);
-        JsonObject actual = jsonMedia.asJson();
-
-        JsonObjectBuilder expectedBuilder = Json.createObjectBuilder();
-        expectedBuilder.add("target", "ip_address1").add("port", "port1").add("name", "sinkName");
-        JsonObject expected = expectedBuilder.build();
-
-        Assertions.assertEquals(actual, expected);
     }
 }
