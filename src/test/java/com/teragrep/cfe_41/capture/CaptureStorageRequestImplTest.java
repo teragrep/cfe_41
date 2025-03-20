@@ -62,14 +62,14 @@ import org.mockserver.integration.ClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-public class CaptureStorageRequestTest {
+public class CaptureStorageRequestImplTest {
 
     private static ClientAndServer mockServer;
     private static MockServerClient mockClient;
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(CaptureStorageRequest.class).verify();
+        EqualsVerifier.forClass(CaptureStorageRequestImpl.class).verify();
     }
 
     @BeforeAll

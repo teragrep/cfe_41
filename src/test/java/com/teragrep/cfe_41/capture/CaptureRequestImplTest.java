@@ -49,8 +49,8 @@ import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -62,14 +62,14 @@ import org.mockserver.integration.ClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-public class CaptureStorageRequestTest {
+public class CaptureRequestImplTest {
 
     private static ClientAndServer mockServer;
     private static MockServerClient mockClient;
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(CaptureStorageRequest.class).verify();
+        EqualsVerifier.forClass(CaptureRequestImpl.class).verify();
     }
 
     @BeforeAll
@@ -84,19 +84,24 @@ public class CaptureStorageRequestTest {
     }
 
     @Test
-    public void captureStorageRequestTest() {
+    public void captureRequest() {
+        // Build the expected outcome
+        JsonObjectBuilder captureBuilder = Json.createObjectBuilder();
+        captureBuilder.add("id", 1);
+        captureBuilder.add("tag", "tag");
+        captureBuilder.add("retention_time", "retention_time");
+        captureBuilder.add("category", "category");
+        captureBuilder.add("application", "application");
+        captureBuilder.add("index", "index");
+        captureBuilder.add("source_type", "source_type");
+        captureBuilder.add("protocol", "protocol");
+        captureBuilder.add("flow", "flow");
+        JsonObject captureJsonObject = captureBuilder.build();
 
-        // Expected to have capture with ID of 1 to have storages 1 and 2 (cfe_10 and cfe_11)
-        JsonArrayBuilder captureStorageBuilder = Json.createArrayBuilder();
-        captureStorageBuilder
-                .add(Json.createObjectBuilder().add("storage_id", 1).add("capture_id", 1).add("storage_name", "cfe_10"))
-                .add(Json.createObjectBuilder().add("storage_id", 2).add("capture_id", 1).add("storage_name", "cfe_11"));
-        JsonArray captureStoragesArray = captureStorageBuilder.build();
-
-        // Mock client that simulates successful request from cfe_18. Request should ask with capture_id of 1
+        // Mock client that simulates successful request from cfe_18
         mockClient
-                .when(request().withMethod("GET").withPath("/storage/capture/1"))
-                .respond(response().withStatusCode(200).withBody(captureStoragesArray.toString()));
+                .when(request().withMethod("GET").withPath("/capture/relp/1"))
+                .respond(response().withStatusCode(200).withBody(captureJsonObject.toString()));
 
         String[] args = new String[] {
                 "url=http://localhost:1080", "test=test"
@@ -106,16 +111,18 @@ public class CaptureStorageRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        CaptureStorageRequest captureStorageRequest = new CaptureStorageRequestImpl(apiConfig);
+        // Requesting capture with ID of one and relp since they are expected
+        CaptureRequest captureRequest = new CaptureRequestImpl(apiConfig);
 
-        CaptureStorageResponse actualCaptureStorageResponse = Assertions
-                .assertDoesNotThrow(() -> captureStorageRequest.captureStorageResponse(1));
+        CaptureResponse actualCaptureResponse = Assertions
+                .assertDoesNotThrow(() -> captureRequest.captureResponse(1, "relp"));
 
-        CaptureStorageResponse expectedCaptureStorageResponse = new CaptureStorageResponse(captureStoragesArray);
+        CaptureResponse expectedCaptureResponse = new CaptureResponse(captureJsonObject);
 
         // Assertions
-        Assertions.assertFalse(captureStoragesArray.isEmpty());
+        Assertions.assertFalse(captureJsonObject.isEmpty());
         // Asserting that contents equal to each other
-        Assertions.assertEquals(actualCaptureStorageResponse.hashCode(), expectedCaptureStorageResponse.hashCode());
+        Assertions.assertEquals(actualCaptureResponse.hashCode(), expectedCaptureResponse.hashCode());
+
     }
 }

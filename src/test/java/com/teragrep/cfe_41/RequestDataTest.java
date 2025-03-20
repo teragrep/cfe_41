@@ -50,7 +50,10 @@ import com.teragrep.cnf_01.Configuration;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 

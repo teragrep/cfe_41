@@ -45,9 +45,41 @@
  */
 package com.teragrep.cfe_41.capture;
 
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
+
 import java.io.IOException;
+import java.util.Objects;
 
-public interface CaptureRequest {
+public final class CaptureStorageRequestImpl implements CaptureStorageRequest {
 
-    CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    private final ApiConfig apiConfig;
+
+    public CaptureStorageRequestImpl(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
+
+    @Override
+    public CaptureStorageResponse captureStorageResponse(final int captureDefinitionId) throws IOException {
+        final JsonArray captureStorageArray = new Response(
+                new RequestData("/storage/capture/" + captureDefinitionId, apiConfig).doRequest()
+        ).asJsonArray();
+        return new CaptureStorageResponse(captureStorageArray);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureStorageRequestImpl that = (CaptureStorageRequestImpl) o;
+        return Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
+    }
 }

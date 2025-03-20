@@ -43,7 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.captureGroup;
 
 import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cnf_01.ArgsConfiguration;
@@ -62,14 +62,14 @@ import org.mockserver.integration.ClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-public class CaptureStorageRequestTest {
+public class CaptureGroupRequestImplTest {
 
     private static ClientAndServer mockServer;
     private static MockServerClient mockClient;
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(CaptureStorageRequest.class).verify();
+        EqualsVerifier.forClass(CaptureGroupRequestImpl.class).verify();
     }
 
     @BeforeAll
@@ -84,19 +84,17 @@ public class CaptureStorageRequestTest {
     }
 
     @Test
-    public void captureStorageRequestTest() {
+    public void captureGroupRequestTest() {
 
-        // Expected to have capture with ID of 1 to have storages 1 and 2 (cfe_10 and cfe_11)
-        JsonArrayBuilder captureStorageBuilder = Json.createArrayBuilder();
-        captureStorageBuilder
-                .add(Json.createObjectBuilder().add("storage_id", 1).add("capture_id", 1).add("storage_name", "cfe_10"))
-                .add(Json.createObjectBuilder().add("storage_id", 2).add("capture_id", 1).add("storage_name", "cfe_11"));
-        JsonArray captureStoragesArray = captureStorageBuilder.build();
+        JsonArrayBuilder captureGroupBuilder = Json.createArrayBuilder();
+        captureGroupBuilder
+                .add(Json.createObjectBuilder().add("capture_def_group_name", "captureGroup1").add("capture_definition_id", 1).add("capture_group_type", "relp").add("id", 1));
+        JsonArray captureGroupArray = captureGroupBuilder.build();
 
-        // Mock client that simulates successful request from cfe_18. Request should ask with capture_id of 1
+        // Mock client that simulates successful request from cfe_18
         mockClient
-                .when(request().withMethod("GET").withPath("/storage/capture/1"))
-                .respond(response().withStatusCode(200).withBody(captureStoragesArray.toString()));
+                .when(request().withMethod("GET").withPath("/capture/group/captureGroup1"))
+                .respond(response().withStatusCode(200).withBody(captureGroupArray.toString()));
 
         String[] args = new String[] {
                 "url=http://localhost:1080", "test=test"
@@ -106,16 +104,16 @@ public class CaptureStorageRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        CaptureStorageRequest captureStorageRequest = new CaptureStorageRequestImpl(apiConfig);
+        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequestImpl(apiConfig);
 
-        CaptureStorageResponse actualCaptureStorageResponse = Assertions
-                .assertDoesNotThrow(() -> captureStorageRequest.captureStorageResponse(1));
+        CaptureGroupResponse actualCaptureGroupResponse = Assertions
+                .assertDoesNotThrow(() -> captureGroupRequest.captureGroupResponse("captureGroup1"));
 
-        CaptureStorageResponse expectedCaptureStorageResponse = new CaptureStorageResponse(captureStoragesArray);
+        CaptureGroupResponse expectedCaptureGroupResponse = new CaptureGroupResponse(captureGroupArray);
 
         // Assertions
-        Assertions.assertFalse(captureStoragesArray.isEmpty());
+        Assertions.assertFalse(captureGroupArray.isEmpty());
         // Asserting that contents equal to each other
-        Assertions.assertEquals(actualCaptureStorageResponse.hashCode(), expectedCaptureStorageResponse.hashCode());
+        Assertions.assertEquals(actualCaptureGroupResponse.hashCode(), expectedCaptureGroupResponse.hashCode());
     }
 }

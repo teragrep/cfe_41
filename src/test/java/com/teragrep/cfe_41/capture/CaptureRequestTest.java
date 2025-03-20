@@ -112,9 +112,10 @@ public class CaptureRequestTest {
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
         // Requesting capture with ID of one and relp since they are expected
-        CaptureRequest captureRequest = new CaptureRequest(1, "relp", apiConfig);
+        CaptureRequest captureRequest = new CaptureRequestImpl(apiConfig);
 
-        CaptureResponse actualCaptureResponse = Assertions.assertDoesNotThrow(() -> captureRequest.captureResponse());
+        CaptureResponse actualCaptureResponse = Assertions
+                .assertDoesNotThrow(() -> captureRequest.captureResponse(1, "relp"));
 
         CaptureResponse expectedCaptureResponse = new CaptureResponse(captureJsonObject);
 

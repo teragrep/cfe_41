@@ -43,11 +43,48 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.captureGroup;
+
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
 
 import java.io.IOException;
+import java.util.Objects;
 
-public interface CaptureRequest {
+public final class CaptureGroupRequestImpl implements CaptureGroupRequest {
 
-    CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    private final ApiConfig apiConfig;
+
+    public CaptureGroupRequestImpl(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
+
+    /**
+     * Returns all captures included in Capture group Uses GET
+     *
+     * @return {@link CaptureGroupResponse}
+     * @throws IOException if group not found
+     */
+    @Override
+    public CaptureGroupResponse captureGroupResponse(final String groupName) throws IOException {
+        final JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
+                .asJsonArray();
+        return new CaptureGroupResponse(a);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureGroupRequestImpl that = (CaptureGroupRequestImpl) o;
+        return Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
+    }
 }

@@ -43,11 +43,54 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.target;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.capture.Capture;
+import com.teragrep.cfe_41.fakes.CaptureFake;
+import com.teragrep.cfe_41.media.JsonMedia;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public interface CaptureRequest {
+import java.util.Collections;
+import java.util.List;
 
-    CaptureResponse captureResponse(int id, String captureType) throws IOException;
+public final class PrintableCapturesTest {
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PrintableCapturesImpl.class).verify();
+    }
+
+    @Test
+    void testStorageCapturePairImplIdealCase() {
+        final Capture capture = new CaptureFake();
+        final PrintableCaptures pair = new PrintableCapturesImpl(List.of(capture));
+        final JsonObject result = pair.print(new JsonMedia()).asJson();
+
+        final JsonArray tableArray = Json
+                .createArrayBuilder()
+                .add(Json.createObjectBuilder().add("index", "fake-tag").add("value", true).build())
+                .build();
+        final JsonObject expected = Json.createObjectBuilder().add("table", tableArray).build();
+
+        Assertions.assertFalse(pair.captures().isEmpty());
+        Assertions.assertEquals(capture, pair.captures().get(0));
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
+    void testStorageCapturePairImplEmptyCaptureList() {
+        final PrintableCaptures pair = new PrintableCapturesImpl(Collections.emptyList());
+        final JsonObject result = pair.print(new JsonMedia()).asJson();
+
+        final JsonObject expected = Json.createObjectBuilder().add("table", JsonValue.EMPTY_JSON_ARRAY).build();
+        Assertions.assertTrue(pair.captures().isEmpty());
+        Assertions.assertEquals(expected, result);
+    }
+
 }

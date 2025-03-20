@@ -46,6 +46,7 @@
 package com.teragrep.cfe_41.media;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
@@ -65,6 +66,16 @@ public final class JsonMedia implements Media {
 
     @Override
     public Media with(final String key, final String value) {
+        return new JsonMedia(this.builder.add(key, value));
+    }
+
+    @Override
+    public Media with(final String key, final JsonArray value) {
+        return new JsonMedia(this.builder.add(key, value));
+    }
+
+    @Override
+    public Media with(final String key, final JsonObject value) {
         return new JsonMedia(this.builder.add(key, value));
     }
 

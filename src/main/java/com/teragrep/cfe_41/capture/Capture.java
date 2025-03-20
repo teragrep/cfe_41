@@ -45,7 +45,9 @@
  */
 package com.teragrep.cfe_41.capture;
 
-public interface Capture {
+import com.teragrep.cfe_41.Stored;
+
+public interface Capture extends Stored {
 
     public abstract String tag();
 

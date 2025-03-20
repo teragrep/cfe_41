@@ -43,11 +43,36 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.fakes;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.capture.CaptureStorage;
 
-public interface CaptureRequest {
+public class StorageFake implements CaptureStorage {
 
-    CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    private final int storageId;
+    private final int captureId;
+
+    public StorageFake() {
+        this(1, 1);
+    }
+
+    public StorageFake(final int storageId, final int captureId) {
+        this.storageId = storageId;
+        this.captureId = captureId;
+    }
+
+    @Override
+    public int storageId() {
+        return storageId;
+    }
+
+    @Override
+    public int captureId() {
+        return captureId;
+    }
+
+    @Override
+    public String storageName() {
+        return "fake-storagename";
+    }
 }

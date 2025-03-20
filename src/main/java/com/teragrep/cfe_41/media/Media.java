@@ -45,11 +45,16 @@
  */
 package com.teragrep.cfe_41.media;
 
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 
 public interface Media {
 
     public abstract Media with(final String key, final String value);
+
+    public abstract Media with(final String key, final JsonArray value);
+
+    public abstract Media with(final String key, final JsonObject value);
 
     public abstract JsonObject asJson();
 }

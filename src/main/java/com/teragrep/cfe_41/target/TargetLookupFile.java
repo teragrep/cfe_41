@@ -43,66 +43,58 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.target;
 
+import com.teragrep.cfe_41.media.JsonMedia;
 import jakarta.json.JsonObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Objects;
 
-/*
-Takes Capture JsonObject and ṕarses it into Capture
- */
-public final class CaptureResponse implements Capture {
+public final class TargetLookupFile {
 
-    private final JsonObject jsonObject;
+    private final String captureGroupName;
+    private final String folderPath;
+    private final PrintableCaptures printableCaptures;
+    private final String storageName;
 
-    public CaptureResponse(final JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
+    public TargetLookupFile(
+            final PrintableCaptures printableCaptures,
+            final String captureGroupName,
+            final String storageName
+    ) {
+        this(printableCaptures, captureGroupName, storageName, "");
     }
 
-    @Override
-    public int id() {
-        return jsonObject.getInt("id");
+    public TargetLookupFile(
+            final PrintableCaptures printableCaptures,
+            final String captureGroupName,
+            final String storageName,
+            final String folderPath
+    ) {
+        this.printableCaptures = printableCaptures;
+        this.captureGroupName = captureGroupName;
+        this.folderPath = folderPath;
+        this.storageName = storageName;
     }
 
-    @Override
-    public String tag() {
-        return jsonObject.getString("tag");
-    }
+    public void save() throws IOException {
+        final JsonObject json = printableCaptures.print(new JsonMedia()).asJson();
 
-    @Override
-    public String retention_time() {
-        return jsonObject.getString("retention_time");
-    }
+        final String filename = captureGroupName.concat("_").concat(storageName).concat(".json");
 
-    @Override
-    public String category() {
-        return jsonObject.getString("category");
-    }
+        final File file;
+        if (folderPath.isEmpty()) {
+            file = new File(filename);
+        }
+        else {
+            file = new File(folderPath, filename);
+        }
 
-    @Override
-    public String application() {
-        return jsonObject.getString("application");
-    }
-
-    @Override
-    public String index() {
-        return jsonObject.getString("index");
-    }
-
-    @Override
-    public String source_type() {
-        return jsonObject.getString("source_type");
-    }
-
-    @Override
-    public String protocol() {
-        return jsonObject.getString("protocol");
-    }
-
-    @Override
-    public String flow() {
-        return jsonObject.getString("flow");
+        Files.write(file.toPath(), json.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
@@ -110,12 +102,14 @@ public final class CaptureResponse implements Capture {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final CaptureResponse that = (CaptureResponse) o;
-        return Objects.equals(jsonObject, that.jsonObject);
+        final TargetLookupFile that = (TargetLookupFile) o;
+        return Objects.equals(captureGroupName, that.captureGroupName) && Objects
+                .equals(folderPath, that.folderPath) && Objects.equals(printableCaptures, that.printableCaptures)
+                && Objects.equals(storageName, that.storageName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(jsonObject);
+        return Objects.hash(captureGroupName, folderPath, printableCaptures, storageName);
     }
 }
