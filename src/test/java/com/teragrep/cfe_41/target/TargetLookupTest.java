@@ -51,7 +51,6 @@ import com.teragrep.cfe_41.fakes.*;
 import com.teragrep.cfe_41.media.JsonMedia;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -62,7 +61,13 @@ public final class TargetLookupTest {
 
     @Test
     void testTargetLookupWithMultiplePairs() {
-        final TargetLookup lookup = new TargetLookup(new ApiConfig(Map.of()), "captureGroup1", new CaptureGroupRequestFake(), new CaptureStorageRequestFake(), new CaptureRequestFake());
+        final TargetLookup lookup = new TargetLookup(
+                new ApiConfig(Map.of()),
+                "captureGroup1",
+                new CaptureGroupRequestFake(),
+                new CaptureStorageRequestFake(),
+                new CaptureRequestFake()
+        );
         final Map<CaptureStorage, PrintableCaptures> lookupMap = Assertions.assertDoesNotThrow(lookup::asMap);
 
         Assertions.assertEquals(2, lookupMap.size());
@@ -72,7 +77,9 @@ public final class TargetLookupTest {
                 .add("table", Json.createArrayBuilder().add(Json.createObjectBuilder().add("index", "fake-tag").add("value", true).build()).build()).build();
 
         int loopsExecuted = 0;
-        final String[] expectedStorages = {"cfe_10", "cfe_11"};
+        final String[] expectedStorages = {
+                "cfe_10", "cfe_11"
+        };
         for (final Map.Entry<CaptureStorage, PrintableCaptures> ent : lookupMap.entrySet()) {
             final int captureId = ent.getKey().captureId();
             Assertions.assertEquals(expectedStorages[loopsExecuted], ent.getKey().storageName());
@@ -88,7 +95,13 @@ public final class TargetLookupTest {
 
     @Test
     void testTargetLookupWithNoGroups() {
-        final TargetLookup lookup = new TargetLookup(new ApiConfig(Map.of()), "captureGroup1", new EmptyCaptureGroupRequestFake(), new CaptureStorageRequestFake(), new CaptureRequestFake());
+        final TargetLookup lookup = new TargetLookup(
+                new ApiConfig(Map.of()),
+                "captureGroup1",
+                new EmptyCaptureGroupRequestFake(),
+                new CaptureStorageRequestFake(),
+                new CaptureRequestFake()
+        );
         final Map<CaptureStorage, PrintableCaptures> lookupMap = Assertions.assertDoesNotThrow(lookup::asMap);
 
         Assertions.assertEquals(0, lookupMap.size());

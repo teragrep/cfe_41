@@ -48,5 +48,6 @@ package com.teragrep.cfe_41.captureGroup;
 import java.io.IOException;
 
 public interface CaptureGroupRequest {
+
     CaptureGroupResponse captureGroupResponse(String groupName) throws IOException;
 }

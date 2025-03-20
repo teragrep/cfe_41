@@ -48,5 +48,6 @@ package com.teragrep.cfe_41.capture;
 import java.io.IOException;
 
 public interface CaptureStorageRequest {
+
     CaptureStorageResponse captureStorageResponse(int captureDefinitionId) throws IOException;
 }

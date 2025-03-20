@@ -53,5 +53,6 @@ import java.util.List;
 public interface PrintableCaptures extends Printable {
 
     public abstract List<Capture> captures();
+
     public abstract PrintableCaptures withCapture(final Capture capture);
 }

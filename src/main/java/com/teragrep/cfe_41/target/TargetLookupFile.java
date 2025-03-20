@@ -61,11 +61,20 @@ public final class TargetLookupFile {
     private final PrintableCaptures printableCaptures;
     private final String storageName;
 
-    public TargetLookupFile(final PrintableCaptures printableCaptures, final String captureGroupName, final String storageName) {
+    public TargetLookupFile(
+            final PrintableCaptures printableCaptures,
+            final String captureGroupName,
+            final String storageName
+    ) {
         this(printableCaptures, captureGroupName, storageName, "");
     }
 
-    public TargetLookupFile(final PrintableCaptures printableCaptures, final String captureGroupName, final String storageName, final String folderPath) {
+    public TargetLookupFile(
+            final PrintableCaptures printableCaptures,
+            final String captureGroupName,
+            final String storageName,
+            final String folderPath
+    ) {
         this.printableCaptures = printableCaptures;
         this.captureGroupName = captureGroupName;
         this.folderPath = folderPath;
@@ -94,7 +103,9 @@ public final class TargetLookupFile {
             return false;
         }
         final TargetLookupFile that = (TargetLookupFile) o;
-        return Objects.equals(captureGroupName, that.captureGroupName) && Objects.equals(folderPath, that.folderPath) && Objects.equals(printableCaptures, that.printableCaptures) && Objects.equals(storageName, that.storageName);
+        return Objects.equals(captureGroupName, that.captureGroupName) && Objects
+                .equals(folderPath, that.folderPath) && Objects.equals(printableCaptures, that.printableCaptures)
+                && Objects.equals(storageName, that.storageName);
     }
 
     @Override

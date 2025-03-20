@@ -67,10 +67,22 @@ public final class TargetLookup {
     private final CaptureRequest captureRequest;
 
     public TargetLookup(final ApiConfig apiConfig, final String groupName) {
-        this(apiConfig, groupName, new CaptureGroupRequestImpl(apiConfig), new CaptureStorageRequestImpl(apiConfig), new CaptureRequestImpl(apiConfig));
+        this(
+                apiConfig,
+                groupName,
+                new CaptureGroupRequestImpl(apiConfig),
+                new CaptureStorageRequestImpl(apiConfig),
+                new CaptureRequestImpl(apiConfig)
+        );
     }
 
-    public TargetLookup(final ApiConfig apiConfig, final String groupName, final CaptureGroupRequest captureGroupRequest, final CaptureStorageRequest captureStorageRequest, final CaptureRequest captureRequest) {
+    public TargetLookup(
+            final ApiConfig apiConfig,
+            final String groupName,
+            final CaptureGroupRequest captureGroupRequest,
+            final CaptureStorageRequest captureStorageRequest,
+            final CaptureRequest captureRequest
+    ) {
         this.apiConfig = apiConfig;
         this.groupName = groupName;
         this.captureGroupRequest = captureGroupRequest;
@@ -80,18 +92,20 @@ public final class TargetLookup {
 
     public Map<CaptureStorage, PrintableCaptures> asMap() throws IOException {
         final Map<CaptureStorage, PrintableCaptures> rv = new HashMap<>();
-        final CaptureGroupResponse cgResponse =  captureGroupRequest.captureGroupResponse(groupName);
+        final CaptureGroupResponse cgResponse = captureGroupRequest.captureGroupResponse(groupName);
         final List<PartialCaptureResponse> partialCaptureResponses = cgResponse.partialCaptureResponses();
 
         for (final PartialCaptureResponse partialCaptureResponse : partialCaptureResponses) {
             final int captureDefinitionId = partialCaptureResponse.captureDefinitionId();
             final String captureGroupType = partialCaptureResponse.captureGroupType();
             final CaptureStorageResponse csResponse = captureStorageRequest.captureStorageResponse(captureDefinitionId);
-            final List<PartialCaptureStorageResponse> partialCsResponses =  csResponse.partialCaptureStorageResponses();
+            final List<PartialCaptureStorageResponse> partialCsResponses = csResponse.partialCaptureStorageResponses();
             for (final PartialCaptureStorageResponse partialCsResponse : partialCsResponses) {
-                final CaptureResponse captureResponse = captureRequest.captureResponse(captureDefinitionId, captureGroupType);
+                final CaptureResponse captureResponse = captureRequest
+                        .captureResponse(captureDefinitionId, captureGroupType);
 
-                final PrintableCaptures printableCaptures = rv.getOrDefault(partialCsResponse, new PrintableCapturesImpl());
+                final PrintableCaptures printableCaptures = rv
+                        .getOrDefault(partialCsResponse, new PrintableCapturesImpl());
                 rv.put(partialCsResponse, printableCaptures.withCapture(captureResponse));
             }
         }
@@ -105,7 +119,8 @@ public final class TargetLookup {
             return false;
         }
         final TargetLookup that = (TargetLookup) o;
-        return Objects.equals(apiConfig, that.apiConfig) && Objects.equals(groupName, that.groupName) && Objects.equals(captureGroupRequest, that.captureGroupRequest) && Objects.equals(captureStorageRequest, that.captureStorageRequest) && Objects.equals(captureRequest, that.captureRequest);
+        return Objects.equals(apiConfig, that.apiConfig) && Objects.equals(groupName, that.groupName)
+                && Objects.equals(captureGroupRequest, that.captureGroupRequest) && Objects.equals(captureStorageRequest, that.captureStorageRequest) && Objects.equals(captureRequest, that.captureRequest);
     }
 
     @Override

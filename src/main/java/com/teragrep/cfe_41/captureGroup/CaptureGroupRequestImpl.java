@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public final class CaptureGroupRequestImpl implements CaptureGroupRequest {
+
     private final ApiConfig apiConfig;
 
     public CaptureGroupRequestImpl(final ApiConfig apiConfig) {
