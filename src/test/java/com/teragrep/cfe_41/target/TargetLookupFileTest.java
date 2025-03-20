@@ -64,6 +64,11 @@ import java.util.List;
 public final class TargetLookupFileTest {
 
     @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(TargetLookupFile.class).verify();
+    }
+
+    @Test
     void testSavingToFileIdealCase() {
         final String targetPath = "src/test/resources/cgName_fake-storagename.json";
         final TargetLookupFile targetLookupFile = new TargetLookupFile(
@@ -117,8 +122,4 @@ public final class TargetLookupFileTest {
         });
     }
 
-    @Test
-    void testEqualsContract() {
-        EqualsVerifier.forClass(TargetLookupFile.class).verify();
-    }
 }

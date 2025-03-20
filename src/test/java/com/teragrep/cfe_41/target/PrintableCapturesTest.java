@@ -62,6 +62,11 @@ import java.util.List;
 public final class PrintableCapturesTest {
 
     @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PrintableCapturesImpl.class).verify();
+    }
+
+    @Test
     void testStorageCapturePairImplIdealCase() {
         final Capture capture = new CaptureFake();
         final PrintableCaptures pair = new PrintableCapturesImpl(List.of(capture));
@@ -93,8 +98,4 @@ public final class PrintableCapturesTest {
         Assertions.assertEquals(expected, result);
     }
 
-    @Test
-    void testEqualsContract() {
-        EqualsVerifier.forClass(PrintableCapturesImpl.class).verify();
-    }
 }

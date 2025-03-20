@@ -60,6 +60,11 @@ import java.util.Map;
 public final class TargetLookupTest {
 
     @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(TargetLookup.class).verify();
+    }
+
+    @Test
     void testTargetLookupWithMultiplePairs() {
         final TargetLookup lookup = new TargetLookup(
                 new ApiConfig(Map.of()),
@@ -107,8 +112,4 @@ public final class TargetLookupTest {
         Assertions.assertEquals(0, lookupMap.size());
     }
 
-    @Test
-    void testEqualsContract() {
-        EqualsVerifier.forClass(TargetLookup.class).verify();
-    }
 }
