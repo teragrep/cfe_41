@@ -70,10 +70,6 @@ public final class PrintableCapturesTest {
     void testStorageCapturePairImplIdealCase() {
         final Capture capture = new CaptureFake();
         final PrintableCaptures pair = new PrintableCapturesImpl(List.of(capture));
-
-        Assertions.assertFalse(pair.captures().isEmpty());
-        Assertions.assertEquals(capture, pair.captures().get(0));
-
         final JsonObject result = pair.print(new JsonMedia()).asJson();
 
         final JsonArray tableArray = Json
@@ -82,19 +78,18 @@ public final class PrintableCapturesTest {
                 .build();
         final JsonObject expected = Json.createObjectBuilder().add("table", tableArray).build();
 
+        Assertions.assertFalse(pair.captures().isEmpty());
+        Assertions.assertEquals(capture, pair.captures().get(0));
         Assertions.assertEquals(expected, result);
     }
 
     @Test
     void testStorageCapturePairImplEmptyCaptureList() {
         final PrintableCaptures pair = new PrintableCapturesImpl(Collections.emptyList());
-
-        Assertions.assertTrue(pair.captures().isEmpty());
-
         final JsonObject result = pair.print(new JsonMedia()).asJson();
 
         final JsonObject expected = Json.createObjectBuilder().add("table", JsonValue.EMPTY_JSON_ARRAY).build();
-
+        Assertions.assertTrue(pair.captures().isEmpty());
         Assertions.assertEquals(expected, result);
     }
 
