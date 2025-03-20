@@ -73,18 +73,18 @@ public final class TargetLookupTest {
                 new CaptureStorageRequestFake(),
                 new CaptureRequestFake()
         );
-        final Map<CaptureStorage, PrintableCaptures> lookupMap = Assertions.assertDoesNotThrow(lookup::asMap);
 
-        Assertions.assertEquals(2, lookupMap.size());
+        final Map<CaptureStorage, PrintableCaptures> lookupMap = Assertions.assertDoesNotThrow(lookup::asMap);
 
         final JsonObject expected = Json
                 .createObjectBuilder()
                 .add("table", Json.createArrayBuilder().add(Json.createObjectBuilder().add("index", "fake-tag").add("value", true).build()).build()).build();
 
-        int loopsExecuted = 0;
         final String[] expectedStorages = {
                 "cfe_10", "cfe_11"
         };
+
+        int loopsExecuted = 0;
         for (final Map.Entry<CaptureStorage, PrintableCaptures> ent : lookupMap.entrySet()) {
             final int captureId = ent.getKey().captureId();
             Assertions.assertEquals(expectedStorages[loopsExecuted], ent.getKey().storageName());
@@ -95,6 +95,7 @@ public final class TargetLookupTest {
             loopsExecuted++;
         }
 
+        Assertions.assertEquals(2, lookupMap.size());
         Assertions.assertEquals(2, loopsExecuted);
     }
 
