@@ -43,34 +43,50 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.HashMap;
+public class CaptureResponseTest {
 
-public class Main {
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(CaptureResponse.class).verify();
+    }
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    @Test
+    public void captureResponseTest() {
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        // Build the expected outcome
+        JsonObjectBuilder captureBuilder = Json.createObjectBuilder();
+        captureBuilder.add("id", 1);
+        captureBuilder.add("tag", "tag");
+        captureBuilder.add("retention_time", "retention_time");
+        captureBuilder.add("category", "category");
+        captureBuilder.add("application", "application");
+        captureBuilder.add("index", "index");
+        captureBuilder.add("source_type", "source_type");
+        captureBuilder.add("protocol", "protocol");
+        captureBuilder.add("flow", "flow");
+        JsonObject captureJsonObject = captureBuilder.build();
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+        // Build object that needs to be tested
+        CaptureResponse captureResponse = new CaptureResponse(captureJsonObject);
+
+        Assertions.assertEquals(1, captureResponse.id());
+        Assertions.assertEquals("tag", captureResponse.tag());
+        Assertions.assertEquals("retention_time", captureResponse.retention_time());
+        Assertions.assertEquals("category", captureResponse.category());
+        Assertions.assertEquals("application", captureResponse.application());
+        Assertions.assertEquals("index", captureResponse.index());
+        Assertions.assertEquals("source_type", captureResponse.source_type());
+        Assertions.assertEquals("protocol", captureResponse.protocol());
+        Assertions.assertEquals("flow", captureResponse.flow());
+
     }
 }

@@ -43,34 +43,47 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonObject;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.Objects;
 
-public class Main {
+public final class CaptureRequest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final int id;
+    private final String captureType;
+    private final ApiConfig apiConfig;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
+    public CaptureRequest(final int id, final String captureType, final ApiConfig apiConfig) {
+        this.id = id;
+        this.captureType = captureType;
+        this.apiConfig = apiConfig;
+    }
+
+    public CaptureResponse captureResponse() throws IOException {
+        final JsonObject jsonObject = new Response(
+                new RequestData("/capture/" + captureType + "/" + id, apiConfig).doRequest()
+        ).asJsonObject();
+        return new CaptureResponse(jsonObject);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        final CaptureRequest that = (CaptureRequest) o;
+        return id == that.id && Objects.equals(captureType, that.captureType)
+                && Objects.equals(apiConfig, that.apiConfig);
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, captureType, apiConfig);
     }
 }

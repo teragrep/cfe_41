@@ -43,34 +43,37 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.captureGroup;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.HashMap;
+public class PartialCaptureResponseTest {
 
-public class Main {
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(PartialCaptureResponse.class).verify();
+    }
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    @Test
+    public void partialCaptureResponseTest() {
+        JsonObjectBuilder partialCaptureResponseBuilder = Json.createObjectBuilder();
+        partialCaptureResponseBuilder.add("capture_def_group_name", "captureGroup1");
+        partialCaptureResponseBuilder.add("capture_definition_id", 1);
+        partialCaptureResponseBuilder.add("capture_group_type", "relp");
+        partialCaptureResponseBuilder.add("id", 1);
+        JsonObject partialCaptureResponse = partialCaptureResponseBuilder.build();
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        PartialCaptureResponse captureResponse = new PartialCaptureResponse(partialCaptureResponse);
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+        Assertions.assertEquals("captureGroup1", captureResponse.groupName());
+        Assertions.assertEquals(1, captureResponse.captureDefinitionId());
+        Assertions.assertEquals("relp", captureResponse.captureGroupType());
+        Assertions.assertEquals(1, captureResponse.groupId());
+
     }
 }

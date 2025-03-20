@@ -43,34 +43,23 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public interface Capture {
 
-import java.util.Map;
-import java.util.HashMap;
+    public abstract String tag();
 
-public class Main {
+    public abstract String retention_time();
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    public abstract String category();
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+    public abstract String application();
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
-    }
+    public abstract String index();
+
+    public abstract String source_type();
+
+    public abstract String protocol();
+
+    public abstract String flow();
 }

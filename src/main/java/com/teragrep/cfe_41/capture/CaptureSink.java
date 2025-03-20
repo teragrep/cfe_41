@@ -43,34 +43,48 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.sink.Sink;
+import com.teragrep.cfe_41.sink.SinkRuleset;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.Objects;
+import java.util.Set;
 
-public class Main {
+public final class CaptureSink {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final Set<Sink> sinks;
+    private final String flowName;
+    private final String protocolType;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
+    public CaptureSink(final Set<Sink> sink, final String flowName, final String protocolType) {
+        this.sinks = sink;
+        this.flowName = flowName;
+        this.protocolType = protocolType;
+    }
+
+    public SinkRuleset buildSink() {
+        for (Sink sink : sinks) {
+            if (sink.flowName().equals(flowName) && sink.protocolType().equals(protocolType)) {
+                final String name = sink.flowName() + sink.ip() + sink.port() + sink.protocolType();
+                return new SinkRuleset(name, sink);
+            }
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        throw new IllegalStateException("Sink not found");
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureSink that = (CaptureSink) o;
+        return Objects.equals(sinks, that.sinks) && Objects.equals(flowName, that.flowName)
+                && Objects.equals(protocolType, that.protocolType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sinks, flowName, protocolType);
     }
 }

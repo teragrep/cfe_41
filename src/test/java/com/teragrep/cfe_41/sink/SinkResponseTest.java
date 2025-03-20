@@ -43,34 +43,41 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.HashMap;
+public class SinkResponseTest {
 
-public class Main {
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(SinkResponse.class).verify();
+    }
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    @Test
+    public void testSinkResponse() {
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder
+                .add("flow", "flow1")
+                .add("protocol", "protocol1")
+                .add("ip_address", "ip_address1")
+                .add("port", "port1")
+                .add("id", 1);
+        JsonObject sink = builder.build();
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+        SinkResponse response = new SinkResponse(sink);
+
+        Assertions.assertEquals("flow1", response.flowName());
+        Assertions.assertEquals("protocol1", response.protocolType());
+        Assertions.assertEquals("ip_address1", response.ip());
+        Assertions.assertEquals("port1", response.port());
+        Assertions.assertEquals(1, response.id());
+
     }
 }

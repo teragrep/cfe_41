@@ -43,34 +43,80 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.capture;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.Stored;
+import jakarta.json.JsonObject;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.Objects;
 
-public class Main {
+/*
+Takes Capture JsonObject and ṕarses it into Capture
+ */
+public final class CaptureResponse implements Capture, Stored {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final JsonObject jsonObject;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
+    public CaptureResponse(final JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
+    @Override
+    public int id() {
+        return jsonObject.getInt("id");
+    }
+
+    @Override
+    public String tag() {
+        return jsonObject.getString("tag");
+    }
+
+    @Override
+    public String retention_time() {
+        return jsonObject.getString("retention_time");
+    }
+
+    @Override
+    public String category() {
+        return jsonObject.getString("category");
+    }
+
+    @Override
+    public String application() {
+        return jsonObject.getString("application");
+    }
+
+    @Override
+    public String index() {
+        return jsonObject.getString("index");
+    }
+
+    @Override
+    public String source_type() {
+        return jsonObject.getString("source_type");
+    }
+
+    @Override
+    public String protocol() {
+        return jsonObject.getString("protocol");
+    }
+
+    @Override
+    public String flow() {
+        return jsonObject.getString("flow");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        final CaptureResponse that = (CaptureResponse) o;
+        return Objects.equals(jsonObject, that.jsonObject);
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonObject);
     }
 }

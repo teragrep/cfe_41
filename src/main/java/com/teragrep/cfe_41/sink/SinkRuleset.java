@@ -43,34 +43,66 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.media.Media;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.Objects;
 
-public class Main {
+/*
+Object that ties one Ruleset object with the ruleset name.
+Differentiated since name is formed in CaptureSink
+ */
+public final class SinkRuleset implements Sink {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final String rulesetName;
+    private final Sink ruleset;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
-
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+    public SinkRuleset(final String rulesetName, final Sink rulesetSink) {
+        this.rulesetName = rulesetName;
+        this.ruleset = rulesetSink;
     }
+
+    public String sinkName() {
+        return rulesetName;
+    }
+
+    @Override
+    public String flowName() {
+        return ruleset.flowName();
+    }
+
+    @Override
+    public String protocolType() {
+        return ruleset.protocolType();
+    }
+
+    @Override
+    public String ip() {
+        return ruleset.ip();
+    }
+
+    @Override
+    public String port() {
+        return ruleset.port();
+    }
+
+    public Media asJson(final Media media) {
+        return media.with("target", this.ruleset.ip()).with("port", this.ruleset.port()).with("name", this.rulesetName);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SinkRuleset that = (SinkRuleset) o;
+        return Objects.equals(rulesetName, that.rulesetName) && Objects.equals(ruleset, that.ruleset);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rulesetName, ruleset);
+    }
+
 }

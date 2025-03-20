@@ -43,34 +43,39 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.media;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.json.JsonObject;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.HashMap;
+public class JsonMediaTest {
 
-public class Main {
-
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
-
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(JsonMedia.class).verify();
     }
+
+    @Test
+    public void jsonMediaTest() {
+        JsonMedia jsonMedia = new JsonMedia();
+        Media media = jsonMedia.with("testKey", "testValue");
+        JsonObject result = media.asJson();
+
+        // Expects to get value from testKey
+        Assertions.assertEquals("testValue", result.getString("testKey"));
+    }
+
+    @Test
+    public void jsonMediaMultiTest() {
+        JsonMedia jsonMedia = new JsonMedia();
+        Media media = jsonMedia.with("testKey", "testValue").with("testKey2", "testValue2");
+        JsonObject result = media.asJson();
+
+        // Tests that multiple values can be inserted into JsonMedia
+        Assertions.assertEquals("testValue", result.getString("testKey"));
+        Assertions.assertEquals("testValue2", result.getString("testKey2"));
+    }
+
 }

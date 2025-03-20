@@ -43,34 +43,49 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.captureGroup;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.Objects;
 
-public class Main {
+public final class CaptureGroupRequest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final String groupName;
+    private final ApiConfig apiConfig;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
+    public CaptureGroupRequest(final String groupName, final ApiConfig apiConfig) {
+        this.groupName = groupName;
+        this.apiConfig = apiConfig;
+    }
+
+    /**
+     * Returns all captures included in Capture group Uses GET
+     *
+     * @return {@link CaptureGroupResponse}
+     * @throws IOException if group not found
+     */
+    public CaptureGroupResponse captureGroupResponse() throws IOException {
+        final JsonArray a = new Response(new RequestData("/capture/group/" + groupName, apiConfig).doRequest())
+                .asJsonArray();
+        return new CaptureGroupResponse(a);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        final CaptureGroupRequest that = (CaptureGroupRequest) o;
+        return Objects.equals(groupName, that.groupName) && Objects.equals(apiConfig, that.apiConfig);
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupName, apiConfig);
     }
 }

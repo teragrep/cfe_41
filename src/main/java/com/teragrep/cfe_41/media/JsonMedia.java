@@ -43,34 +43,47 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.media;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.Objects;
 
-public class Main {
+public final class JsonMedia implements Media {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final JsonObjectBuilder builder;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
-        try {
-            logger.debug("Loaded configuration <{}>", configuration.asMap());
-            configMap = configuration.asMap();
+    public JsonMedia() {
+        this(Json.createObjectBuilder());
+    }
+
+    public JsonMedia(final JsonObjectBuilder builder) {
+        this.builder = builder;
+    }
+
+    @Override
+    public Media with(final String key, final String value) {
+        return new JsonMedia(this.builder.add(key, value));
+    }
+
+    @Override
+    public JsonObject asJson() {
+        return this.builder.build();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        final JsonMedia jsonMedia = (JsonMedia) o;
+        return Objects.equals(builder, jsonMedia.builder);
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(configMap);
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(builder);
     }
 }
