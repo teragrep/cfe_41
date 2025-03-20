@@ -106,10 +106,10 @@ public class CaptureStorageRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        CaptureStorageRequest captureStorageRequest = new CaptureStorageRequest(1, apiConfig);
+        CaptureStorageRequest captureStorageRequest = new CaptureStorageRequestImpl(apiConfig);
 
         CaptureStorageResponse actualCaptureStorageResponse = Assertions
-                .assertDoesNotThrow(() -> captureStorageRequest.captureStorageResponse());
+                .assertDoesNotThrow(() -> captureStorageRequest.captureStorageResponse(1));
 
         CaptureStorageResponse expectedCaptureStorageResponse = new CaptureStorageResponse(captureStoragesArray);
 
