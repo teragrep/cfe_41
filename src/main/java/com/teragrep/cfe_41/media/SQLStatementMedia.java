@@ -43,12 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.media;
 
-import java.io.IOException;
+public interface SQLStatementMedia {
 
-public interface HostRequest {
+    public abstract SQLStatementMedia withStream(String logGroupName, String directory, String stream, String tag);
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
+    public abstract SQLStatementMedia withLogGroup(String logGroupName);
 
+    public abstract SQLStatementMedia withHost(String hostName, String logGroupName);
+
+    public abstract String asSql();
 }

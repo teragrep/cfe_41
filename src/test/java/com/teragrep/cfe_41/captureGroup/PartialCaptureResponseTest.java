@@ -73,7 +73,7 @@ public class PartialCaptureResponseTest {
         Assertions.assertEquals("captureGroup1", captureResponse.groupName());
         Assertions.assertEquals(1, captureResponse.captureDefinitionId());
         Assertions.assertEquals("relp", captureResponse.captureGroupType());
-        Assertions.assertEquals(1, captureResponse.groupId());
+        Assertions.assertEquals(1, captureResponse.id());
 
     }
 }

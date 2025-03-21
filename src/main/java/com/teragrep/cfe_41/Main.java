@@ -45,14 +45,15 @@
  */
 package com.teragrep.cfe_41;
 
+import com.teragrep.cfe_41.importsql.Importsql;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import com.teragrep.cnf_01.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Map;
-import java.util.HashMap;
 
 public class Main {
 
@@ -61,7 +62,7 @@ public class Main {
     public static void main(final String[] args) throws Exception {
         // Creates new ApiConfig from commandline args
         final Configuration configuration = new ArgsConfiguration(args);
-        Map<String, String> configMap = new HashMap<>();
+        final Map<String, String> configMap;
         try {
             logger.debug("Loaded configuration <{}>", configuration.asMap());
             configMap = configuration.asMap();
@@ -72,5 +73,14 @@ public class Main {
         }
 
         final ApiConfig apiConfig = new ApiConfig(configMap);
+        createImport(apiConfig);
+    }
+
+    public static void createImport(final ApiConfig apiConfig) throws IOException {
+
+        final Importsql importsql = new Importsql(apiConfig);
+        String file = importsql.sql();
+        System.out.println(file);
+        // Writes to file maybe in a different object or is carried to importsql responsibility. Uncertain yet
     }
 }

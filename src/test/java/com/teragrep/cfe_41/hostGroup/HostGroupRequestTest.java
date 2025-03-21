@@ -104,10 +104,10 @@ public class HostGroupRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        HostGroupRequestImpl hostGroupRequest = new HostGroupRequestImpl("hostGroup", apiConfig);
+        HostGroupRequestImpl hostGroupRequest = new HostGroupRequestImpl(apiConfig);
 
         HostGroupResponse actualHostGroupResponse = Assertions
-                .assertDoesNotThrow(() -> hostGroupRequest.hostGroupResponse());
+                .assertDoesNotThrow(() -> hostGroupRequest.hostGroupResponse("hostGroup"));
 
         HostGroupResponse expectedHostGroupResponse = new HostGroupResponse(hostGroupArray);
 

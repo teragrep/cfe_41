@@ -45,10 +45,9 @@
  */
 package com.teragrep.cfe_41.host;
 
-import java.io.IOException;
+public interface Host {
 
-public interface HostRequest {
+    public abstract String md5();
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
-
+    public abstract String fqHost();
 }

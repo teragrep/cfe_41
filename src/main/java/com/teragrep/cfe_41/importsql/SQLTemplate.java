@@ -43,12 +43,36 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.importsql;
 
-import java.io.IOException;
+import org.jooq.DSLContext;
+import org.jooq.Query;
+import org.jooq.SQLDialect;
+import org.jooq.conf.RenderKeywordCase;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
-public interface HostRequest {
+import java.io.StringWriter;
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
+public class SQLTemplate {
 
+    private final Settings settings = new Settings().withRenderKeywordCase(RenderKeywordCase.UPPER);
+    private final DSLContext ctx = DSL.using(SQLDialect.MYSQL, settings);
+    private final StringWriter sw = new StringWriter();
+
+    public String startTemplate() {
+        Query queryGroup = ctx.deleteFrom(DSL.table("log_group"));
+        Query queryHost = ctx.deleteFrom(DSL.table("host"));
+        Query queryStream = ctx.deleteFrom(DSL.table("stream"));
+        sw.write("START TRANSACTION;\n");
+        sw.write(queryGroup + ";\n");
+        sw.write(queryHost + ";\n");
+        sw.write(queryStream + ";\n");
+        return sw.toString();
+    }
+
+    public String endTemplate() {
+        sw.write("COMMIT;");
+        return sw.toString();
+    }
 }

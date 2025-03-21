@@ -55,15 +55,13 @@ import java.util.Objects;
 
 public final class HostGroupRequestImpl implements HostGroupRequest {
 
-    private final String hostGroupName;
     private final ApiConfig apiConfig;
 
-    public HostGroupRequestImpl(final String hostGroupName, final ApiConfig apiConfig) {
-        this.hostGroupName = hostGroupName;
+    public HostGroupRequestImpl(final ApiConfig apiConfig) {
         this.apiConfig = apiConfig;
     }
 
-    public HostGroupResponse hostGroupResponse() throws IOException {
+    public HostGroupResponse hostGroupResponse(final String hostGroupName) throws IOException {
         final JsonArray a = new Response(new RequestData("/host/group/" + hostGroupName, apiConfig).doRequest())
                 .asJsonArray();
         return new HostGroupResponse(a);
@@ -75,11 +73,11 @@ public final class HostGroupRequestImpl implements HostGroupRequest {
             return false;
         }
         final HostGroupRequestImpl that = (HostGroupRequestImpl) o;
-        return Objects.equals(hostGroupName, that.hostGroupName) && Objects.equals(apiConfig, that.apiConfig);
+        return Objects.equals(apiConfig, that.apiConfig);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hostGroupName, apiConfig);
+        return Objects.hashCode(apiConfig);
     }
 }

@@ -43,12 +43,39 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.importsql;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.host.Host;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
 
-public interface HostRequest {
+import java.util.Objects;
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
+public final class SQLMediaHost {
 
+    private final Host hostName;
+    private final String captureGroupName;
+
+    public SQLMediaHost(final Host hostName, final String captureGroupName) {
+        this.hostName = hostName;
+        this.captureGroupName = captureGroupName;
+    }
+
+    public SQLStatementMedia asSql(final SQLStatementMedia sqlStatementMedia) {
+        return sqlStatementMedia.withHost(this.hostName.fqHost(), this.captureGroupName);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SQLMediaHost sqlMediaHost = (SQLMediaHost) o;
+        return Objects.equals(hostName, sqlMediaHost.hostName)
+                && Objects.equals(captureGroupName, sqlMediaHost.captureGroupName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hostName, captureGroupName);
+    }
 }

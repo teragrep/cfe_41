@@ -43,12 +43,17 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.captureGroup;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.Stored;
 
-public interface HostRequest {
+public interface CaptureGroup extends Stored {
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
+    public abstract String groupName();
 
+    public abstract int captureDefinitionId();
+
+    public abstract String captureGroupType();
+
+    public abstract int id();
 }

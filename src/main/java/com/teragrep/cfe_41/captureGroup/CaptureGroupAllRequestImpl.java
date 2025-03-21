@@ -43,12 +43,41 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.captureGroup;
+
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
 
 import java.io.IOException;
+import java.util.Objects;
 
-public interface HostRequest {
+public class CaptureGroupAllRequestImpl implements CaptureGroupAllRequest {
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
+    private final ApiConfig apiConfig;
 
+    public CaptureGroupAllRequestImpl(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
+
+    @Override
+    public CaptureGroupResponse captureGroupResponse() throws IOException {
+        final JsonArray a = new Response(new RequestData("/capture/group", apiConfig).doRequest()).asJsonArray();
+        return new CaptureGroupResponse(a);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CaptureGroupAllRequestImpl that = (CaptureGroupAllRequestImpl) o;
+        return Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
+    }
 }

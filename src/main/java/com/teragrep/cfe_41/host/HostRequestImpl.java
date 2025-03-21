@@ -55,18 +55,14 @@ import java.util.Objects;
 
 public final class HostRequestImpl implements HostRequest {
 
-    private final int id;
-    private final String hostType;
     private final ApiConfig apiConfig;
 
-    public HostRequestImpl(final int id, final String hostType, final ApiConfig apiConfig) {
-        this.id = id;
-        this.hostType = hostType;
+    public HostRequestImpl(final ApiConfig apiConfig) {
         this.apiConfig = apiConfig;
     }
 
     @Override
-    public HostResponse hostResponse() throws IOException {
+    public HostResponse hostResponse(final int id, final String hostType) throws IOException {
         final JsonObject jsonObject = new Response(
                 new RequestData("/host/" + hostType + "/" + id, apiConfig).doRequest()
         ).asJsonObject();
@@ -79,11 +75,11 @@ public final class HostRequestImpl implements HostRequest {
             return false;
         }
         final HostRequestImpl that = (HostRequestImpl) o;
-        return id == that.id && Objects.equals(hostType, that.hostType) && Objects.equals(apiConfig, that.apiConfig);
+        return Objects.equals(apiConfig, that.apiConfig);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, hostType, apiConfig);
+        return Objects.hashCode(apiConfig);
     }
 }

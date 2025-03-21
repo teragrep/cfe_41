@@ -43,12 +43,20 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.fakes;
+
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
+import jakarta.json.Json;
 
 import java.io.IOException;
 
-public interface HostRequest {
+public final class CaptureGroupAllRequestFake implements CaptureGroupAllRequest {
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
-
+    @Override
+    public CaptureGroupResponse captureGroupResponse() throws IOException {
+        return new CaptureGroupResponse(
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group1").add("capture_definition_id", 1).add("capture_group_type", "relp").add("id", 1)).add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group2").add("capture_definition_id", 2).add("capture_group_type", "relp").add("id", 2)).add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group2").add("capture_definition_id", 3).add("capture_group_type", "relp").add("id", 3)).build()
+        );
+    }
 }

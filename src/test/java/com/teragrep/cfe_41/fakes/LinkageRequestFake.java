@@ -43,12 +43,20 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.fakes;
+
+import com.teragrep.cfe_41.linkage.LinkageRequest;
+import com.teragrep.cfe_41.linkage.LinkageResponse;
+import jakarta.json.Json;
 
 import java.io.IOException;
 
-public interface HostRequest {
+public final class LinkageRequestFake implements LinkageRequest {
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
-
+    @Override
+    public LinkageResponse linkageResponse(final String groupName) throws IOException {
+        return new LinkageResponse(
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("id", 1).add("capture_group_name", "fake-group1").add("host_group_name", "hostGroup1").add("host_group_type", "relp").add("capture_group_type", "relp").add("host_group_id", 1).add("capture_group_id", 1)).add(Json.createObjectBuilder().add("id", 2).add("capture_group_name", "fake-group2").add("host_group_name", "hostGroup2").add("host_group_type", "relp").add("capture_group_type", "relp").add("host_group_id", 2).add("capture_group_id", 2)).build()
+        );
+    }
 }

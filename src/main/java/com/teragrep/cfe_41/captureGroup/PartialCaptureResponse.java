@@ -49,7 +49,7 @@ import jakarta.json.JsonObject;
 
 import java.util.Objects;
 
-public final class PartialCaptureResponse {
+public final class PartialCaptureResponse implements CaptureGroup {
 
     private final JsonObject jsonObject;
 
@@ -57,19 +57,23 @@ public final class PartialCaptureResponse {
         this.jsonObject = jsonObject;
     }
 
+    @Override
     public String groupName() {
         return jsonObject.getString("capture_def_group_name");
     }
 
+    @Override
     public int captureDefinitionId() {
         return jsonObject.getInt("capture_definition_id");
     }
 
+    @Override
     public String captureGroupType() {
         return jsonObject.getString("capture_group_type");
     }
 
-    public int groupId() {
+    @Override
+    public int id() {
         return jsonObject.getInt("id");
     }
 

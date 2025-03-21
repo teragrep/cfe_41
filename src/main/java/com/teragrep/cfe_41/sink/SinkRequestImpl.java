@@ -43,12 +43,52 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.sink;
+
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 
 import java.io.IOException;
+import java.util.Objects;
 
-public interface HostRequest {
+public final class SinkRequestImpl implements SinkRequest {
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
+    private final ApiConfig apiConfig;
 
+    public SinkRequestImpl(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
+
+    @Override
+    public SinkResponse sinkResponse(final String flowName, final String protocolType) throws IOException {
+        final JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).asJsonArray();
+
+        for (JsonValue sinkjson : sinksArray) {
+            final JsonObject sinkJsonObject = sinkjson.asJsonObject();
+            // If flow and protocol match the object attributes then return ip address and port for configuration file
+            final SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
+            if (flowName.equals(sinkResponse.flowName()) && protocolType.equals(sinkResponse.protocolType())) {
+                return sinkResponse;
+            }
+        }
+        throw new IllegalStateException("No sink found");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SinkRequestImpl that = (SinkRequestImpl) o;
+        return Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
+    }
 }

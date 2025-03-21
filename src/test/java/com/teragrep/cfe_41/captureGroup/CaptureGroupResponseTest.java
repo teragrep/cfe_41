@@ -101,7 +101,7 @@ public class CaptureGroupResponseTest {
                     .assertEquals(expectedPartialCaptureResponses.get(loopsExecuted).captureDefinitionId(), response.captureDefinitionId());
             Assertions
                     .assertEquals(expectedPartialCaptureResponses.get(loopsExecuted).captureGroupType(), response.captureGroupType());
-            Assertions.assertEquals(expectedPartialCaptureResponses.get(loopsExecuted).groupId(), response.groupId());
+            Assertions.assertEquals(expectedPartialCaptureResponses.get(loopsExecuted).id(), response.id());
             loopsExecuted++;
         }
         Assertions.assertEquals(2, loopsExecuted);

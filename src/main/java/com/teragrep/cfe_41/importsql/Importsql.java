@@ -43,12 +43,58 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.importsql;
+
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.captureGroup.*;
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public interface HostRequest {
+public final class Importsql {
 
-    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
+    private final ApiConfig apiConfig;
+
+    public Importsql(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
+
+    public String sql() throws IOException {
+        SQLStatementMedia sqlStatementMedia = new SQLMedia();
+        final CaptureGroupAllRequest captureGroupAllRequest = new CaptureGroupAllRequestImpl(apiConfig);
+        final CaptureGroupResponse capRespo = captureGroupAllRequest.captureGroupResponse();
+        Set<String> captureGroupNames = new HashSet<>();
+        for (PartialCaptureResponse captureGroup : capRespo.partialCaptureResponses()) {
+            captureGroupNames.add(captureGroup.groupName());
+        }
+
+        for (String captureGroupName : captureGroupNames) {
+            final SQLMediaCaptureGroup SQLMediaCaptureGroup = new SQLMediaCaptureGroup(captureGroupName);
+
+            final SQLCapture capture = new SQLCapture(apiConfig);
+            final List<SQLMediaCapture> captures = capture.asSQLCaptures(captureGroupName);
+
+            final SQLHost host = new SQLHost(apiConfig);
+            final List<SQLMediaHost> hosts = host.asSQLHosts(captureGroupName);
+
+            // Group
+            sqlStatementMedia = SQLMediaCaptureGroup.asSql(sqlStatementMedia);
+            // Streams
+            for (SQLMediaCapture c : captures) {
+                sqlStatementMedia = c.asSql(sqlStatementMedia);
+            }
+            // Hosts
+            for (SQLMediaHost h : hosts) {
+                sqlStatementMedia = h.asSql(sqlStatementMedia);
+            }
+        }
+
+        return sqlStatementMedia.asSql();
+
+    }
 
 }
