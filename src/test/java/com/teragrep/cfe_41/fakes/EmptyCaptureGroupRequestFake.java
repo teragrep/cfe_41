@@ -43,11 +43,16 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.fakes;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
+import jakarta.json.JsonValue;
 
-public interface CaptureRequest {
+public final class EmptyCaptureGroupRequestFake implements CaptureGroupRequest {
 
-    CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    @Override
+    public CaptureGroupResponse captureGroupResponse(final String groupName) {
+        return new CaptureGroupResponse(JsonValue.EMPTY_JSON_ARRAY);
+    }
 }
