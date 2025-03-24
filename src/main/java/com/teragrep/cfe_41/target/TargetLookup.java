@@ -92,18 +92,25 @@ public final class TargetLookup {
 
     public Map<CaptureStorage, PrintableCaptures> asMap() throws IOException {
         final Map<CaptureStorage, PrintableCaptures> rv = new HashMap<>();
+
+        // get CaptureGroupResponse for specified capture group name
         final CaptureGroupResponse cgResponse = captureGroupRequest.captureGroupResponse(groupName);
         final List<PartialCaptureResponse> partialCaptureResponses = cgResponse.partialCaptureResponses();
 
         for (final PartialCaptureResponse partialCaptureResponse : partialCaptureResponses) {
+            // For each PartialCaptureResponse get CaptureStorages
             final int captureDefinitionId = partialCaptureResponse.captureDefinitionId();
             final String captureGroupType = partialCaptureResponse.captureGroupType();
+
             final CaptureStorageResponse csResponse = captureStorageRequest.captureStorageResponse(captureDefinitionId);
             final List<PartialCaptureStorageResponse> partialCsResponses = csResponse.partialCaptureStorageResponses();
             for (final PartialCaptureStorageResponse partialCsResponse : partialCsResponses) {
+                // For each PartialCaptureStorageResponse get CaptureResponses
                 final CaptureResponse captureResponse = captureRequest
                         .captureResponse(captureDefinitionId, captureGroupType);
 
+                // Add to Map by key CaptureStorage and value is collection of Captures
+                // getOrDefault() ensures that a new collection is initialized if no key present in map
                 final PrintableCaptures printableCaptures = rv
                         .getOrDefault(partialCsResponse, new PrintableCapturesImpl());
                 rv.put(partialCsResponse, printableCaptures.withCapture(captureResponse));
