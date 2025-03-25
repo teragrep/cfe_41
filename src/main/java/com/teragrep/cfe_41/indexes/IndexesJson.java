@@ -43,7 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.target;
+package com.teragrep.cfe_41.indexes;
 
 import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cfe_41.capture.*;
@@ -51,14 +51,13 @@ import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupRequestImpl;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.target.PrintableCaptures;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-public final class TargetLookup {
+public final class IndexesJson {
 
     private final ApiConfig apiConfig;
     private final String groupName;
@@ -66,7 +65,7 @@ public final class TargetLookup {
     private final CaptureStorageRequest captureStorageRequest;
     private final CaptureRequest captureRequest;
 
-    public TargetLookup(final ApiConfig apiConfig, final String groupName) {
+    public IndexesJson(final ApiConfig apiConfig, final String groupName) {
         this(
                 apiConfig,
                 groupName,
@@ -76,7 +75,7 @@ public final class TargetLookup {
         );
     }
 
-    public TargetLookup(
+    public IndexesJson(
             final ApiConfig apiConfig,
             final String groupName,
             final CaptureGroupRequest captureGroupRequest,
@@ -90,31 +89,21 @@ public final class TargetLookup {
         this.captureRequest = captureRequest;
     }
 
-    public Map<CaptureStorage, PrintableCaptures> asMap() throws IOException {
-        final Map<CaptureStorage, PrintableCaptures> rv = new HashMap<>();
-
+    public PrintableCaptures asPrintableCaptures() throws IOException {
+        PrintableCaptures rv = new PrintableIndexesCaptures();
         // get CaptureGroupResponse for specified capture group name
         final CaptureGroupResponse cgResponse = captureGroupRequest.captureGroupResponse(groupName);
         final List<PartialCaptureResponse> partialCaptureResponses = cgResponse.partialCaptureResponses();
 
         for (final PartialCaptureResponse partialCaptureResponse : partialCaptureResponses) {
-            // For each PartialCaptureResponse get CaptureStorages
+            // For each PartialCaptureResponse get CaptureResponses
             final int captureDefinitionId = partialCaptureResponse.captureDefinitionId();
             final String captureGroupType = partialCaptureResponse.captureGroupType();
 
-            final CaptureStorageResponse csResponse = captureStorageRequest.captureStorageResponse(captureDefinitionId);
-            final List<PartialCaptureStorageResponse> partialCsResponses = csResponse.partialCaptureStorageResponses();
-            for (final PartialCaptureStorageResponse partialCsResponse : partialCsResponses) {
-                // For each PartialCaptureStorageResponse get CaptureResponses
-                final CaptureResponse captureResponse = captureRequest
-                        .captureResponse(captureDefinitionId, captureGroupType);
+            final CaptureResponse captureResponse = captureRequest
+                    .captureResponse(captureDefinitionId, captureGroupType);
 
-                // Add to Map by key CaptureStorage and value is collection of Captures
-                // getOrDefault() ensures that a new collection is initialized if no key present in map
-                final PrintableCaptures printableCaptures = rv
-                        .getOrDefault(partialCsResponse, new PrintableTargetLookupCaptures());
-                rv.put(partialCsResponse, printableCaptures.withCapture(captureResponse));
-            }
+            rv = rv.withCapture(captureResponse);
         }
 
         return rv;
@@ -125,7 +114,7 @@ public final class TargetLookup {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final TargetLookup that = (TargetLookup) o;
+        final IndexesJson that = (IndexesJson) o;
         return Objects.equals(apiConfig, that.apiConfig) && Objects.equals(groupName, that.groupName)
                 && Objects.equals(captureGroupRequest, that.captureGroupRequest) && Objects.equals(captureStorageRequest, that.captureStorageRequest) && Objects.equals(captureRequest, that.captureRequest);
     }

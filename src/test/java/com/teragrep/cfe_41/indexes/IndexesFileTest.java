@@ -43,7 +43,7 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.target;
+package com.teragrep.cfe_41.indexes;
 
 import com.teragrep.cfe_41.fakes.CaptureFake;
 import jakarta.json.Json;
@@ -58,26 +58,24 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 
-public final class TargetLookupFileTest {
+public final class IndexesFileTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(TargetLookupFile.class).verify();
+        EqualsVerifier.forClass(IndexesFile.class).verify();
     }
 
     @Test
-    void testSavingToFileIdealCase() {
-        final String targetPath = "src/test/resources/cgName_fake-storagename.json";
-        final TargetLookupFile targetLookupFile = new TargetLookupFile(
-                new PrintableTargetLookupCaptures(List.of(new CaptureFake())),
-                "cgName",
-                "fake-storagename",
+    void testIdealCase() {
+        final String targetPath = "src/test/resources/captureGroup1_indexes.json";
+        final IndexesFile indexesFile = new IndexesFile(
+                new PrintableIndexesCaptures(List.of(new CaptureFake())),
+                "captureGroup1",
                 "src/test/resources"
         );
-        Assertions.assertDoesNotThrow(targetLookupFile::save);
+        Assertions.assertDoesNotThrow(indexesFile::save);
 
         final Reader fileReader = Assertions.assertDoesNotThrow(() -> new FileReader(targetPath));
         final JsonReader jsonReader = Json.createReader(fileReader);
@@ -85,7 +83,7 @@ public final class TargetLookupFileTest {
 
         final JsonObject expected = Json
                 .createObjectBuilder()
-                .add("table", Json.createArrayBuilder().add(Json.createObjectBuilder().add("index", "fake-tag").add("value", true))).build();
+                .add("table", Json.createArrayBuilder().add(Json.createObjectBuilder().add("index", "fake-tag").add("value", "fake-index"))).build();
 
         Assertions.assertEquals(expected, objectFromFile);
 
@@ -97,15 +95,14 @@ public final class TargetLookupFileTest {
     }
 
     @Test
-    void testSavingToFileWithoutAnyTags() {
-        final String targetPath = "src/test/resources/cgName_fake-storagename.json";
-        final TargetLookupFile targetLookupFile = new TargetLookupFile(
-                new PrintableTargetLookupCaptures(Collections.emptyList()),
-                "cgName",
-                "fake-storagename",
+    void testEmptyList() {
+        final String targetPath = "src/test/resources/captureGroup1_indexes.json";
+        final IndexesFile indexesFile = new IndexesFile(
+                new PrintableIndexesCaptures(List.of()),
+                "captureGroup1",
                 "src/test/resources"
         );
-        Assertions.assertDoesNotThrow(targetLookupFile::save);
+        Assertions.assertDoesNotThrow(indexesFile::save);
 
         final Reader fileReader = Assertions.assertDoesNotThrow(() -> new FileReader(targetPath));
         final JsonReader jsonReader = Json.createReader(fileReader);

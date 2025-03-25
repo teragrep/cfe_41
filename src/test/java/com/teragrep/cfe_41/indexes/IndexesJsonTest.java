@@ -43,62 +43,60 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.target;
+package com.teragrep.cfe_41.indexes;
 
-import com.teragrep.cfe_41.capture.Capture;
-import com.teragrep.cfe_41.media.Media;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.fakes.CaptureGroupRequestFake;
+import com.teragrep.cfe_41.fakes.CaptureRequestFake;
+import com.teragrep.cfe_41.fakes.CaptureStorageRequestFake;
+import com.teragrep.cfe_41.fakes.EmptyCaptureGroupRequestFake;
+import com.teragrep.cfe_41.media.JsonMedia;
 import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.Map;
 
-public final class PrintableCapturesImpl implements PrintableCaptures {
+public final class IndexesJsonTest {
 
-    private final List<Capture> captures;
-
-    public PrintableCapturesImpl() {
-        this(new ArrayList<>());
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(IndexesJson.class).verify();
     }
 
-    public PrintableCapturesImpl(final List<Capture> captures) {
-        this.captures = captures;
+    @Test
+    void testIndexesJsonIdealCase() throws IOException {
+        final IndexesJson indexesJson = new IndexesJson(
+                new ApiConfig(Map.of()),
+                "captureGroup1",
+                new CaptureGroupRequestFake(),
+                new CaptureStorageRequestFake(),
+                new CaptureRequestFake()
+        );
+
+        final JsonObject expected = Json
+                .createObjectBuilder()
+                .add("table", Json.createArrayBuilder().add(Json.createObjectBuilder().add("index", "fake-tag").add("value", "fake-index"))).build();
+
+        Assertions.assertEquals(expected, indexesJson.asPrintableCaptures().print(new JsonMedia()).asJson());
     }
 
-    @Override
-    public List<Capture> captures() {
-        return captures;
-    }
+    @Test
+    void testIndexesJsonEmpty() throws IOException {
+        final IndexesJson indexesJson = new IndexesJson(
+                new ApiConfig(Map.of()),
+                "captureGroup1",
+                new EmptyCaptureGroupRequestFake(),
+                new CaptureStorageRequestFake(),
+                new CaptureRequestFake()
+        );
 
-    @Override
-    public PrintableCaptures withCapture(final Capture capture) {
-        final List<Capture> newCaptures = new ArrayList<>(captures);
-        newCaptures.add(capture);
-        return new PrintableCapturesImpl(newCaptures);
-    }
+        final JsonObject expected = Json.createObjectBuilder().add("table", JsonValue.EMPTY_JSON_ARRAY).build();
 
-    @Override
-    public Media print(final Media media) {
-        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (final Capture capture : captures) {
-            arrayBuilder.add(Json.createObjectBuilder().add("index", capture.tag()).add("value", true).build());
-        }
-
-        return media.with("table", arrayBuilder.build());
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final PrintableCapturesImpl that = (PrintableCapturesImpl) o;
-        return Objects.equals(captures, that.captures);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(captures);
+        Assertions.assertEquals(expected, indexesJson.asPrintableCaptures().print(new JsonMedia()).asJson());
     }
 }

@@ -46,51 +46,59 @@
 package com.teragrep.cfe_41.target;
 
 import com.teragrep.cfe_41.capture.Capture;
-import com.teragrep.cfe_41.fakes.CaptureFake;
-import com.teragrep.cfe_41.media.JsonMedia;
+import com.teragrep.cfe_41.media.Media;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import jakarta.json.JsonArrayBuilder;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public final class PrintableCapturesTest {
+public final class PrintableTargetLookupCaptures implements PrintableCaptures {
 
-    @Test
-    void testEqualsContract() {
-        EqualsVerifier.forClass(PrintableTargetLookupCaptures.class).verify();
+    private final List<Capture> captures;
+
+    public PrintableTargetLookupCaptures() {
+        this(new ArrayList<>());
     }
 
-    @Test
-    void testStorageCapturePairImplIdealCase() {
-        final Capture capture = new CaptureFake();
-        final PrintableCaptures pair = new PrintableTargetLookupCaptures(List.of(capture));
-        final JsonObject result = pair.print(new JsonMedia()).asJson();
-
-        final JsonArray tableArray = Json
-                .createArrayBuilder()
-                .add(Json.createObjectBuilder().add("index", "fake-tag").add("value", true).build())
-                .build();
-        final JsonObject expected = Json.createObjectBuilder().add("table", tableArray).build();
-
-        Assertions.assertFalse(pair.captures().isEmpty());
-        Assertions.assertEquals(capture, pair.captures().get(0));
-        Assertions.assertEquals(expected, result);
+    public PrintableTargetLookupCaptures(final List<Capture> captures) {
+        this.captures = captures;
     }
 
-    @Test
-    void testStorageCapturePairImplEmptyCaptureList() {
-        final PrintableCaptures pair = new PrintableTargetLookupCaptures(Collections.emptyList());
-        final JsonObject result = pair.print(new JsonMedia()).asJson();
-
-        final JsonObject expected = Json.createObjectBuilder().add("table", JsonValue.EMPTY_JSON_ARRAY).build();
-        Assertions.assertTrue(pair.captures().isEmpty());
-        Assertions.assertEquals(expected, result);
+    @Override
+    public List<Capture> captures() {
+        return captures;
     }
 
+    @Override
+    public PrintableCaptures withCapture(final Capture capture) {
+        final List<Capture> newCaptures = new ArrayList<>(captures);
+        newCaptures.add(capture);
+        return new PrintableTargetLookupCaptures(newCaptures);
+    }
+
+    @Override
+    public Media print(final Media media) {
+        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (final Capture capture : captures) {
+            arrayBuilder.add(Json.createObjectBuilder().add("index", capture.tag()).add("value", true).build());
+        }
+
+        return media.with("table", arrayBuilder.build());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PrintableTargetLookupCaptures that = (PrintableTargetLookupCaptures) o;
+        return Objects.equals(captures, that.captures);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(captures);
+    }
 }
