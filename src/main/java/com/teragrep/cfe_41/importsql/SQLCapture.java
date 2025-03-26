@@ -54,10 +54,7 @@ import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class SQLCapture {
 
@@ -107,4 +104,18 @@ public final class SQLCapture {
         return sqlMediaCaptures;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SQLCapture that = (SQLCapture) o;
+        return Objects.equals(captureRequest, that.captureRequest)
+                && Objects.equals(captureGroupRequest, that.captureGroupRequest);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(captureRequest, captureGroupRequest);
+    }
 }

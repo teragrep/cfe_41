@@ -53,8 +53,9 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import java.io.StringWriter;
+import java.util.Objects;
 
-public class SQLTemplate {
+public final class SQLTemplate {
 
     private final Settings settings = new Settings().withRenderKeywordCase(RenderKeywordCase.UPPER);
     private final DSLContext ctx = DSL.using(SQLDialect.MYSQL, settings);
@@ -74,5 +75,19 @@ public class SQLTemplate {
     public String endTemplate() {
         sw.write("COMMIT;");
         return sw.toString();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SQLTemplate that = (SQLTemplate) o;
+        return Objects.equals(settings, that.settings) && Objects.equals(ctx, that.ctx) && Objects.equals(sw, that.sw);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(settings, ctx, sw);
     }
 }

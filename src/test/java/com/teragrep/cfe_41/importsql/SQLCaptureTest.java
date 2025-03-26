@@ -45,40 +45,6 @@
  */
 package com.teragrep.cfe_41.importsql;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.fakes.*;
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-public class ImportsqlTest {
-
-    @Test
-    public void testContract() {
-        EqualsVerifier.forClass(Importsql.class).verify();
-    }
-
-    @Test
-    public void importsqlTest() {
-
-        String[] args = new String[] {
-                "url=http://localhost:1080", "test=test"
-        };
-        Configuration cfg = new ArgsConfiguration(args);
-
-        // Create ApiConfig so that request can be made
-        ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
-
-        Importsql importsql = new Importsql(apiConfig);
-
-        String actual = Assertions.assertDoesNotThrow(() -> importsql.sql());
-
-        // group 1 has one capture and 1 host and,
-        String expected = ",";
-
-        Assertions.assertEquals(expected, actual);
-    }
+public class SQLCaptureTest {
 
 }

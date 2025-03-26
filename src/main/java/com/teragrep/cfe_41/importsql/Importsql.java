@@ -53,21 +53,37 @@ import com.teragrep.cfe_41.media.SQLStatementMedia;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public final class Importsql {
 
+    private final CaptureGroupAllRequest captureGroupAllRequest;
+    private final SQLHost sqlHost;
+    private final SQLCapture sqlCapture;
     private final ApiConfig apiConfig;
 
     public Importsql(final ApiConfig apiConfig) {
+        this(new CaptureGroupAllRequestImpl(apiConfig), new SQLHost(apiConfig), new SQLCapture(apiConfig), apiConfig);
+    }
+
+    public Importsql(
+            final CaptureGroupAllRequest captureGroupAllRequest,
+            final SQLHost sqlHost,
+            final SQLCapture sqlCapture,
+            final ApiConfig apiConfig
+    ) {
         this.apiConfig = apiConfig;
+        this.captureGroupAllRequest = captureGroupAllRequest;
+        this.sqlHost = sqlHost;
+        this.sqlCapture = sqlCapture;
     }
 
     public String sql() throws IOException {
         SQLStatementMedia sqlStatementMedia = new SQLMedia();
-        final CaptureGroupAllRequest captureGroupAllRequest = new CaptureGroupAllRequestImpl(apiConfig);
         final CaptureGroupResponse capRespo = captureGroupAllRequest.captureGroupResponse();
-        Set<String> captureGroupNames = new HashSet<>();
+        // Get unique group names from all capture groups
+        final Set<String> captureGroupNames = new HashSet<>();
         for (PartialCaptureResponse captureGroup : capRespo.partialCaptureResponses()) {
             captureGroupNames.add(captureGroup.groupName());
         }
@@ -75,26 +91,35 @@ public final class Importsql {
         for (String captureGroupName : captureGroupNames) {
             final SQLMediaCaptureGroup SQLMediaCaptureGroup = new SQLMediaCaptureGroup(captureGroupName);
 
-            final SQLCapture capture = new SQLCapture(apiConfig);
-            final List<SQLMediaCapture> captures = capture.asSQLCaptures(captureGroupName);
+            final List<SQLMediaCapture> captures = sqlCapture.asSQLCaptures(captureGroupName);
 
-            final SQLHost host = new SQLHost(apiConfig);
-            final List<SQLMediaHost> hosts = host.asSQLHosts(captureGroupName);
+            final List<SQLMediaHost> hosts = sqlHost.asSQLHosts(captureGroupName);
 
-            // Group
+            // Group insertion to importsql
             sqlStatementMedia = SQLMediaCaptureGroup.asSql(sqlStatementMedia);
-            // Streams
+            // Streams insertion to importsql
             for (SQLMediaCapture c : captures) {
                 sqlStatementMedia = c.asSql(sqlStatementMedia);
             }
-            // Hosts
+            // Hosts insertion to importsql
             for (SQLMediaHost h : hosts) {
                 sqlStatementMedia = h.asSql(sqlStatementMedia);
             }
         }
-
         return sqlStatementMedia.asSql();
-
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Importsql importsql = (Importsql) o;
+        return Objects.equals(apiConfig, importsql.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
+    }
 }

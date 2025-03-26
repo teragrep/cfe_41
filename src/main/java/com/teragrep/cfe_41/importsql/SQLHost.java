@@ -58,12 +58,9 @@ import com.teragrep.cfe_41.linkage.LinkageResponse;
 import com.teragrep.cfe_41.linkage.PartialLinkageResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class SQLHost {
+public final class SQLHost {
 
     private final LinkageRequest linkageRequest;
     private final HostGroupRequest hostGroupRequest;
@@ -122,5 +119,20 @@ public class SQLHost {
             throw new RuntimeException(e);
         }
         return sqlMediaHosts;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SQLHost sqlHost = (SQLHost) o;
+        return Objects.equals(linkageRequest, sqlHost.linkageRequest) && Objects
+                .equals(hostGroupRequest, sqlHost.hostGroupRequest) && Objects.equals(hostRequest, sqlHost.hostRequest);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(linkageRequest, hostGroupRequest, hostRequest);
     }
 }

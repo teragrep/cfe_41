@@ -46,4 +46,5 @@
 package com.teragrep.cfe_41.media;
 
 public class SQLMediaTest {
+
 }

@@ -77,7 +77,6 @@ public class Main {
     }
 
     public static void createImport(final ApiConfig apiConfig) throws IOException {
-
         final Importsql importsql = new Importsql(apiConfig);
         String file = importsql.sql();
         System.out.println(file);
