@@ -85,26 +85,16 @@ public final class SQLHost {
         this.hostRequest = hostRequest;
     }
 
-    public List<SQLMediaHost> asSQLHosts(final String captureGroupName) {
+    public List<SQLMediaHost> asSQLHosts(final String captureGroupName) throws IOException {
         final Set<PartialLinkageResponse> partialLinkageResponses;
-        try {
-            final LinkageResponse linkageResponse = linkageRequest.linkageResponse(captureGroupName);
-            // Get partials which show in detail which host groups are linked with capture groups
-            partialLinkageResponses = new HashSet<>(linkageResponse.partialLinkageResponses());
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        final LinkageResponse linkageResponse = linkageRequest.linkageResponse(captureGroupName);
+        // Get partials which show in detail which host groups are linked with capture groups
+        partialLinkageResponses = new HashSet<>(linkageResponse.partialLinkageResponses());
 
         // Get a list of host groups linked
         final Set<HostGroupResponse> hostGroupResponses = new HashSet<>();
         for (PartialLinkageResponse partialLinkageResponse : partialLinkageResponses) {
-            try {
-                hostGroupResponses.add(hostGroupRequest.hostGroupResponse(partialLinkageResponse.hostGroupName()));
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            hostGroupResponses.add(hostGroupRequest.hostGroupResponse(partialLinkageResponse.hostGroupName()));
         }
 
         // Get partials which show in detail which hosts are linked within host groups
@@ -114,17 +104,12 @@ public final class SQLHost {
         }
         final List<SQLMediaHost> sqlMediaHosts = new ArrayList<>();
         // Inserts hosts to sqlStatement
-        try {
-            for (PartialHostResponse host : partialHostResponses) {
-                final SQLMediaHost sqlMediaHost = new SQLMediaHost(
-                        hostRequest.hostResponse(host.hostId(), host.hostGroupType()),
-                        captureGroupName
-                );
-                sqlMediaHosts.add(sqlMediaHost);
-            }
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+        for (PartialHostResponse host : partialHostResponses) {
+            final SQLMediaHost sqlMediaHost = new SQLMediaHost(
+                    hostRequest.hostResponse(host.hostId(), host.hostGroupType()),
+                    captureGroupName
+            );
+            sqlMediaHosts.add(sqlMediaHost);
         }
         return sqlMediaHosts;
     }

@@ -73,7 +73,8 @@ public class SQLCaptureTest {
 
         SQLCapture sqlCapture = new SQLCapture(captureRequest, captureGroup);
 
-        List<SQLMediaCapture> sqlMediaCapturesActual = sqlCapture.asSQLCaptures("group1");
+        List<SQLMediaCapture> sqlMediaCapturesActual = Assertions
+                .assertDoesNotThrow(() -> sqlCapture.asSQLCaptures("group1"));
 
         Capture capture = new CaptureFake();
 

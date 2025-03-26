@@ -76,7 +76,7 @@ public class SQLHostTest {
 
         SQLHost sqlHost = new SQLHost(linkageRequest, hostGroupRequest, hostRequest);
 
-        List<SQLMediaHost> sqlMediaHostsActual = sqlHost.asSQLHosts("Group1");
+        List<SQLMediaHost> sqlMediaHostsActual = Assertions.assertDoesNotThrow(() -> sqlHost.asSQLHosts("Group1"));
 
         Host host = new HostFake();
 

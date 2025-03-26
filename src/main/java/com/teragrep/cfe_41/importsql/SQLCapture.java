@@ -51,12 +51,10 @@ import com.teragrep.cfe_41.capture.CaptureRequestImpl;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupRequestImpl;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -75,35 +73,19 @@ public final class SQLCapture {
     }
 
     // Gets all the capture and returns a list for sql
-    public List<SQLMediaCapture> asSQLCaptures(final String captureGroupName) {
-        final Set<CaptureGroupResponse> captureGroups = new HashSet<>();
-        try {
-            captureGroups.add(captureGroupRequest.captureGroupResponse(captureGroupName));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        final Set<PartialCaptureResponse> partialCaptures = new HashSet<>();
-        for (CaptureGroupResponse partialCaptureResponse : captureGroups) {
-            partialCaptures.addAll(partialCaptureResponse.partialCaptureResponses());
-        }
+    public List<SQLMediaCapture> asSQLCaptures(final String captureGroupName) throws IOException {
+        final CaptureGroupResponse captureGroups = captureGroupRequest.captureGroupResponse(captureGroupName);
+        final List<PartialCaptureGroupResponse> partialCaptures = captureGroups.partialCaptureResponses();
 
         final List<SQLMediaCapture> sqlMediaCaptures = new ArrayList<>();
 
         // Inserts streams to sqlStatement
-        for (PartialCaptureResponse captureGroup : partialCaptures) {
-            try {
-                final SQLMediaCapture sqlMediaCapture = new SQLMediaCapture(
-                        captureGroupName,
-                        captureRequest
-                                .captureResponse(captureGroup.captureDefinitionId(), captureGroup.captureGroupType())
-                );
-                sqlMediaCaptures.add(sqlMediaCapture);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        for (PartialCaptureGroupResponse captureGroup : partialCaptures) {
+            final SQLMediaCapture sqlMediaCapture = new SQLMediaCapture(
+                    captureGroupName,
+                    captureRequest.captureResponse(captureGroup.captureDefinitionId(), captureGroup.captureGroupType())
+            );
+            sqlMediaCaptures.add(sqlMediaCapture);
         }
         return sqlMediaCaptures;
     }

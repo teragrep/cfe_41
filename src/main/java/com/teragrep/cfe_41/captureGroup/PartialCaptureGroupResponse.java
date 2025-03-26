@@ -45,35 +45,49 @@
  */
 package com.teragrep.cfe_41.captureGroup;
 
-import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-public class PartialCaptureResponseTest {
+import java.util.Objects;
 
-    @Test
-    public void testContract() {
-        EqualsVerifier.forClass(PartialCaptureResponse.class).verify();
+public final class PartialCaptureGroupResponse implements CaptureGroup {
+
+    private final JsonObject jsonObject;
+
+    public PartialCaptureGroupResponse(final JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
     }
 
-    @Test
-    public void partialCaptureResponseTest() {
-        JsonObjectBuilder partialCaptureResponseBuilder = Json.createObjectBuilder();
-        partialCaptureResponseBuilder.add("capture_def_group_name", "captureGroup1");
-        partialCaptureResponseBuilder.add("capture_definition_id", 1);
-        partialCaptureResponseBuilder.add("capture_group_type", "relp");
-        partialCaptureResponseBuilder.add("id", 1);
-        JsonObject partialCaptureResponse = partialCaptureResponseBuilder.build();
+    @Override
+    public String groupName() {
+        return jsonObject.getString("capture_def_group_name");
+    }
 
-        PartialCaptureResponse captureResponse = new PartialCaptureResponse(partialCaptureResponse);
+    @Override
+    public int captureDefinitionId() {
+        return jsonObject.getInt("capture_definition_id");
+    }
 
-        Assertions.assertEquals("captureGroup1", captureResponse.groupName());
-        Assertions.assertEquals(1, captureResponse.captureDefinitionId());
-        Assertions.assertEquals("relp", captureResponse.captureGroupType());
-        Assertions.assertEquals(1, captureResponse.id());
+    @Override
+    public String captureGroupType() {
+        return jsonObject.getString("capture_group_type");
+    }
 
+    @Override
+    public int id() {
+        return jsonObject.getInt("id");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PartialCaptureGroupResponse that = (PartialCaptureGroupResponse) o;
+        return Objects.equals(jsonObject, that.jsonObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonObject);
     }
 }

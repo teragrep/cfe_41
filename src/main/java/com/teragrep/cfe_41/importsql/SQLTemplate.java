@@ -57,9 +57,20 @@ import java.util.Objects;
 
 public final class SQLTemplate {
 
-    private final Settings settings = new Settings().withRenderKeywordCase(RenderKeywordCase.UPPER);
-    private final DSLContext ctx = DSL.using(SQLDialect.MYSQL, settings);
-    private final StringWriter sw = new StringWriter();
+    private final DSLContext ctx;
+    private final StringWriter sw;
+
+    public SQLTemplate() {
+        this(
+                DSL.using(SQLDialect.MYSQL, new Settings().withRenderKeywordCase(RenderKeywordCase.UPPER)),
+                new StringWriter()
+        );
+    }
+
+    public SQLTemplate(final DSLContext ctx,final StringWriter sw) {
+        this.ctx = ctx;
+        this.sw = sw;
+    }
 
     public String startTemplate() {
         final Query queryGroup = ctx.deleteFrom(DSL.table("log_group"));
@@ -83,11 +94,11 @@ public final class SQLTemplate {
             return false;
         }
         final SQLTemplate that = (SQLTemplate) o;
-        return Objects.equals(settings, that.settings) && Objects.equals(ctx, that.ctx) && Objects.equals(sw, that.sw);
+        return Objects.equals(ctx, that.ctx) && Objects.equals(sw, that.sw);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(settings, ctx, sw);
+        return Objects.hash(ctx, sw);
     }
 }
