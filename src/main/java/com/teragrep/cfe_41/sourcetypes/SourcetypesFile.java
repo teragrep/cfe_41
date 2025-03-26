@@ -58,7 +58,7 @@ import java.util.Objects;
 public final class SourcetypesFile {
 
     private final PrintableCaptures printableCaptures;
-    private final String folderPath;
+    private final String directoryPath;
     private final String captureGroupName;
 
     public SourcetypesFile(final PrintableCaptures printableCaptures, final String captureGroupName) {
@@ -68,11 +68,11 @@ public final class SourcetypesFile {
     public SourcetypesFile(
             final PrintableCaptures printableCaptures,
             final String captureGroupName,
-            final String folderPath
+            final String directoryPath
     ) {
         this.printableCaptures = printableCaptures;
         this.captureGroupName = captureGroupName;
-        this.folderPath = folderPath;
+        this.directoryPath = directoryPath;
     }
 
     public void save() throws IOException {
@@ -81,11 +81,11 @@ public final class SourcetypesFile {
         final String filename = captureGroupName.concat("_sourcetypes.json");
 
         final File file;
-        if (folderPath.isEmpty()) {
+        if (directoryPath.isEmpty()) {
             file = new File(filename);
         }
         else {
-            file = new File(folderPath, filename);
+            file = new File(directoryPath, filename);
         }
 
         Files.write(file.toPath(), json.toString().getBytes(StandardCharsets.UTF_8));
@@ -97,12 +97,12 @@ public final class SourcetypesFile {
             return false;
         }
         final SourcetypesFile that = (SourcetypesFile) o;
-        return Objects.equals(printableCaptures, that.printableCaptures) && Objects.equals(folderPath, that.folderPath)
+        return Objects.equals(printableCaptures, that.printableCaptures) && Objects.equals(directoryPath, that.directoryPath)
                 && Objects.equals(captureGroupName, that.captureGroupName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(printableCaptures, folderPath, captureGroupName);
+        return Objects.hash(printableCaptures, directoryPath, captureGroupName);
     }
 }
