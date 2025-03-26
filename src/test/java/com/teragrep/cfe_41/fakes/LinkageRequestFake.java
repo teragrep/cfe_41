@@ -56,7 +56,7 @@ public final class LinkageRequestFake implements LinkageRequest {
     @Override
     public LinkageResponse linkageResponse(final String groupName) throws IOException {
         return new LinkageResponse(
-                Json.createArrayBuilder().add(Json.createObjectBuilder().add("id", 1).add("capture_group_name", "fake-group1").add("host_group_name", "hostGroup1").add("host_group_type", "relp").add("capture_group_type", "relp").add("host_group_id", 1).add("capture_group_id", 1)).add(Json.createObjectBuilder().add("id", 2).add("capture_group_name", "fake-group2").add("host_group_name", "hostGroup2").add("host_group_type", "relp").add("capture_group_type", "relp").add("host_group_id", 2).add("capture_group_id", 2)).build()
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("id", 1).add("capture_group_name", groupName).add("host_group_name", groupName).add("host_group_type", "relp").add("capture_group_type", "relp").add("host_group_id", 1).add("capture_group_id", 1)).build()
         );
     }
 }

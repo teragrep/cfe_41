@@ -45,6 +45,49 @@
  */
 package com.teragrep.cfe_41.media;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 public class SQLMediaTest {
+
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(SQLMedia.class).verify();
+    }
+
+    @Test
+    public void sqlMediaStreamTest() {
+        SQLStatementMedia actualMedia = new SQLMedia();
+        actualMedia.withStream("group1", "index1", "source1", "tag1");
+        String actual = actualMedia.asSql();
+        String expected = "START TRANSACTION;\n" + "DELETE FROM log_group;\n" + "DELETE FROM host;\n"
+                + "DELETE FROM stream;\n"
+                + "INSERT INTO stream (gid, directory, stream, tag) VALUES ((SELECT id FROM log_group WHERE name = `group1`), `index1`, `source1`, `tag1`);\n"
+                + "COMMIT;";
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void sqlMediaLogGroupTest() {
+        SQLStatementMedia actualMedia = new SQLMedia();
+        actualMedia.withLogGroup("group1");
+        String actual = actualMedia.asSql();
+        String expected = "START TRANSACTION;\n" + "DELETE FROM log_group;\n" + "DELETE FROM host;\n"
+                + "DELETE FROM stream;\n" + "INSERT INTO log_group (name) VALUES (`group1`);\n" + "COMMIT;";
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void sqlMediaHostTest() {
+        SQLStatementMedia actualMedia = new SQLMedia();
+        actualMedia.withHost("host1", "group1");
+        String actual = actualMedia.asSql();
+        String expected = "START TRANSACTION;\n" + "DELETE FROM log_group;\n" + "DELETE FROM host;\n"
+                + "DELETE FROM stream;\n"
+                + "INSERT INTO host (name, gid) VALUES (`host1`, (SELECT id FROM log_group WHERE name = `group1`));\n"
+                + "COMMIT;";
+        Assertions.assertEquals(expected, actual);
+    }
 
 }

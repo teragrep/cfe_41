@@ -52,16 +52,16 @@ import java.util.Objects;
 
 public final class SQLMediaHost {
 
-    private final Host hostName;
+    private final Host host;
     private final String captureGroupName;
 
-    public SQLMediaHost(final Host hostName, final String captureGroupName) {
-        this.hostName = hostName;
+    public SQLMediaHost(final Host host, final String captureGroupName) {
+        this.host = host;
         this.captureGroupName = captureGroupName;
     }
 
     public SQLStatementMedia asSql(final SQLStatementMedia sqlStatementMedia) {
-        return sqlStatementMedia.withHost(this.hostName.fqHost(), this.captureGroupName);
+        return sqlStatementMedia.withHost(this.host.fqHost(), this.captureGroupName);
     }
 
     @Override
@@ -70,12 +70,12 @@ public final class SQLMediaHost {
             return false;
         }
         final SQLMediaHost sqlMediaHost = (SQLMediaHost) o;
-        return Objects.equals(hostName, sqlMediaHost.hostName)
+        return Objects.equals(host, sqlMediaHost.host)
                 && Objects.equals(captureGroupName, sqlMediaHost.captureGroupName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hostName, captureGroupName);
+        return Objects.hash(host, captureGroupName);
     }
 }

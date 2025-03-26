@@ -79,9 +79,16 @@ public final class Importsql {
         this.sqlCapture = sqlCapture;
     }
 
-    public String sql() throws IOException {
+    @Override
+    public String toString() {
         SQLStatementMedia sqlStatementMedia = new SQLMedia();
-        final CaptureGroupResponse capRespo = captureGroupAllRequest.captureGroupResponse();
+        final CaptureGroupResponse capRespo;
+        try {
+            capRespo = captureGroupAllRequest.captureGroupResponse();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         // Get unique group names from all capture groups
         final Set<String> captureGroupNames = new HashSet<>();
         for (PartialCaptureResponse captureGroup : capRespo.partialCaptureResponses()) {
@@ -115,11 +122,13 @@ public final class Importsql {
             return false;
         }
         final Importsql importsql = (Importsql) o;
-        return Objects.equals(apiConfig, importsql.apiConfig);
+        return Objects.equals(captureGroupAllRequest, importsql.captureGroupAllRequest) && Objects
+                .equals(sqlHost, importsql.sqlHost) && Objects.equals(sqlCapture, importsql.sqlCapture)
+                && Objects.equals(apiConfig, importsql.apiConfig);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(apiConfig);
+        return Objects.hash(captureGroupAllRequest, sqlHost, sqlCapture, apiConfig);
     }
 }

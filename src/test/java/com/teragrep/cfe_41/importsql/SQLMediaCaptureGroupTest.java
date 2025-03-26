@@ -45,7 +45,10 @@
  */
 package com.teragrep.cfe_41.importsql;
 
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class SQLMediaCaptureGroupTest {
@@ -55,4 +58,18 @@ public class SQLMediaCaptureGroupTest {
         EqualsVerifier.forClass(SQLMediaCaptureGroup.class).verify();
     }
 
+    @Test
+    public void sqlMediaCaptureGroupTest() {
+
+        SQLMediaCaptureGroup sqlMediaCaptureGroup = new SQLMediaCaptureGroup("captureGroup1");
+
+        SQLMedia sqlMediaActual = new SQLMedia();
+        SQLMedia sqlMediaExpected = new SQLMedia();
+
+        SQLStatementMedia actual = sqlMediaCaptureGroup.asSql(sqlMediaActual);
+        SQLStatementMedia expected = sqlMediaExpected.withLogGroup("captureGroup1");
+
+        Assertions.assertEquals(actual.asSql(), expected.asSql());
+
+    }
 }

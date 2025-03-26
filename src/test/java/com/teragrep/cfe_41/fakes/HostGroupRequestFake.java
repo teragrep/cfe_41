@@ -56,7 +56,7 @@ public final class HostGroupRequestFake implements HostGroupRequest {
     @Override
     public HostGroupResponse hostGroupResponse(final String hostGroupName) throws IOException {
         return new HostGroupResponse(
-                Json.createArrayBuilder().add(Json.createObjectBuilder().add("host_id", 1).add("host_group_name", "hostGroup1").add("host_group_type", "relp").add("md5", "fake-md5").add("id", 1)).add(Json.createObjectBuilder().add("host_id", 2).add("host_group_name", "hostGroup2").add("host_group_type", "relp").add("md5", "fake-md52").add("id", 2)).build()
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("host_id", 1).add("host_group_name", hostGroupName).add("host_group_type", "relp").add("md5", "fake-md5").add("id", 1)).build()
         );
     }
 }

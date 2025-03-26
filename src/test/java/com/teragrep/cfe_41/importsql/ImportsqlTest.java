@@ -46,7 +46,14 @@
 package com.teragrep.cfe_41.importsql;
 
 import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.capture.CaptureRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
 import com.teragrep.cfe_41.fakes.*;
+import com.teragrep.cfe_41.host.HostRequest;
+import com.teragrep.cfe_41.hostGroup.HostGroupRequest;
+import com.teragrep.cfe_41.linkage.LinkageRequest;
+import com.teragrep.cfe_41.media.SQLMedia;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -71,12 +78,31 @@ public class ImportsqlTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        Importsql importsql = new Importsql(apiConfig);
+        LinkageRequest linkageRequestFake = new LinkageRequestFake();
+        HostGroupRequest hostGroupRequestFake = new HostGroupRequestFake();
+        HostRequest hostRequestFake = new HostRequestFake();
+        SQLHost sqlHost = Assertions
+                .assertDoesNotThrow(() -> new SQLHost(linkageRequestFake, hostGroupRequestFake, hostRequestFake));
 
-        String actual = Assertions.assertDoesNotThrow(() -> importsql.sql());
+        CaptureRequest captureRequestFake = new CaptureRequestFake();
+        CaptureGroupRequest captureGroupRequestFake = new CaptureGroupRequestFake();
+        SQLCapture sqlCapture = Assertions
+                .assertDoesNotThrow(() -> new SQLCapture(captureRequestFake, captureGroupRequestFake));
 
-        // group 1 has one capture and 1 host and,
-        String expected = ",";
+        CaptureGroupAllRequest captureGroupAllRequestFake = new CaptureGroupAllRequestFake();
+
+        Importsql importsql = new Importsql(captureGroupAllRequestFake, sqlHost, sqlCapture, apiConfig);
+
+        String actual = Assertions.assertDoesNotThrow(() -> importsql.toString());
+
+        SQLMedia expectedSql = new SQLMedia();
+        expectedSql.withLogGroup("fake-group1");
+        expectedSql.withStream("fake-group1", "fake-index", "fake-sourcetype", "fake-tag");
+        expectedSql.withHost("fake-fqhost", "fake-group1");
+        expectedSql.withLogGroup("fake-group2");
+        expectedSql.withStream("fake-group2", "fake-index", "fake-sourcetype", "fake-tag");
+        expectedSql.withHost("fake-fqhost", "fake-group2");
+        String expected = expectedSql.asSql();
 
         Assertions.assertEquals(expected, actual);
     }

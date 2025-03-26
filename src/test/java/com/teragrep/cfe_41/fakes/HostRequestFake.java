@@ -55,8 +55,6 @@ public final class HostRequestFake implements HostRequest {
 
     @Override
     public HostResponse hostResponse(int id, String hostType) throws IOException {
-        return new HostResponse(
-                Json.createObjectBuilder().add("md5", "fake-md5").add("fqHost", "fake-fqHost" + id).build()
-        );
+        return new HostResponse(Json.createObjectBuilder().add("md5", "fake-md5").add("fqHost", "fake-fqhost").build());
     }
 }

@@ -45,6 +45,53 @@
  */
 package com.teragrep.cfe_41.importsql;
 
+import com.teragrep.cfe_41.capture.Capture;
+import com.teragrep.cfe_41.capture.CaptureRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
+import com.teragrep.cfe_41.fakes.CaptureFake;
+import com.teragrep.cfe_41.fakes.CaptureGroupRequestFake;
+import com.teragrep.cfe_41.fakes.CaptureRequestFake;
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 public class SQLCaptureTest {
+
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(SQLCapture.class).verify();
+    }
+
+    @Test
+    public void sqlCaptureTest() {
+        CaptureRequest captureRequest = new CaptureRequestFake();
+        CaptureGroupRequest captureGroup = new CaptureGroupRequestFake();
+
+        SQLCapture sqlCapture = new SQLCapture(captureRequest, captureGroup);
+
+        List<SQLMediaCapture> sqlMediaCapturesActual = sqlCapture.asSQLCaptures("group1");
+
+        Capture capture = new CaptureFake();
+
+        SQLMediaCapture sqlMediaCapture = new SQLMediaCapture("group1", capture);
+
+        SQLMedia sqlMediaActual = new SQLMedia();
+        SQLMedia sqlMediaExpected = new SQLMedia();
+
+        SQLStatementMedia expected = sqlMediaCapture.asSql(sqlMediaExpected);
+
+        int loopsExecuted = 0;
+        for (SQLMediaCapture sqlMediaCaptureActual : sqlMediaCapturesActual) {
+            loopsExecuted++;
+            SQLStatementMedia actual = sqlMediaCaptureActual.asSql(sqlMediaActual);
+            Assertions.assertEquals(expected.asSql(), actual.asSql());
+        }
+        Assertions.assertEquals(1, loopsExecuted);
+
+    }
 
 }

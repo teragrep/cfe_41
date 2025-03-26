@@ -43,20 +43,56 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.fakes;
+package com.teragrep.cfe_41.importsql;
 
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.capture.CaptureResponse;
-import jakarta.json.Json;
+import com.teragrep.cfe_41.fakes.HostFake;
+import com.teragrep.cfe_41.fakes.HostGroupRequestFake;
+import com.teragrep.cfe_41.fakes.HostRequestFake;
+import com.teragrep.cfe_41.fakes.LinkageRequestFake;
+import com.teragrep.cfe_41.host.Host;
+import com.teragrep.cfe_41.host.HostRequest;
+import com.teragrep.cfe_41.hostGroup.HostGroupRequest;
+import com.teragrep.cfe_41.linkage.LinkageRequest;
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.util.List;
 
-public final class CaptureRequestFake implements CaptureRequest {
+public class SQLHostTest {
 
-    @Override
-    public CaptureResponse captureResponse(final int id, final String captureType) throws IOException {
-        return new CaptureResponse(
-                Json.createObjectBuilder().add("id", id).add("tag", "fake-tag").add("retention_time", "fake-retention").add("category", "fake-category").add("application", "fake-app").add("index", "fake-index").add("source_type", "fake-sourcetype").add("protocol", "fake-protocol").add("flow", "fake-flow").build()
-        );
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(SQLHost.class).verify();
+    }
+
+    @Test
+    public void sqlHostTest() {
+        LinkageRequest linkageRequest = new LinkageRequestFake();
+        HostGroupRequest hostGroupRequest = new HostGroupRequestFake();
+        HostRequest hostRequest = new HostRequestFake();
+
+        SQLHost sqlHost = new SQLHost(linkageRequest, hostGroupRequest, hostRequest);
+
+        List<SQLMediaHost> sqlMediaHostsActual = sqlHost.asSQLHosts("Group1");
+
+        Host host = new HostFake();
+
+        SQLMediaHost sqlMediaHost = new SQLMediaHost(host, "Group1");
+
+        SQLMedia sqlMediaActual = new SQLMedia();
+        SQLMedia sqlMediaExpected = new SQLMedia();
+
+        SQLStatementMedia expected = sqlMediaHost.asSql(sqlMediaExpected);
+
+        int loopsExecuted = 0;
+        for (SQLMediaHost sqlMediaHostActual : sqlMediaHostsActual) {
+            loopsExecuted++;
+            SQLStatementMedia actual = sqlMediaHostActual.asSql(sqlMediaActual);
+            Assertions.assertEquals(expected.asSql(), actual.asSql());
+        }
+        Assertions.assertEquals(1, loopsExecuted);
     }
 }
