@@ -52,16 +52,25 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileReader;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
 public final class TargetLookupFileTest {
+
+    @BeforeAll
+    static void createResourcesFolder() {
+        if (!Files.exists(Path.of("src/test/resources"))) {
+            Assertions.assertDoesNotThrow(() -> Files.createDirectories(Path.of("src/test/resources")));
+        }
+    }
 
     @Test
     void testEqualsContract() {
