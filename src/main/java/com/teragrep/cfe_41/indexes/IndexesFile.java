@@ -43,49 +43,52 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.target;
+package com.teragrep.cfe_41.indexes;
 
-import com.teragrep.cfe_41.capture.Capture;
-import com.teragrep.cfe_41.media.Media;
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
+import com.teragrep.cfe_41.media.JsonMedia;
+import com.teragrep.cfe_41.target.PrintableCaptures;
+import jakarta.json.JsonObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Objects;
 
-public final class PrintableCapturesImpl implements PrintableCaptures {
+public final class IndexesFile {
 
-    private final List<Capture> captures;
+    private final PrintableCaptures printableCaptures;
+    private final String directoryPath;
+    private final String captureGroupName;
 
-    public PrintableCapturesImpl() {
-        this(new ArrayList<>());
+    public IndexesFile(final PrintableCaptures printableCaptures, final String captureGroupName) {
+        this(printableCaptures, captureGroupName, "");
     }
 
-    public PrintableCapturesImpl(final List<Capture> captures) {
-        this.captures = captures;
+    public IndexesFile(
+            final PrintableCaptures printableCaptures,
+            final String captureGroupName,
+            final String directoryPath
+    ) {
+        this.printableCaptures = printableCaptures;
+        this.captureGroupName = captureGroupName;
+        this.directoryPath = directoryPath;
     }
 
-    @Override
-    public List<Capture> captures() {
-        return captures;
-    }
+    public void save() throws IOException {
+        final JsonObject json = printableCaptures.print(new JsonMedia()).asJson();
 
-    @Override
-    public PrintableCaptures withCapture(final Capture capture) {
-        final List<Capture> newCaptures = new ArrayList<>(captures);
-        newCaptures.add(capture);
-        return new PrintableCapturesImpl(newCaptures);
-    }
+        final String filename = captureGroupName.concat("_indexes.json");
 
-    @Override
-    public Media print(final Media media) {
-        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (final Capture capture : captures) {
-            arrayBuilder.add(Json.createObjectBuilder().add("index", capture.tag()).add("value", true).build());
+        final File file;
+        if (directoryPath.isEmpty()) {
+            file = new File(filename);
+        }
+        else {
+            file = new File(directoryPath, filename);
         }
 
-        return media.with("table", arrayBuilder.build());
+        Files.write(file.toPath(), json.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
@@ -93,12 +96,13 @@ public final class PrintableCapturesImpl implements PrintableCaptures {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final PrintableCapturesImpl that = (PrintableCapturesImpl) o;
-        return Objects.equals(captures, that.captures);
+        final IndexesFile that = (IndexesFile) o;
+        return Objects.equals(printableCaptures, that.printableCaptures) && Objects
+                .equals(directoryPath, that.directoryPath) && Objects.equals(captureGroupName, that.captureGroupName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(captures);
+        return Objects.hash(printableCaptures, directoryPath, captureGroupName);
     }
 }

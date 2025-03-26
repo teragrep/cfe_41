@@ -43,83 +43,60 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.target;
+package com.teragrep.cfe_41.indexes;
 
-import com.teragrep.cfe_41.fakes.CaptureFake;
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.fakes.CaptureGroupRequestFake;
+import com.teragrep.cfe_41.fakes.CaptureRequestFake;
+import com.teragrep.cfe_41.fakes.CaptureStorageRequestFake;
+import com.teragrep.cfe_41.fakes.EmptyCaptureGroupRequestFake;
+import com.teragrep.cfe_41.media.JsonMedia;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileReader;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.util.Map;
 
-public final class TargetLookupFileTest {
+public final class IndexesJsonTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(TargetLookupFile.class).verify();
+        EqualsVerifier.forClass(IndexesJson.class).verify();
     }
 
     @Test
-    void testSavingToFileIdealCase() {
-        final String targetPath = "src/test/resources/cgName_fake-storagename.json";
-        final TargetLookupFile targetLookupFile = new TargetLookupFile(
-                new PrintableTargetLookupCaptures(List.of(new CaptureFake())),
-                "cgName",
-                "fake-storagename",
-                "src/test/resources"
+    void testIndexesJsonIdealCase() throws IOException {
+        final IndexesJson indexesJson = new IndexesJson(
+                new ApiConfig(Map.of()),
+                "captureGroup1",
+                new CaptureGroupRequestFake(),
+                new CaptureStorageRequestFake(),
+                new CaptureRequestFake()
         );
-        Assertions.assertDoesNotThrow(targetLookupFile::save);
-
-        final Reader fileReader = Assertions.assertDoesNotThrow(() -> new FileReader(targetPath));
-        final JsonReader jsonReader = Json.createReader(fileReader);
-        final JsonObject objectFromFile = jsonReader.readObject();
 
         final JsonObject expected = Json
                 .createObjectBuilder()
-                .add("table", Json.createArrayBuilder().add(Json.createObjectBuilder().add("index", "fake-tag").add("value", true))).build();
+                .add("table", Json.createArrayBuilder().add(Json.createObjectBuilder().add("index", "fake-tag").add("value", "fake-index"))).build();
 
-        Assertions.assertEquals(expected, objectFromFile);
-
-        Assertions.assertDoesNotThrow(() -> {
-            jsonReader.close();
-            fileReader.close();
-            Files.delete(Paths.get(targetPath));
-        });
+        Assertions.assertEquals(expected, indexesJson.asPrintableCaptures().print(new JsonMedia()).asJson());
     }
 
     @Test
-    void testSavingToFileWithoutAnyTags() {
-        final String targetPath = "src/test/resources/cgName_fake-storagename.json";
-        final TargetLookupFile targetLookupFile = new TargetLookupFile(
-                new PrintableTargetLookupCaptures(Collections.emptyList()),
-                "cgName",
-                "fake-storagename",
-                "src/test/resources"
+    void testIndexesJsonEmpty() throws IOException {
+        final IndexesJson indexesJson = new IndexesJson(
+                new ApiConfig(Map.of()),
+                "captureGroup1",
+                new EmptyCaptureGroupRequestFake(),
+                new CaptureStorageRequestFake(),
+                new CaptureRequestFake()
         );
-        Assertions.assertDoesNotThrow(targetLookupFile::save);
-
-        final Reader fileReader = Assertions.assertDoesNotThrow(() -> new FileReader(targetPath));
-        final JsonReader jsonReader = Json.createReader(fileReader);
-        final JsonObject objectFromFile = jsonReader.readObject();
 
         final JsonObject expected = Json.createObjectBuilder().add("table", JsonValue.EMPTY_JSON_ARRAY).build();
 
-        Assertions.assertEquals(expected, objectFromFile);
-
-        Assertions.assertDoesNotThrow(() -> {
-            jsonReader.close();
-            fileReader.close();
-            Files.delete(Paths.get(targetPath));
-        });
+        Assertions.assertEquals(expected, indexesJson.asPrintableCaptures().print(new JsonMedia()).asJson());
     }
-
 }
