@@ -46,7 +46,10 @@
 package com.teragrep.cfe_41.importsql;
 
 import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.captureGroup.*;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequestImpl;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
+import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
 import com.teragrep.cfe_41.media.SQLMedia;
 import com.teragrep.cfe_41.media.SQLStatementMedia;
 

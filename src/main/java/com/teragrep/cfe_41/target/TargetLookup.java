@@ -46,7 +46,14 @@
 package com.teragrep.cfe_41.target;
 
 import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.capture.*;
+import com.teragrep.cfe_41.capture.CaptureRequest;
+import com.teragrep.cfe_41.capture.CaptureRequestImpl;
+import com.teragrep.cfe_41.capture.CaptureStorageRequest;
+import com.teragrep.cfe_41.capture.CaptureStorageRequestImpl;
+import com.teragrep.cfe_41.capture.CaptureStorageResponse;
+import com.teragrep.cfe_41.capture.CaptureStorage;
+import com.teragrep.cfe_41.capture.CaptureResponse;
+import com.teragrep.cfe_41.capture.PartialCaptureStorageResponse;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupRequestImpl;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;

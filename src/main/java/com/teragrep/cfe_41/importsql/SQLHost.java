@@ -58,7 +58,11 @@ import com.teragrep.cfe_41.linkage.LinkageResponse;
 import com.teragrep.cfe_41.linkage.PartialLinkageResponse;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public final class SQLHost {
 
@@ -71,7 +75,11 @@ public final class SQLHost {
 
     }
 
-    public SQLHost(LinkageRequest linkageRequest, HostGroupRequest hostGroupRequest, HostRequest hostRequest) {
+    public SQLHost(
+            final LinkageRequest linkageRequest,
+            final HostGroupRequest hostGroupRequest,
+            final HostRequest hostRequest
+    ) {
         this.linkageRequest = linkageRequest;
         this.hostGroupRequest = hostGroupRequest;
         this.hostRequest = hostRequest;
@@ -80,7 +88,7 @@ public final class SQLHost {
     public List<SQLMediaHost> asSQLHosts(final String captureGroupName) {
         final Set<PartialLinkageResponse> partialLinkageResponses;
         try {
-            LinkageResponse linkageResponse = linkageRequest.linkageResponse(captureGroupName);
+            final LinkageResponse linkageResponse = linkageRequest.linkageResponse(captureGroupName);
             // Get partials which show in detail which host groups are linked with capture groups
             partialLinkageResponses = new HashSet<>(linkageResponse.partialLinkageResponses());
         }
@@ -104,11 +112,11 @@ public final class SQLHost {
         for (HostGroupResponse hostGroupResponse : hostGroupResponses) {
             partialHostResponses.addAll(hostGroupResponse.partialHostResponses());
         }
-        List<SQLMediaHost> sqlMediaHosts = new ArrayList<>();
+        final List<SQLMediaHost> sqlMediaHosts = new ArrayList<>();
         // Inserts hosts to sqlStatement
         try {
             for (PartialHostResponse host : partialHostResponses) {
-                SQLMediaHost sqlMediaHost = new SQLMediaHost(
+                final SQLMediaHost sqlMediaHost = new SQLMediaHost(
                         hostRequest.hostResponse(host.hostId(), host.hostGroupType()),
                         captureGroupName
                 );

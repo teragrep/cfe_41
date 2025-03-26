@@ -62,9 +62,9 @@ public final class SQLTemplate {
     private final StringWriter sw = new StringWriter();
 
     public String startTemplate() {
-        Query queryGroup = ctx.deleteFrom(DSL.table("log_group"));
-        Query queryHost = ctx.deleteFrom(DSL.table("host"));
-        Query queryStream = ctx.deleteFrom(DSL.table("stream"));
+        final Query queryGroup = ctx.deleteFrom(DSL.table("log_group"));
+        final Query queryHost = ctx.deleteFrom(DSL.table("host"));
+        final Query queryStream = ctx.deleteFrom(DSL.table("stream"));
         sw.write("START TRANSACTION;\n");
         sw.write(queryGroup + ";\n");
         sw.write(queryHost + ";\n");
