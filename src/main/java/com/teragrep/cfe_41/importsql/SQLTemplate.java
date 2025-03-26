@@ -43,11 +43,62 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.importsql;
 
-import java.io.IOException;
+import org.jooq.DSLContext;
+import org.jooq.Query;
+import org.jooq.SQLDialect;
+import org.jooq.conf.RenderKeywordCase;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
-public interface CaptureRequest {
+import java.io.StringWriter;
+import java.util.Objects;
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+public final class SQLTemplate {
+
+    private final DSLContext ctx;
+    private final StringWriter sw;
+
+    public SQLTemplate() {
+        this(
+                DSL.using(SQLDialect.MYSQL, new Settings().withRenderKeywordCase(RenderKeywordCase.UPPER)),
+                new StringWriter()
+        );
+    }
+
+    public SQLTemplate(final DSLContext ctx,final StringWriter sw) {
+        this.ctx = ctx;
+        this.sw = sw;
+    }
+
+    public String startTemplate() {
+        final Query queryGroup = ctx.deleteFrom(DSL.table("log_group"));
+        final Query queryHost = ctx.deleteFrom(DSL.table("host"));
+        final Query queryStream = ctx.deleteFrom(DSL.table("stream"));
+        sw.write("START TRANSACTION;\n");
+        sw.write(queryGroup + ";\n");
+        sw.write(queryHost + ";\n");
+        sw.write(queryStream + ";\n");
+        return sw.toString();
+    }
+
+    public String endTemplate() {
+        sw.write("COMMIT;");
+        return sw.toString();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SQLTemplate that = (SQLTemplate) o;
+        return Objects.equals(ctx, that.ctx) && Objects.equals(sw, that.sw);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ctx, sw);
+    }
 }

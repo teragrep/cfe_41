@@ -49,5 +49,5 @@ import java.io.IOException;
 
 public interface CaptureGroupRequest {
 
-    CaptureGroupResponse captureGroupResponse(String groupName) throws IOException;
+    public abstract CaptureGroupResponse captureGroupResponse(String groupName) throws IOException;
 }

@@ -43,11 +43,51 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.captureGroup;
 
-import java.io.IOException;
+import jakarta.json.JsonObject;
 
-public interface CaptureRequest {
+import java.util.Objects;
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+public final class PartialCaptureGroupResponse implements CaptureGroup {
+
+    private final JsonObject jsonObject;
+
+    public PartialCaptureGroupResponse(final JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
+    @Override
+    public String groupName() {
+        return jsonObject.getString("capture_def_group_name");
+    }
+
+    @Override
+    public int captureDefinitionId() {
+        return jsonObject.getInt("capture_definition_id");
+    }
+
+    @Override
+    public String captureGroupType() {
+        return jsonObject.getString("capture_group_type");
+    }
+
+    @Override
+    public int id() {
+        return jsonObject.getInt("id");
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PartialCaptureGroupResponse that = (PartialCaptureGroupResponse) o;
+        return Objects.equals(jsonObject, that.jsonObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonObject);
+    }
 }

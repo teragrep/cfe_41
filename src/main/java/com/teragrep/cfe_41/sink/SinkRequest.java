@@ -45,56 +45,9 @@
  */
 package com.teragrep.cfe_41.sink;
 
-import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-
 import java.io.IOException;
-import java.util.Objects;
 
-public final class SinkRequest {
+public interface SinkRequest {
 
-    private final String flowName;
-    private final String protocolType;
-    private final ApiConfig apiConfig;
-
-    public SinkRequest(final String flowName, final String protocolType, final ApiConfig apiConfig) {
-        this.flowName = flowName;
-        this.protocolType = protocolType;
-        this.apiConfig = apiConfig;
-    }
-
-    public SinkResponse sinkResponse() throws IOException {
-        final JsonArray sinksArray = new Response(new RequestData("/sink", apiConfig).doRequest()).asJsonArray();
-
-        for (JsonValue sinkjson : sinksArray) {
-            final JsonObject sinkJsonObject = sinkjson.asJsonObject();
-            // If flow and protocol match the object attributes then return ip address and port for configuration file
-            final SinkResponse sinkResponse = new SinkResponse(sinkJsonObject);
-            if (flowName.equals(sinkResponse.flowName()) && protocolType.equals(sinkResponse.protocolType())) {
-                return sinkResponse;
-            }
-        }
-
-        throw new IllegalStateException("No sink found");
-
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final SinkRequest that = (SinkRequest) o;
-        return Objects.equals(flowName, that.flowName) && Objects.equals(protocolType, that.protocolType)
-                && Objects.equals(apiConfig, that.apiConfig);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(flowName, protocolType, apiConfig);
-    }
+    public abstract SinkResponse sinkResponse(String flowName, String protocolType) throws IOException;
 }

@@ -49,5 +49,5 @@ import java.io.IOException;
 
 public interface HostGroupRequest {
 
-    public abstract HostGroupResponse hostGroupResponse() throws IOException;
+    public abstract HostGroupResponse hostGroupResponse(String hostGroupName) throws IOException;
 }
