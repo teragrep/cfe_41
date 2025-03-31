@@ -43,37 +43,27 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonStructure;
 
-import java.util.Map;
+import java.util.Collection;
 
-public class Main {
+public final class JsonableArray implements Jsonable {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final Collection<Jsonable> jsonables;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
+    public JsonableArray(final Collection<Jsonable> jsonables) {
+        this.jsonables = jsonables;
+    }
+
+    public JsonStructure asJsonStructure() {
+        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (final Jsonable jsonable : jsonables) {
+            arrayBuilder.add(jsonable.asJsonStructure());
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
-
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+        return arrayBuilder.build();
     }
 }

@@ -43,37 +43,58 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.media.Media;
+import jakarta.json.JsonObject;
 
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Objects;
 
-public class Main {
+public final class CFE04ConfigFile {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final Media media;
+    private final String directoryPath;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
+    public CFE04ConfigFile(final Media media) {
+        this(media, "");
+    }
+
+    public CFE04ConfigFile(final Media media, final String directoryPath) {
+        this.media = media;
+        this.directoryPath = directoryPath;
+    }
+
+    public void save() throws IOException {
+        final JsonObject json = media.asJson();
+
+        final String filename = "config.json";
+
+        final File file;
+        if (directoryPath.isEmpty()) {
+            file = new File(filename);
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
+        else {
+            file = new File(directoryPath, filename);
         }
 
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+        Files.write(file.toPath(), json.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CFE04ConfigFile that = (CFE04ConfigFile) o;
+        return Objects.equals(media, that.media) && Objects.equals(directoryPath, that.directoryPath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(media, directoryPath);
     }
 }

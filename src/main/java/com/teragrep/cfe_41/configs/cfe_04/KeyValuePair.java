@@ -43,37 +43,38 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.json.Json;
+import jakarta.json.JsonStructure;
 
-import java.util.Map;
+import java.util.Objects;
 
-public class Main {
+public final class KeyValuePair implements Jsonable {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final String key;
+    private final String value;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
+    public KeyValuePair(final String key, final String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public JsonStructure asJsonStructure() {
+        return Json.createObjectBuilder().add("key", key).add("value", value).build();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        final KeyValuePair that = (KeyValuePair) o;
+        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, value);
     }
 }

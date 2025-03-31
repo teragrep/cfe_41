@@ -43,37 +43,42 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
-
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.teragrep.cfe_41.configs.cfe_04;
 
 import java.util.Map;
+import java.util.List;
 
-public class Main {
+public final class VerifiedConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final Map<String, String> config;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+    public VerifiedConfig(final Map<String, String> config) {
+        this.config = config;
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+    public Map<String, String> asValidatedMap() {
+
+        List<String> keys = List
+                .of(
+                        "cfe_04.global.truncate", "cfe_04.global.last_chance_index",
+                        "cfe_04.global.last_chance_index_malformed", "cfe_04.global.max_days_ago",
+
+                        "cfe_04.config.index.home.path.template", "cfe_04.config.index.cold.path.template",
+                        "cfe_04.config.index.thawed.path.template", "cfe_04.config.index.summary.home.path",
+
+                        "cfe_04.config.sourcetype.max_days_ago", "cfe_04.config.sourcetype.category",
+                        "cfe_04.config.sourcetype.description", "cfe_04.config.sourcetype.truncate",
+                        "cfe_04.config.sourcetype.freeform_indexer_enabled",
+                        "cfe_04.config.sourcetype.freeform_indexer_text",
+                        "cfe_04.config.sourcetype.freeform_lb_enabled", "cfe_04.config.sourcetype.freeform_lb_text"
+                );
+
+        keys.forEach(key -> {
+            if (!config.containsKey(key)) {
+                throw new IllegalArgumentException("Key " + key + " not found in configuration");
+            }
+        });
+
+        return config;
     }
 }

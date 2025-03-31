@@ -43,37 +43,59 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.json.Json;
+import jakarta.json.JsonStructure;
 
 import java.util.Map;
+import java.util.Objects;
 
-public class Main {
+public final class Global implements Jsonable {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private final String truncate;
+    private final String lci;
+    private final String lciMalformed;
+    private final String maxDaysAgo;
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
+    public Global(final Map<String, String> config) {
+        this(
+                config.get("cfe_04.global.truncate"),
+                config.get("cfe_04.global.last_chance_index"),
+                config.get("cfe_04.global.last_chance_index_malformed"),
+                config.get("cfe_04.global.max_days_ago")
+        );
+    }
+
+    public Global(final String truncate, final String lci, final String lciMalformed, final String maxDaysAgo) {
+        this.truncate = truncate;
+        this.lci = lci;
+        this.lciMalformed = lciMalformed;
+        this.maxDaysAgo = maxDaysAgo;
+    }
+
+    @Override
+    public JsonStructure asJsonStructure() {
+        return Json
+                .createObjectBuilder()
+                .add("truncate", truncate)
+                .add("last_chance_index", lci)
+                .add("last_chance_index_malformed", lciMalformed)
+                .add("max_days_ago", maxDaysAgo)
+                .build();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        final Global global = (Global) o;
+        return Objects.equals(truncate, global.truncate) && Objects.equals(lci, global.lci) && Objects.equals(lciMalformed, global.lciMalformed) && Objects.equals(maxDaysAgo, global.maxDaysAgo);
+    }
 
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+    @Override
+    public int hashCode() {
+        return Objects.hash(truncate, lci, lciMalformed, maxDaysAgo);
     }
 }
