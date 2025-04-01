@@ -71,6 +71,10 @@ public final class CFE04ConfigTest {
         );
         final JsonObject output = config.print(new JsonMedia()).asJson();
 
+        final JsonObject expMeta = Json.createObjectBuilder()
+                .add("name", "meta-name")
+                .build();
+
         final JsonObject expIndex = Json.createObjectBuilder()
                 .add("name", "fake-index")
                 .add("repFactor", "auto")
@@ -103,7 +107,7 @@ public final class CFE04ConfigTest {
                 .build();
 
         final JsonObject expected = Json.createObjectBuilder()
-                .add("_meta", JsonValue.EMPTY_JSON_OBJECT)
+                .add("_meta", expMeta)
                 .add("volumes", JsonValue.EMPTY_JSON_ARRAY)
                 .add("indexes", Json.createArrayBuilder().add(expIndex))
                 .add("sourcetypes", Json.createArrayBuilder().add(expSourcetype))
@@ -125,6 +129,10 @@ public final class CFE04ConfigTest {
         );
         final JsonObject output = config.print(new JsonMedia()).asJson();
 
+        final JsonObject expMeta = Json.createObjectBuilder()
+                .add("name", "meta-name")
+                .build();
+
         final JsonObject expGlobal = Json.createObjectBuilder()
                 .add("truncate", "12345")
                 .add("last_chance_index", "lci")
@@ -133,7 +141,7 @@ public final class CFE04ConfigTest {
                 .build();
 
         final JsonObject expected = Json.createObjectBuilder()
-                .add("_meta", JsonValue.EMPTY_JSON_OBJECT)
+                .add("_meta", expMeta)
                 .add("volumes", JsonValue.EMPTY_JSON_ARRAY)
                 .add("indexes", JsonValue.EMPTY_JSON_ARRAY)
                 .add("sourcetypes", JsonValue.EMPTY_JSON_ARRAY)

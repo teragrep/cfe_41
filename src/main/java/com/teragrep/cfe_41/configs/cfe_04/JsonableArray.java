@@ -50,6 +50,7 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonStructure;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public final class JsonableArray implements Jsonable {
 
@@ -65,5 +66,19 @@ public final class JsonableArray implements Jsonable {
             arrayBuilder.add(jsonable.asJsonStructure());
         }
         return arrayBuilder.build();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final JsonableArray that = (JsonableArray) o;
+        return Objects.equals(jsonables, that.jsonables);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonables);
     }
 }
