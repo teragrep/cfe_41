@@ -70,12 +70,19 @@ public final class VerifiedConfig {
                         "cfe_04.config.sourcetype.description", "cfe_04.config.sourcetype.truncate",
                         "cfe_04.config.sourcetype.freeform_indexer_enabled",
                         "cfe_04.config.sourcetype.freeform_indexer_text",
-                        "cfe_04.config.sourcetype.freeform_lb_enabled", "cfe_04.config.sourcetype.freeform_lb_text"
+                        "cfe_04.config.sourcetype.freeform_lb_enabled",
+                        "cfe_04.config.sourcetype.freeform_lb_text",
+                        "cfe_04.meta.name"
                 );
 
         keys.forEach(key -> {
             if (!config.containsKey(key)) {
                 throw new IllegalArgumentException("Key " + key + " not found in configuration");
+            }
+            else {
+                if (key.contains("template") && !config.get(key).contains("%s")) {
+                    throw new IllegalArgumentException("Key " + key + " contains malformed template");
+                }
             }
         });
 

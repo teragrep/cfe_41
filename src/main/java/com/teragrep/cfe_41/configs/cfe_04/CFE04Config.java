@@ -107,7 +107,7 @@ public final class CFE04Config implements Printable {
         }
 
         return media
-                .with("_meta", JsonValue.EMPTY_JSON_OBJECT) // TODO: _meta object
+                .with("_meta", new Meta(config).asJsonStructure())
                 .with("volumes", JsonValue.EMPTY_JSON_ARRAY) // TODO: volumes object
                 .with("indexes", new JsonableArray(indexes).asJsonStructure())
                 .with("sourcetypes", new JsonableArray(sourcetypes).asJsonStructure())
