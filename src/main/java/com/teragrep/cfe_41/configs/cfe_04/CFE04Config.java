@@ -122,7 +122,8 @@ public final class CFE04Config implements Printable {
             return false;
         }
         final CFE04Config that = (CFE04Config) o;
-        return Objects.equals(config, that.config) && Objects.equals(captureGroupAllRequest, that.captureGroupAllRequest) && Objects.equals(captureRequest, that.captureRequest) && Objects.equals(captureStorageRequest, that.captureStorageRequest);
+        return Objects.equals(config, that.config)
+                && Objects.equals(captureGroupAllRequest, that.captureGroupAllRequest) && Objects.equals(captureRequest, that.captureRequest) && Objects.equals(captureStorageRequest, that.captureStorageRequest);
     }
 
     @Override

@@ -71,23 +71,26 @@ public final class CFE04ConfigTest {
         );
         final JsonObject output = config.print(new JsonMedia()).asJson();
 
-        final JsonObject expMeta = Json.createObjectBuilder()
-                .add("name", "meta-name")
-                .build();
+        final JsonObject expMeta = Json.createObjectBuilder().add("name", "meta-name").build();
 
-        final JsonObject expIndex = Json.createObjectBuilder()
+        final JsonObject expIndex = Json
+                .createObjectBuilder()
                 .add("name", "fake-index")
                 .add("repFactor", "auto")
                 .add("disabled", "false")
                 .add("homePath", "fake:home0/fake-index/fake")
                 .add("coldPath", "fake:cold0/fake-index/fake")
                 .add("thawedPath", "fake:thaw0/fake-index/fake")
-                .add("override", Json.createArrayBuilder().add(Json.createObjectBuilder().add("key","frozenTimePeriodInSecs").add("value", "2592000")))
+                .add(
+                        "override",
+                        Json.createArrayBuilder().add(Json.createObjectBuilder().add("key", "frozenTimePeriodInSecs").add("value", "2592000"))
+                )
                 .add("summaryHomePath", "fake:summary/summary/fake/fake")
                 .build();
 
-        final JsonObject expSourcetype = Json.createObjectBuilder()
-                .add("name","fake-source")
+        final JsonObject expSourcetype = Json
+                .createObjectBuilder()
+                .add("name", "fake-source")
                 .add("max_days_ago", "25")
                 .add("category", "Fake category")
                 .add("description", "Fake description")
@@ -99,14 +102,16 @@ public final class CFE04ConfigTest {
                 .add("freeform_lb_text", "")
                 .build();
 
-        final JsonObject expGlobal = Json.createObjectBuilder()
+        final JsonObject expGlobal = Json
+                .createObjectBuilder()
                 .add("truncate", "12345")
                 .add("last_chance_index", "lci")
                 .add("last_chance_index_malformed", "lci_malformed")
                 .add("max_days_ago", "25")
                 .build();
 
-        final JsonObject expected = Json.createObjectBuilder()
+        final JsonObject expected = Json
+                .createObjectBuilder()
                 .add("_meta", expMeta)
                 .add("volumes", JsonValue.EMPTY_JSON_ARRAY)
                 .add("indexes", Json.createArrayBuilder().add(expIndex))
@@ -129,18 +134,18 @@ public final class CFE04ConfigTest {
         );
         final JsonObject output = config.print(new JsonMedia()).asJson();
 
-        final JsonObject expMeta = Json.createObjectBuilder()
-                .add("name", "meta-name")
-                .build();
+        final JsonObject expMeta = Json.createObjectBuilder().add("name", "meta-name").build();
 
-        final JsonObject expGlobal = Json.createObjectBuilder()
+        final JsonObject expGlobal = Json
+                .createObjectBuilder()
                 .add("truncate", "12345")
                 .add("last_chance_index", "lci")
                 .add("last_chance_index_malformed", "lci_malformed")
                 .add("max_days_ago", "25")
                 .build();
 
-        final JsonObject expected = Json.createObjectBuilder()
+        final JsonObject expected = Json
+                .createObjectBuilder()
                 .add("_meta", expMeta)
                 .add("volumes", JsonValue.EMPTY_JSON_ARRAY)
                 .add("indexes", JsonValue.EMPTY_JSON_ARRAY)

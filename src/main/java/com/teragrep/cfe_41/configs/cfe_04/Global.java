@@ -91,7 +91,8 @@ public final class Global implements Jsonable {
             return false;
         }
         final Global global = (Global) o;
-        return Objects.equals(truncate, global.truncate) && Objects.equals(lci, global.lci) && Objects.equals(lciMalformed, global.lciMalformed) && Objects.equals(maxDaysAgo, global.maxDaysAgo);
+        return Objects.equals(truncate, global.truncate) && Objects.equals(lci, global.lci)
+                && Objects.equals(lciMalformed, global.lciMalformed) && Objects.equals(maxDaysAgo, global.maxDaysAgo);
     }
 
     @Override

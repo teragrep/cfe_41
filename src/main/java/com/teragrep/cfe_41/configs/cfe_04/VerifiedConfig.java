@@ -70,8 +70,7 @@ public final class VerifiedConfig {
                         "cfe_04.config.sourcetype.description", "cfe_04.config.sourcetype.truncate",
                         "cfe_04.config.sourcetype.freeform_indexer_enabled",
                         "cfe_04.config.sourcetype.freeform_indexer_text",
-                        "cfe_04.config.sourcetype.freeform_lb_enabled",
-                        "cfe_04.config.sourcetype.freeform_lb_text",
+                        "cfe_04.config.sourcetype.freeform_lb_enabled", "cfe_04.config.sourcetype.freeform_lb_text",
                         "cfe_04.meta.name"
                 );
 
