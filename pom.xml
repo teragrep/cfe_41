@@ -145,6 +145,7 @@
             <exclude>eclipse-java-formatter.xml</exclude>
             <!-- log4j.xml -->
             <exclude>src/main/resources/log4j2.xml</exclude>
+            <exclude>src/test/resources/.empty</exclude>
           </excludes>
         </configuration>
         <executions>
