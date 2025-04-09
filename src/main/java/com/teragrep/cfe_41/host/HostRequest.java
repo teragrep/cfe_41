@@ -47,8 +47,8 @@ package com.teragrep.cfe_41.host;
 
 import java.io.IOException;
 
-interface HostRequest {
+public interface HostRequest {
 
-    public abstract HostResponse hostResponse() throws IOException;
+    public abstract HostResponse hostResponse(final int id, final String hostType) throws IOException;
 
 }

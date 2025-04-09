@@ -43,37 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.captureGroup;
+package com.teragrep.cfe_41.media;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+public interface SQLStatementMedia {
 
-public class PartialCaptureResponseTest {
+    public abstract SQLStatementMedia withStream(String logGroupName, String directory, String stream, String tag);
 
-    @Test
-    public void testContract() {
-        EqualsVerifier.forClass(PartialCaptureResponse.class).verify();
-    }
+    public abstract SQLStatementMedia withLogGroup(String logGroupName);
 
-    @Test
-    public void partialCaptureResponseTest() {
-        JsonObjectBuilder partialCaptureResponseBuilder = Json.createObjectBuilder();
-        partialCaptureResponseBuilder.add("capture_def_group_name", "captureGroup1");
-        partialCaptureResponseBuilder.add("capture_definition_id", 1);
-        partialCaptureResponseBuilder.add("capture_group_type", "relp");
-        partialCaptureResponseBuilder.add("id", 1);
-        JsonObject partialCaptureResponse = partialCaptureResponseBuilder.build();
+    public abstract SQLStatementMedia withHost(String hostName, String logGroupName);
 
-        PartialCaptureResponse captureResponse = new PartialCaptureResponse(partialCaptureResponse);
-
-        Assertions.assertEquals("captureGroup1", captureResponse.groupName());
-        Assertions.assertEquals(1, captureResponse.captureDefinitionId());
-        Assertions.assertEquals("relp", captureResponse.captureGroupType());
-        Assertions.assertEquals(1, captureResponse.groupId());
-
-    }
+    public abstract String asSql();
 }

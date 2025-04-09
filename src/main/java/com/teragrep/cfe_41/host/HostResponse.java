@@ -49,7 +49,7 @@ import jakarta.json.JsonObject;
 
 import java.util.Objects;
 
-public final class HostResponse {
+public final class HostResponse implements Host {
 
     private final JsonObject response;
 
@@ -57,10 +57,12 @@ public final class HostResponse {
         this.response = response;
     }
 
+    @Override
     public String md5() {
         return response.getString("md5");
     }
 
+    @Override
     public String fqHost() {
         return response.getString("fqHost");
     }

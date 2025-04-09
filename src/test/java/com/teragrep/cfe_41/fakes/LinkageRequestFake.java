@@ -43,11 +43,20 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.fakes;
+
+import com.teragrep.cfe_41.linkage.LinkageRequest;
+import com.teragrep.cfe_41.linkage.LinkageResponse;
+import jakarta.json.Json;
 
 import java.io.IOException;
 
-public interface CaptureRequest {
+public final class LinkageRequestFake implements LinkageRequest {
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    @Override
+    public LinkageResponse linkageResponse(final String groupName) throws IOException {
+        return new LinkageResponse(
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("id", 1).add("capture_group_name", groupName).add("host_group_name", groupName).add("host_group_type", "relp").add("capture_group_type", "relp").add("host_group_id", 1).add("capture_group_id", 1)).build()
+        );
+    }
 }

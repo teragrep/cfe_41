@@ -43,47 +43,20 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.captureGroup;
+package com.teragrep.cfe_41.fakes;
 
-import jakarta.json.JsonObject;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
+import jakarta.json.Json;
 
-import java.util.Objects;
+import java.io.IOException;
 
-public final class PartialCaptureResponse {
-
-    private final JsonObject jsonObject;
-
-    public PartialCaptureResponse(final JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
-    }
-
-    public String groupName() {
-        return jsonObject.getString("capture_def_group_name");
-    }
-
-    public int captureDefinitionId() {
-        return jsonObject.getInt("capture_definition_id");
-    }
-
-    public String captureGroupType() {
-        return jsonObject.getString("capture_group_type");
-    }
-
-    public int groupId() {
-        return jsonObject.getInt("id");
-    }
+public final class CaptureGroupAllRequestFake implements CaptureGroupAllRequest {
 
     @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final PartialCaptureResponse that = (PartialCaptureResponse) o;
-        return Objects.equals(jsonObject, that.jsonObject);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(jsonObject);
+    public CaptureGroupResponse captureGroupResponse() throws IOException {
+        return new CaptureGroupResponse(
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group1").add("capture_definition_id", 1).add("capture_group_type", "relp").add("id", 1)).add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group2").add("capture_definition_id", 2).add("capture_group_type", "relp").add("id", 2)).add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group2").add("capture_definition_id", 3).add("capture_group_type", "relp").add("id", 3)).build()
+        );
     }
 }

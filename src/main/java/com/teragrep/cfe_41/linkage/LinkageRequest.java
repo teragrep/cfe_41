@@ -49,5 +49,5 @@ import java.io.IOException;
 
 public interface LinkageRequest {
 
-    public abstract LinkageResponse linkageResponse() throws IOException;
+    public abstract LinkageResponse linkageResponse(final String groupName) throws IOException;
 }
