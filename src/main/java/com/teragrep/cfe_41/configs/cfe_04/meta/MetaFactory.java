@@ -11,7 +11,7 @@ public final class MetaFactory {
 
     public Meta meta() {
         if (!config.containsKey("cfe_04.meta.name")) {
-            throw new IllegalArgumentException("Missing required property 'cfe_04.meta.name'");
+            throw new IllegalArgumentException("Config cfe_04.meta.name not specified");
         }
 
         return new Meta(config.get("cfe_04.meta.name"));

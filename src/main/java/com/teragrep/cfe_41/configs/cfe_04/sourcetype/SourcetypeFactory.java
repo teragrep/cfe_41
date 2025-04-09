@@ -13,35 +13,35 @@ public final class SourcetypeFactory {
 
     public Sourcetype sourcetype(final String name) {
         if (!config.containsKey("cfe_04.config.sourcetype.max_days_ago")) {
-            throw new IllegalArgumentException("cfe_04.config.sourcetype.max_days_ago must be set");
+            throw new IllegalArgumentException("Config cfe_04.config.sourcetype.max_days_ago not specified");
         }
 
         if (!config.containsKey("cfe_04.config.sourcetype.category")) {
-            throw new IllegalArgumentException("cfe_04.config.sourcetype.category must be set");
+            throw new IllegalArgumentException("Config cfe_04.config.sourcetype.category not specified");
         }
 
         if (!config.containsKey("cfe_04.config.sourcetype.description")) {
-            throw new IllegalArgumentException("cfe_04.config.sourcetype.description must be set");
+            throw new IllegalArgumentException("Config cfe_04.config.sourcetype.description not specified");
         }
 
         if (!config.containsKey("cfe_04.config.sourcetype.truncate")) {
-            throw new IllegalArgumentException("cfe_04.config.sourcetype.truncate must be set");
+            throw new IllegalArgumentException("Config cfe_04.config.sourcetype.truncate not specified");
         }
 
         if (!config.containsKey("cfe_04.config.sourcetype.freeform_indexer_enabled")) {
-            throw new IllegalArgumentException("cfe_04.config.sourcetype.freeform_indexer_enabled must be set");
+            throw new IllegalArgumentException("Config cfe_04.config.sourcetype.freeform_indexer_enabled not specified");
         }
 
         if (!config.containsKey("cfe_04.config.sourcetype.freeform_indexer_text")) {
-            throw new IllegalArgumentException("cfe_04.config.sourcetype.freeform_indexer_text must be set");
+            throw new IllegalArgumentException("Config cfe_04.config.sourcetype.freeform_indexer_text not specified");
         }
 
         if (!config.containsKey("cfe_04.config.sourcetype.freeform_lb_enabled")) {
-            throw new IllegalArgumentException("cfe_04.config.sourcetype.freeform_lb_enabled must be set");
+            throw new IllegalArgumentException("Config cfe_04.config.sourcetype.freeform_lb_enabled not specified");
         }
 
         if (!config.containsKey("cfe_04.config.sourcetype.freeform_lb_text")) {
-            throw new IllegalArgumentException("cfe_04.config.sourcetype.freeform_lb_text must be set");
+            throw new IllegalArgumentException("Config cfe_04.config.sourcetype.freeform_lb_text not specified");
         }
 
         return new Sourcetype(
