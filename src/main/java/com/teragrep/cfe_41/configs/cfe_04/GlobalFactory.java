@@ -22,7 +22,7 @@ public final class GlobalFactory {
             throw new IllegalArgumentException("cfe_04.global.last_chance_index_malformed not specified");
         }
 
-        if (!config.containsKey(config.get("cfe_04.global.max_days_ago"))) {
+        if (!config.containsKey("cfe_04.global.max_days_ago")) {
             throw new IllegalArgumentException("cfe_04.global.max_days_ago not specified");
         }
 

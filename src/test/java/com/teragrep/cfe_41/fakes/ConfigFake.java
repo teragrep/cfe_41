@@ -72,6 +72,7 @@ public final class ConfigFake {
         map.put("cfe_04.config.sourcetype.freeform_lb_text", "");
 
         map.put("cfe_04.meta.name", "meta-name");
+
         return map;
     }
 }
