@@ -43,36 +43,25 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.configs.cfe_04;
+package com.teragrep.cfe_41.configs.cfe_04.meta;
 
+import com.teragrep.cfe_41.configs.cfe_04.Jsonable;
 import jakarta.json.Json;
 import jakarta.json.JsonStructure;
 
 import java.util.Objects;
 
-public final class Global implements Jsonable {
+public final class Meta implements Jsonable {
 
-    private final String truncate;
-    private final String lci;
-    private final String lciMalformed;
-    private final String maxDaysAgo;
+    private final String name;
 
-    public Global(final String truncate, final String lci, final String lciMalformed, final String maxDaysAgo) {
-        this.truncate = truncate;
-        this.lci = lci;
-        this.lciMalformed = lciMalformed;
-        this.maxDaysAgo = maxDaysAgo;
+    public Meta(final String name) {
+        this.name = name;
     }
 
     @Override
     public JsonStructure asJsonStructure() {
-        return Json
-                .createObjectBuilder()
-                .add("truncate", truncate)
-                .add("last_chance_index", lci)
-                .add("last_chance_index_malformed", lciMalformed)
-                .add("max_days_ago", maxDaysAgo)
-                .build();
+        return Json.createObjectBuilder().add("name", name).build();
     }
 
     @Override
@@ -80,13 +69,12 @@ public final class Global implements Jsonable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Global global = (Global) o;
-        return Objects.equals(truncate, global.truncate) && Objects.equals(lci, global.lci)
-                && Objects.equals(lciMalformed, global.lciMalformed) && Objects.equals(maxDaysAgo, global.maxDaysAgo);
+        final Meta meta = (Meta) o;
+        return Objects.equals(name, meta.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(truncate, lci, lciMalformed, maxDaysAgo);
+        return Objects.hashCode(name);
     }
 }

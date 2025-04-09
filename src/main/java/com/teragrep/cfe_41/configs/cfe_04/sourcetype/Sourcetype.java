@@ -43,13 +43,13 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.configs.cfe_04;
+package com.teragrep.cfe_41.configs.cfe_04.sourcetype;
 
+import com.teragrep.cfe_41.configs.cfe_04.Jsonable;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public final class Sourcetype implements Jsonable {
@@ -64,21 +64,6 @@ public final class Sourcetype implements Jsonable {
     private final String freeform_indexer_text;
     private final String freeform_lb_enabled;
     private final String freeform_lb_text;
-
-    public Sourcetype(final String name, final Map<String, String> config) {
-        this(
-                name,
-                config.get("cfe_04.config.sourcetype.max_days_ago"),
-                config.get("cfe_04.config.sourcetype.category"),
-                config.get("cfe_04.config.sourcetype.description"),
-                List.of(),
-                config.get("cfe_04.config.sourcetype.truncate"),
-                config.get("cfe_04.config.sourcetype.freeform_indexer_enabled"),
-                config.get("cfe_04.config.sourcetype.freeform_indexer_text"),
-                config.get("cfe_04.config.sourcetype.freeform_lb_enabled"),
-                config.get("cfe_04.config.sourcetype.freeform_lb_text")
-        );
-    }
 
     public Sourcetype(
             final String name,

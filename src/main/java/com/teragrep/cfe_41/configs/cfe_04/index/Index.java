@@ -43,14 +43,15 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.configs.cfe_04;
+package com.teragrep.cfe_41.configs.cfe_04.index;
 
+import com.teragrep.cfe_41.configs.cfe_04.Jsonable;
+import com.teragrep.cfe_41.configs.cfe_04.KeyValuePair;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public final class Index implements Jsonable {
@@ -63,16 +64,6 @@ public final class Index implements Jsonable {
     private final String thawedPath;
     private final List<KeyValuePair> override;
     private final String summaryHomePath;
-
-    public Index(final String name, final Map<String, String> config) {
-        this(
-                name,
-                config.get("cfe_04.config.index.home.path.template"),
-                config.get("cfe_04.config.index.cold.path.template"),
-                config.get("cfe_04.config.index.thawed.path.template"),
-                config.get("cfe_04.config.index.summary.home.path")
-        );
-    }
 
     public Index(
             final String name,

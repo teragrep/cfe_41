@@ -49,6 +49,10 @@ import com.teragrep.cfe_41.Printable;
 import com.teragrep.cfe_41.capture.*;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.configs.cfe_04.global.GlobalFactory;
+import com.teragrep.cfe_41.configs.cfe_04.index.IndexFactory;
+import com.teragrep.cfe_41.configs.cfe_04.meta.MetaFactory;
+import com.teragrep.cfe_41.configs.cfe_04.sourcetype.SourcetypeFactory;
 import com.teragrep.cfe_41.media.Media;
 import jakarta.json.JsonValue;
 

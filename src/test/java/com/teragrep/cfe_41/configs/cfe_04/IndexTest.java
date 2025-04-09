@@ -45,6 +45,7 @@
  */
 package com.teragrep.cfe_41.configs.cfe_04;
 
+import com.teragrep.cfe_41.configs.cfe_04.index.Index;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import nl.jqno.equalsverifier.EqualsVerifier;

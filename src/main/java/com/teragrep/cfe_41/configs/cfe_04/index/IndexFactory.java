@@ -1,4 +1,4 @@
-package com.teragrep.cfe_41.configs.cfe_04;
+package com.teragrep.cfe_41.configs.cfe_04.index;
 
 import java.util.Map;
 

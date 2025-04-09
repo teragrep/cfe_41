@@ -45,6 +45,7 @@
  */
 package com.teragrep.cfe_41.configs.cfe_04;
 
+import com.teragrep.cfe_41.configs.cfe_04.sourcetype.Sourcetype;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
