@@ -48,7 +48,6 @@ package com.teragrep.cfe_41.configs.cfe_04;
 import jakarta.json.Json;
 import jakarta.json.JsonStructure;
 
-import java.util.Map;
 import java.util.Objects;
 
 public final class Global implements Jsonable {
@@ -57,15 +56,6 @@ public final class Global implements Jsonable {
     private final String lci;
     private final String lciMalformed;
     private final String maxDaysAgo;
-
-    public Global(final Map<String, String> config) {
-        this(
-                config.get("cfe_04.global.truncate"),
-                config.get("cfe_04.global.last_chance_index"),
-                config.get("cfe_04.global.last_chance_index_malformed"),
-                config.get("cfe_04.global.max_days_ago")
-        );
-    }
 
     public Global(final String truncate, final String lci, final String lciMalformed, final String maxDaysAgo) {
         this.truncate = truncate;

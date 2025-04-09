@@ -97,8 +97,8 @@ public final class CFE04Config implements Printable {
                         .partialCaptureStorageResponses();
 
                 if (partialCaptureStorageResponses.stream().anyMatch(r -> r.storageName().equalsIgnoreCase("cfe_04"))) {
-                    indexes.add(new Index(captureResponse.index(), config));
-                    sourcetypes.add(new Sourcetype(captureResponse.source_type(), config));
+                    indexes.add(new IndexFactory(config).index(captureResponse.index()));
+                    sourcetypes.add(new SourcetypeFactory(config).sourcetype(captureResponse.source_type()));
                 }
             }
             catch (IOException e) {
@@ -107,13 +107,13 @@ public final class CFE04Config implements Printable {
         }
 
         return media
-                .with("_meta", new Meta(config).asJsonStructure())
+                .with("_meta", new MetaFactory(config).meta().asJsonStructure())
                 .with("volumes", JsonValue.EMPTY_JSON_ARRAY) // TODO: volumes object
                 .with("indexes", new JsonableArray(indexes).asJsonStructure())
                 .with("sourcetypes", new JsonableArray(sourcetypes).asJsonStructure())
                 .with("fields", JsonValue.EMPTY_JSON_ARRAY) // TODO: fields object
                 .with("transforms", JsonValue.EMPTY_JSON_ARRAY) // TODO: transforms object
-                .with("global", new Global(config).asJsonStructure());
+                .with("global", new GlobalFactory(config).global().asJsonStructure());
     }
 
     @Override
