@@ -56,6 +56,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.ConnectException;
 import java.util.Objects;
 
 public final class Response {
@@ -71,6 +72,9 @@ public final class Response {
     // parse response that comes in array
     public JsonArray asJsonArray() throws IOException {
         // Convert Http response to JsonReader
+        if (httpResponse.getStatusLine().getStatusCode() != 200) {
+            throw new ConnectException(httpResponse.getStatusLine().getStatusCode() + ": " + httpResponse.getStatusLine().getReasonPhrase());
+        }
         final String response = EntityUtils.toString(httpResponse.getEntity());
         LOGGER.debug("Response array contains <{}>", response);
         final JsonReader jsonReader = Json.createReader(new StringReader(response));
@@ -81,6 +85,9 @@ public final class Response {
     // Different method for single object response
     public JsonObject asJsonObject() throws IOException {
         // Convert Http response to JsonReader
+        if (httpResponse.getStatusLine().getStatusCode() != 200) {
+            throw new ConnectException(httpResponse.getStatusLine().getStatusCode() + ": " + httpResponse.getStatusLine().getReasonPhrase());
+        }
         final String response = EntityUtils.toString(httpResponse.getEntity());
         LOGGER.debug("Response object contains <{}>", response);
         final JsonReader jsonReader = Json.createReader(new StringReader(response));

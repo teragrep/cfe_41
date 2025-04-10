@@ -64,7 +64,6 @@ public final class CFE04ConfigTest {
     @Test
     void testIdealCase() {
         final CFE04Config config = new CFE04Config(
-                new ConfigFake().asMap(),
                 new CaptureGroupAllRequestFake(),
                 new CaptureRequestFake(),
                 new CFE04CaptureStorageRequestFake()
@@ -127,7 +126,6 @@ public final class CFE04ConfigTest {
     @Test
     void testNoCFE04Storages() {
         final CFE04Config config = new CFE04Config(
-                new ConfigFake().asMap(),
                 new CaptureGroupAllRequestFake(),
                 new CaptureRequestFake(),
                 new CaptureStorageRequestFake()

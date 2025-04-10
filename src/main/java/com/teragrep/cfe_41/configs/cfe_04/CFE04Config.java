@@ -49,12 +49,11 @@ import com.teragrep.cfe_41.Printable;
 import com.teragrep.cfe_41.capture.*;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
-import com.teragrep.cfe_41.configs.cfe_04.global.GlobalFactory;
-import com.teragrep.cfe_41.configs.cfe_04.index.IndexFactory;
-import com.teragrep.cfe_41.configs.cfe_04.meta.MetaFactory;
-import com.teragrep.cfe_41.configs.cfe_04.sourcetype.SourcetypeFactory;
+import com.teragrep.cfe_41.configs.cfe_04.global.Global;
+import com.teragrep.cfe_41.configs.cfe_04.index.Index;
+import com.teragrep.cfe_41.configs.cfe_04.meta.Meta;
+import com.teragrep.cfe_41.configs.cfe_04.sourcetype.Sourcetype;
 import com.teragrep.cfe_41.media.Media;
-import jakarta.json.JsonValue;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -62,18 +61,15 @@ import java.util.*;
 
 public final class CFE04Config implements Printable {
 
-    private final Map<String, String> config;
     private final CaptureGroupAllRequest captureGroupAllRequest;
     private final CaptureRequest captureRequest;
     private final CaptureStorageRequest captureStorageRequest;
 
     public CFE04Config(
-            final Map<String, String> config,
             final CaptureGroupAllRequest captureGroupAllRequest,
             final CaptureRequest captureRequest,
             final CaptureStorageRequest captureStorageRequest
     ) {
-        this.config = config;
         this.captureGroupAllRequest = captureGroupAllRequest;
         this.captureRequest = captureRequest;
         this.captureStorageRequest = captureStorageRequest;
@@ -92,6 +88,9 @@ public final class CFE04Config implements Printable {
 
         Set<Jsonable> indexes = new HashSet<>();
         Set<Jsonable> sourcetypes = new HashSet<>();
+        Set<Jsonable> volumes = new HashSet<>();
+        Set<Jsonable> fields = new HashSet<>();
+        Set<Jsonable> transforms = new HashSet<>();
         for (final PartialCaptureResponse group : groups) {
             try {
                 final CaptureResponse captureResponse = captureRequest
@@ -101,8 +100,8 @@ public final class CFE04Config implements Printable {
                         .partialCaptureStorageResponses();
 
                 if (partialCaptureStorageResponses.stream().anyMatch(r -> r.storageName().equalsIgnoreCase("cfe_04"))) {
-                    indexes.add(new IndexFactory(config).index(captureResponse.index()));
-                    sourcetypes.add(new SourcetypeFactory(config).sourcetype(captureResponse.source_type()));
+                    indexes.add(new Index(captureResponse.index(), "%s","%s","%s",""));
+                    sourcetypes.add(new Sourcetype(captureResponse.source_type(), "","","",List.of(),"","","","",""));
                 }
             }
             catch (IOException e) {
@@ -111,13 +110,13 @@ public final class CFE04Config implements Printable {
         }
 
         return media
-                .with("_meta", new MetaFactory(config).meta().asJsonStructure())
-                .with("volumes", JsonValue.EMPTY_JSON_ARRAY) // TODO: volumes object
+                .with("_meta", new Meta("").asJsonStructure())
+                .with("volumes", new JsonableArray(volumes).asJsonStructure())
                 .with("indexes", new JsonableArray(indexes).asJsonStructure())
                 .with("sourcetypes", new JsonableArray(sourcetypes).asJsonStructure())
-                .with("fields", JsonValue.EMPTY_JSON_ARRAY) // TODO: fields object
-                .with("transforms", JsonValue.EMPTY_JSON_ARRAY) // TODO: transforms object
-                .with("global", new GlobalFactory(config).global().asJsonStructure());
+                .with("fields", new JsonableArray(fields).asJsonStructure())
+                .with("transforms", new JsonableArray(transforms).asJsonStructure())
+                .with("global", new Global("","","","").asJsonStructure());
     }
 
     @Override
@@ -126,12 +125,11 @@ public final class CFE04Config implements Printable {
             return false;
         }
         final CFE04Config that = (CFE04Config) o;
-        return Objects.equals(config, that.config)
-                && Objects.equals(captureGroupAllRequest, that.captureGroupAllRequest) && Objects.equals(captureRequest, that.captureRequest) && Objects.equals(captureStorageRequest, that.captureStorageRequest);
+        return Objects.equals(captureGroupAllRequest, that.captureGroupAllRequest) && Objects.equals(captureRequest, that.captureRequest) && Objects.equals(captureStorageRequest, that.captureStorageRequest);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(config, captureGroupAllRequest, captureRequest, captureStorageRequest);
+        return Objects.hash(captureGroupAllRequest, captureRequest, captureStorageRequest);
     }
 }
