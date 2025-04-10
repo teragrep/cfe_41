@@ -4,6 +4,8 @@ import com.teragrep.cfe_41.configs.cfe_04.Jsonable;
 import jakarta.json.Json;
 import jakarta.json.JsonStructure;
 
+import java.util.Objects;
+
 public final class Volume implements Jsonable {
 
     private final String name;
@@ -23,5 +25,19 @@ public final class Volume implements Jsonable {
                 .add("path", path)
                 .add("maxVolumeDataSizeMB", maxVolumeDataSizeMB)
                 .build();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Volume volume = (Volume) o;
+        return Objects.equals(name, volume.name) && Objects.equals(path, volume.path) && Objects.equals(maxVolumeDataSizeMB, volume.maxVolumeDataSizeMB);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, path, maxVolumeDataSizeMB);
     }
 }
