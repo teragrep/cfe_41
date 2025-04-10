@@ -45,6 +45,7 @@
  */
 package com.teragrep.cfe_41;
 
+import com.teragrep.cfe_41.api.APIException;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -56,7 +57,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.ConnectException;
 import java.util.Objects;
 
 public final class Response {
@@ -73,7 +73,7 @@ public final class Response {
     public JsonArray asJsonArray() throws IOException {
         // Convert Http response to JsonReader
         if (httpResponse.getStatusLine().getStatusCode() != 200) {
-            throw new ConnectException(httpResponse.getStatusLine().getStatusCode() + ": " + httpResponse.getStatusLine().getReasonPhrase());
+            throw new APIException(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
         }
         final String response = EntityUtils.toString(httpResponse.getEntity());
         LOGGER.debug("Response array contains <{}>", response);
@@ -86,7 +86,7 @@ public final class Response {
     public JsonObject asJsonObject() throws IOException {
         // Convert Http response to JsonReader
         if (httpResponse.getStatusLine().getStatusCode() != 200) {
-            throw new ConnectException(httpResponse.getStatusLine().getStatusCode() + ": " + httpResponse.getStatusLine().getReasonPhrase());
+            throw new APIException(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
         }
         final String response = EntityUtils.toString(httpResponse.getEntity());
         LOGGER.debug("Response object contains <{}>", response);
