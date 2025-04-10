@@ -43,56 +43,37 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04.global;
 
-import com.teragrep.cfe_41.api.APIException;
+import com.teragrep.cfe_41.configs.cfe_04.Jsonable;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import jakarta.json.JsonStructure;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Objects;
 
-public final class Response {
+public final class Global implements Jsonable {
 
-    private static final Logger LOGGER = LogManager.getLogger(Response.class);
+    private final String truncate;
+    private final String lci;
+    private final String lciMalformed;
+    private final String maxDaysAgo;
 
-    private final HttpResponse httpResponse;
-
-    public Response(final HttpResponse jsonResponse) {
-        this.httpResponse = jsonResponse;
+    public Global(final String truncate, final String lci, final String lciMalformed, final String maxDaysAgo) {
+        this.truncate = truncate;
+        this.lci = lci;
+        this.lciMalformed = lciMalformed;
+        this.maxDaysAgo = maxDaysAgo;
     }
 
-    // parse response that comes in array
-    public JsonArray asJsonArray() throws IOException {
-        // Convert Http response to JsonReader
-        if (httpResponse.getStatusLine().getStatusCode() != 200) {
-            throw new APIException(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
-        }
-        final String response = EntityUtils.toString(httpResponse.getEntity());
-        LOGGER.debug("Response array contains <{}>", response);
-        final JsonReader jsonReader = Json.createReader(new StringReader(response));
-        // Return the JSONArray back to the object
-        return jsonReader.readArray();
-    }
-
-    // Different method for single object response
-    public JsonObject asJsonObject() throws IOException {
-        // Convert Http response to JsonReader
-        if (httpResponse.getStatusLine().getStatusCode() != 200) {
-            throw new APIException(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
-        }
-        final String response = EntityUtils.toString(httpResponse.getEntity());
-        LOGGER.debug("Response object contains <{}>", response);
-        final JsonReader jsonReader = Json.createReader(new StringReader(response));
-        // Return the JSONArray back to the object
-        return jsonReader.readObject();
+    @Override
+    public JsonStructure asJsonStructure() {
+        return Json
+                .createObjectBuilder()
+                .add("truncate", truncate)
+                .add("last_chance_index", lci)
+                .add("last_chance_index_malformed", lciMalformed)
+                .add("max_days_ago", maxDaysAgo)
+                .build();
     }
 
     @Override
@@ -100,12 +81,13 @@ public final class Response {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Response other = (Response) o;
-        return Objects.equals(httpResponse, other.httpResponse);
+        final Global global = (Global) o;
+        return Objects.equals(truncate, global.truncate) && Objects.equals(lci, global.lci)
+                && Objects.equals(lciMalformed, global.lciMalformed) && Objects.equals(maxDaysAgo, global.maxDaysAgo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(httpResponse);
+        return Objects.hash(truncate, lci, lciMalformed, maxDaysAgo);
     }
 }

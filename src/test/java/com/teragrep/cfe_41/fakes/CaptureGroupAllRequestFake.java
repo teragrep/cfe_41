@@ -43,37 +43,20 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.fakes;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
+import jakarta.json.Json;
 
-import java.util.Map;
+import java.io.IOException;
 
-public class Main {
+public final class CaptureGroupAllRequestFake implements CaptureGroupAllRequest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
-
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+    @Override
+    public CaptureGroupResponse captureGroupResponse() throws IOException {
+        return new CaptureGroupResponse(
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group1").add("capture_definition_id", 1).add("capture_group_type", "relp").add("id", 1)).add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group2").add("capture_definition_id", 2).add("capture_group_type", "relp").add("id", 2)).add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group2").add("capture_definition_id", 3).add("capture_group_type", "relp").add("id", 3)).build()
+        );
     }
 }

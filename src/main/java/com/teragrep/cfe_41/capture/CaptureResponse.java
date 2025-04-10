@@ -47,6 +47,7 @@ package com.teragrep.cfe_41.capture;
 
 import jakarta.json.JsonObject;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /*
@@ -62,47 +63,74 @@ public final class CaptureResponse implements Capture {
 
     @Override
     public int id() {
-        return jsonObject.getInt("id");
+        if (jsonObject.containsKey("id")) {
+            return jsonObject.getInt("id");
+        }
+        throw new NoSuchElementException("No JSON key 'id' found");
     }
 
     @Override
     public String tag() {
-        return jsonObject.getString("tag");
+        if (jsonObject.containsKey("tag")) {
+            return jsonObject.getString("tag");
+        }
+        throw new NoSuchElementException("No JSON key 'tag' found");
     }
 
     @Override
     public String retention_time() {
-        return jsonObject.getString("retention_time");
+        if (jsonObject.containsKey("retention_time")) {
+            return jsonObject.getString("retention_time");
+        }
+        throw new NoSuchElementException("No JSON key 'retention_time' found");
     }
 
     @Override
     public String category() {
-        return jsonObject.getString("category");
+        if (jsonObject.containsKey("category")) {
+            return jsonObject.getString("category");
+        }
+        throw new NoSuchElementException("No JSON key 'category' found");
     }
 
     @Override
     public String application() {
-        return jsonObject.getString("application");
+        if (jsonObject.containsKey("application")) {
+            return jsonObject.getString("application");
+        }
+        throw new NoSuchElementException("No JSON key 'application' found");
     }
 
     @Override
     public String index() {
-        return jsonObject.getString("index");
+        if (jsonObject.containsKey("index")) {
+            return jsonObject.getString("index");
+        }
+        throw new NoSuchElementException("No JSON key 'index' found");
     }
 
     @Override
     public String source_type() {
-        return jsonObject.getString("source_type");
+        if (jsonObject.containsKey("source_type")) {
+            return jsonObject.getString("source_type");
+        }
+        throw new NoSuchElementException("No JSON key 'source_type' found");
     }
 
     @Override
     public String protocol() {
-        return jsonObject.getString("protocol");
+        if (jsonObject.containsKey("protocol")) {
+            return jsonObject.getString("protocol");
+        }
+        throw new NoSuchElementException("No JSON key 'protocol' found");
     }
 
     @Override
     public String flow() {
-        return jsonObject.getString("flow");
+        if (jsonObject.containsKey("flow")) {
+            return jsonObject.getString("flow");
+        }
+        throw new NoSuchElementException("No JSON key 'flow' found");
     }
 
     @Override

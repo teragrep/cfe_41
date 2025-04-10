@@ -43,37 +43,36 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.fakes;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.HashMap;
 import java.util.Map;
 
-public class Main {
+public final class ConfigFake {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    public Map<String, String> asMap() {
+        final Map<String, String> map = new HashMap<>();
+        map.put("cfe_04.global.truncate", "12345");
+        map.put("cfe_04.global.last_chance_index", "lci");
+        map.put("cfe_04.global.last_chance_index_malformed", "lci_malformed");
+        map.put("cfe_04.global.max_days_ago", "25");
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        map.put("cfe_04.config.index.home.path.template", "fake:home0/%s/fake");
+        map.put("cfe_04.config.index.cold.path.template", "fake:cold0/%s/fake");
+        map.put("cfe_04.config.index.thawed.path.template", "fake:thaw0/%s/fake");
+        map.put("cfe_04.config.index.summary.home.path", "fake:summary/summary/fake/fake");
 
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+        map.put("cfe_04.config.sourcetype.max_days_ago", "25");
+        map.put("cfe_04.config.sourcetype.category", "Fake category");
+        map.put("cfe_04.config.sourcetype.description", "Fake description");
+        map.put("cfe_04.config.sourcetype.truncate", "1");
+        map.put("cfe_04.config.sourcetype.freeform_indexer_enabled", "false");
+        map.put("cfe_04.config.sourcetype.freeform_indexer_text", "");
+        map.put("cfe_04.config.sourcetype.freeform_lb_enabled", "false");
+        map.put("cfe_04.config.sourcetype.freeform_lb_text", "");
+
+        map.put("cfe_04.meta.name", "meta-name");
+
+        return map;
     }
 }

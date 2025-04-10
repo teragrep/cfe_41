@@ -43,37 +43,34 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.configs.cfe_04.global.Global;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+public final class GlobalTest {
 
-public class Main {
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(Global.class).verify();
+    }
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    @Test
+    void testIdealCase() {
+        final Global global = new Global("12345", "lci", "lci-malformed", "20");
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+        final JsonObject expected = Json
+                .createObjectBuilder()
+                .add("truncate", "12345")
+                .add("last_chance_index", "lci")
+                .add("last_chance_index_malformed", "lci-malformed")
+                .add("max_days_ago", "20")
+                .build();
 
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+        Assertions.assertEquals(expected, global.asJsonStructure());
     }
 }

@@ -43,37 +43,54 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.configs.cfe_04.sourcetype.Sourcetype;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import java.util.List;
 
-public class Main {
+public final class SourcetypeTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(Sourcetype.class).verify();
+    }
 
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
+    @Test
+    void testIdealCase() {
+        final Sourcetype sourcetype = new Sourcetype(
+                "name",
+                "20",
+                "category",
+                "desc",
+                List.of(),
+                "12345",
+                "false",
+                "",
+                "false",
+                ""
+        );
 
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+        final JsonObject expected = Json
+                .createObjectBuilder()
+                .add("name", "name")
+                .add("max_days_ago", "20")
+                .add("category", "category")
+                .add("description", "desc")
+                .add("transforms", JsonValue.EMPTY_JSON_ARRAY)
+                .add("truncate", "12345")
+                .add("freeform_indexer_enabled", "false")
+                .add("freeform_indexer_text", "")
+                .add("freeform_lb_enabled", "false")
+                .add("freeform_lb_text", "")
+                .build();
+
+        Assertions.assertEquals(expected, sourcetype.asJsonStructure());
     }
 }

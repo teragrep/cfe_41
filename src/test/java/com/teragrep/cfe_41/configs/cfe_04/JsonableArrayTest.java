@@ -43,37 +43,46 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04;
 
-import com.teragrep.cnf_01.ArgsConfiguration;
-import com.teragrep.cnf_01.Configuration;
-import com.teragrep.cnf_01.ConfigurationException;
-import com.teragrep.cnf_01.EnvironmentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.teragrep.cfe_41.fakes.JsonableFake;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonValue;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
-public class Main {
+public final class JsonableArrayTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
-    public static void main(final String[] args) throws Exception {
-        // Creates new ApiConfig from commandline args
-        final Configuration envConfiguration = new EnvironmentConfiguration();
-        final Configuration argsConfiguration = new ArgsConfiguration(args);
-        Map<String, String> envConfigMap;
-        Map<String, String> argsConfigMap;
-        try {
-            envConfigMap = envConfiguration.asMap();
-            argsConfigMap = argsConfiguration.asMap();
-            logger.debug("Loaded configuration <{}> <{}>", envConfigMap, argsConfigMap);
-        }
-        catch (ConfigurationException e) {
-            logger.error("Error loading configuration <{}>", e.getMessage());
-            throw new ConfigurationException("Error loading configuration <{}>", e.getCause());
-        }
-
-        final ApiConfig apiConfig = new ApiConfig(argsConfigMap);
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(JsonableArray.class).verify();
     }
+
+    @Test
+    void testIdealCase() {
+        final JsonableArray jsonableArray = new JsonableArray(List.of(new JsonableFake(), new JsonableFake()));
+
+        final JsonArray expected = Json
+                .createArrayBuilder()
+                .add(Json.createObjectBuilder().add("fake-key", "fake-value").build())
+                .add(Json.createObjectBuilder().add("fake-key", "fake-value").build())
+                .build();
+
+        Assertions.assertEquals(expected, jsonableArray.asJsonStructure());
+    }
+
+    @Test
+    void testEmptyList() {
+        final JsonableArray jsonableArray = new JsonableArray(Collections.emptyList());
+
+        final JsonArray expected = JsonValue.EMPTY_JSON_ARRAY;
+
+        Assertions.assertEquals(expected, jsonableArray.asJsonStructure());
+    }
+
 }

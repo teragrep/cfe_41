@@ -43,56 +43,29 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41;
+package com.teragrep.cfe_41.configs.cfe_04;
 
-import com.teragrep.cfe_41.api.APIException;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonStructure;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.util.Collection;
 import java.util.Objects;
 
-public final class Response {
+public final class JsonableArray implements Jsonable {
 
-    private static final Logger LOGGER = LogManager.getLogger(Response.class);
+    private final Collection<Jsonable> jsonables;
 
-    private final HttpResponse httpResponse;
-
-    public Response(final HttpResponse jsonResponse) {
-        this.httpResponse = jsonResponse;
+    public JsonableArray(final Collection<Jsonable> jsonables) {
+        this.jsonables = jsonables;
     }
 
-    // parse response that comes in array
-    public JsonArray asJsonArray() throws IOException {
-        // Convert Http response to JsonReader
-        if (httpResponse.getStatusLine().getStatusCode() != 200) {
-            throw new APIException(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
+    public JsonStructure asJsonStructure() {
+        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (final Jsonable jsonable : jsonables) {
+            arrayBuilder.add(jsonable.asJsonStructure());
         }
-        final String response = EntityUtils.toString(httpResponse.getEntity());
-        LOGGER.debug("Response array contains <{}>", response);
-        final JsonReader jsonReader = Json.createReader(new StringReader(response));
-        // Return the JSONArray back to the object
-        return jsonReader.readArray();
-    }
-
-    // Different method for single object response
-    public JsonObject asJsonObject() throws IOException {
-        // Convert Http response to JsonReader
-        if (httpResponse.getStatusLine().getStatusCode() != 200) {
-            throw new APIException(httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
-        }
-        final String response = EntityUtils.toString(httpResponse.getEntity());
-        LOGGER.debug("Response object contains <{}>", response);
-        final JsonReader jsonReader = Json.createReader(new StringReader(response));
-        // Return the JSONArray back to the object
-        return jsonReader.readObject();
+        return arrayBuilder.build();
     }
 
     @Override
@@ -100,12 +73,12 @@ public final class Response {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Response other = (Response) o;
-        return Objects.equals(httpResponse, other.httpResponse);
+        final JsonableArray that = (JsonableArray) o;
+        return Objects.equals(jsonables, that.jsonables);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(httpResponse);
+        return Objects.hashCode(jsonables);
     }
 }
