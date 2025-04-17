@@ -52,6 +52,7 @@ import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
 import com.teragrep.cfe_41.media.SQLMedia;
 import com.teragrep.cfe_41.media.SQLStatementMedia;
+import org.jooq.Batch;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -83,8 +84,7 @@ public final class Importsql {
         this.sqlCapture = sqlCapture;
     }
 
-    @Override
-    public String toString() {
+    public Batch batch() {
         SQLStatementMedia sqlStatementMedia = new SQLMedia();
         final CaptureGroupResponse capRespo;
         try {

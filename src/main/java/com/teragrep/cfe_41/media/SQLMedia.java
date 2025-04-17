@@ -45,17 +45,14 @@
  */
 package com.teragrep.cfe_41.media;
 
-import com.teragrep.cfe_41.importsql.SQLTemplate;
-import org.jooq.DSLContext;
-import org.jooq.Table;
-import org.jooq.Field;
-import org.jooq.SQLDialect;
-import org.jooq.Query;
+import org.jooq.*;
+import org.jooq.conf.ParamType;
 import org.jooq.conf.RenderKeywordCase;
 import org.jooq.conf.Settings;
 
-import java.io.StringWriter;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.using;
 import static org.jooq.impl.DSL.table;
@@ -67,7 +64,6 @@ public final class SQLMedia implements SQLStatementMedia {
 
     private final Settings settings = new Settings().withRenderKeywordCase(RenderKeywordCase.UPPER);
     private final DSLContext create = using(SQLDialect.MYSQL, settings);
-    private final StringWriter query;
     private final Table<?> logGroupTable = table("log_group");
     private final Table<?> streamTable = table("stream");
     private final Table<?> hostTable = table("host");
@@ -77,14 +73,15 @@ public final class SQLMedia implements SQLStatementMedia {
     private final Field<String> directoryField = field("directory", String.class);
     private final Field<String> streamField = field("stream", String.class);
     private final Field<String> tagField = field("tag", String.class);
+    private final List<Query> queries;
 
-    // Initial start and append start of the template
     public SQLMedia() {
-        this(new StringWriter().append(new SQLTemplate().startTemplate()));
+        this(new ArrayList<>());
     }
 
-    public SQLMedia(final StringWriter query) {
-        this.query = query;
+
+    public SQLMedia(List<Query> queries) {
+        this.queries = List.copyOf(queries);
     }
 
     // Build stream here
@@ -99,14 +96,18 @@ public final class SQLMedia implements SQLStatementMedia {
                 .insertInto(streamTable)
                 .columns(gidField, directoryField, streamField, tagField)
                 .values(field(select(id).from(logGroupTable).where(name.eq(name.as(logGroupName)))), directoryField.as(directory), streamField.as(stream), tagField.as(tag));
-        return new SQLMedia(this.query.append(queryResult.getSQL().concat(";\n")));
+        return withQuery(queryResult);
     }
+
+
 
     @Override
     public SQLStatementMedia withLogGroup(final String logGroupName) {
         final Query queryResult = create.insertInto(logGroupTable).columns(name).values(name.as(logGroupName));
-        return new SQLMedia(this.query.append(queryResult.getSQL().concat(";\n")));
+        return withQuery(queryResult);
     }
+
+
 
     @Override
     public SQLStatementMedia withHost(final String hostName, final String logGroupName) {
@@ -114,33 +115,24 @@ public final class SQLMedia implements SQLStatementMedia {
                 .insertInto(hostTable)
                 .columns(name, gidField)
                 .values(name.as(hostName), field(select(id).from(logGroupTable).where(name.eq(name.as(logGroupName)))));
-        return new SQLMedia(this.query.append(queryResult.getSQL().concat(";\n")));
+        return withQuery(queryResult);
     }
 
     @Override
-    public String asSql() {
-        final SQLTemplate template = new SQLTemplate();
-        query.append(template.endTemplate());
-        return query.toString();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+    public Batch asSql() {
+        List<String> sqlStrings = queries.stream().map(q -> q.getSQL(ParamType.INLINED)).collect(Collectors.toList());
+        for (String sqlString : sqlStrings) {
+            System.out.println(sqlString);
         }
-        final SQLMedia sqlMedia = (SQLMedia) o;
-        return Objects.equals(settings, sqlMedia.settings) && Objects
-                .equals(create, sqlMedia.create) && Objects.equals(query, sqlMedia.query)
-                && Objects.equals(logGroupTable, sqlMedia.logGroupTable) && Objects.equals(streamTable, sqlMedia.streamTable) && Objects.equals(hostTable, sqlMedia.hostTable) && Objects.equals(id, sqlMedia.id) && Objects.equals(gidField, sqlMedia.gidField) && Objects.equals(name, sqlMedia.name) && Objects.equals(directoryField, sqlMedia.directoryField) && Objects.equals(streamField, sqlMedia.streamField) && Objects.equals(tagField, sqlMedia.tagField);
+        return create.batch(queries);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects
-                .hash(
-                        settings, create, query, logGroupTable, streamTable, hostTable, id, gidField, name,
-                        directoryField, streamField, tagField
-                );
+    public SQLMedia withQuery(final Query query) {
+        List<Query> newQueries = new ArrayList<>(queries);
+        newQueries.add(query);
+        return new SQLMedia(newQueries);
     }
+
+
+
 }

@@ -72,7 +72,6 @@ public final class SQLHost {
 
     public SQLHost(final ApiConfig apiConfig) {
         this(new LinkageRequestImpl(apiConfig), new HostGroupRequestImpl(apiConfig), new HostRequestImpl(apiConfig));
-
     }
 
     public SQLHost(
