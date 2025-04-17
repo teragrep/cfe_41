@@ -43,14 +43,12 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.sink;
 
 import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
+import jakarta.json.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -62,15 +60,15 @@ import org.mockserver.integration.ClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-public class CaptureStorageRequestTest {
-
-    private static ClientAndServer mockServer;
-    private static MockServerClient mockClient;
+public class SinkRequestImplTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(CaptureStorageRequest.class).verify();
+        EqualsVerifier.forClass(SinkRequestImpl.class).verify();
     }
+
+    private static ClientAndServer mockServer;
+    private static MockServerClient mockClient;
 
     @BeforeAll
     public static void startMockServer() {
@@ -84,19 +82,16 @@ public class CaptureStorageRequestTest {
     }
 
     @Test
-    public void captureStorageRequestTest() {
+    public void testSinkRequest() {
 
-        // Expected to have capture with ID of 1 to have storages 1 and 2 (cfe_10 and cfe_11)
-        JsonArrayBuilder captureStorageBuilder = Json.createArrayBuilder();
-        captureStorageBuilder
-                .add(Json.createObjectBuilder().add("storage_id", 1).add("capture_id", 1).add("storage_name", "cfe_10"))
-                .add(Json.createObjectBuilder().add("storage_id", 2).add("capture_id", 1).add("storage_name", "cfe_11"));
-        JsonArray captureStoragesArray = captureStorageBuilder.build();
+        JsonArrayBuilder builder = Json.createArrayBuilder();
+        builder
+                .add(Json.createObjectBuilder().add("flow", "flow1").add("protocol", "protocol1").add("ip_address", "ip_address1").add("port", "port1").add("id", 1));
+        JsonArray expectedSink = builder.build();
 
-        // Mock client that simulates successful request from cfe_18. Request should ask with capture_id of 1
         mockClient
-                .when(request().withMethod("GET").withPath("/storage/capture/1"))
-                .respond(response().withStatusCode(200).withBody(captureStoragesArray.toString()));
+                .when(request().withMethod("GET").withPath("/sink"))
+                .respond(response().withStatusCode(200).withBody(expectedSink.toString()));
 
         String[] args = new String[] {
                 "url=http://localhost:1080", "test=test"
@@ -106,16 +101,15 @@ public class CaptureStorageRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        CaptureStorageRequest captureStorageRequest = new CaptureStorageRequestImpl(apiConfig);
+        SinkRequestImpl fakeRequest = new SinkRequestImpl(apiConfig);
 
-        CaptureStorageResponse actualCaptureStorageResponse = Assertions
-                .assertDoesNotThrow(() -> captureStorageRequest.captureStorageResponse(1));
+        SinkResponse fakeSinkResponse = Assertions
+                .assertDoesNotThrow(() -> fakeRequest.sinkResponse("flow1", "protocol1"));
+        // Get first object from array since it is expected that first and only object from array is the correct one.
+        SinkResponse realSinkResponse = new SinkResponse(expectedSink.get(0).asJsonObject());
 
-        CaptureStorageResponse expectedCaptureStorageResponse = new CaptureStorageResponse(captureStoragesArray);
+        Assertions.assertFalse(expectedSink.isEmpty());
+        Assertions.assertEquals(realSinkResponse, fakeSinkResponse);
 
-        // Assertions
-        Assertions.assertFalse(captureStoragesArray.isEmpty());
-        // Asserting that contents equal to each other
-        Assertions.assertEquals(actualCaptureStorageResponse.hashCode(), expectedCaptureStorageResponse.hashCode());
     }
 }

@@ -100,9 +100,9 @@ public class HostRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        HostRequestImpl hostRequest = new HostRequestImpl(1, "relp", apiConfig);
+        HostRequestImpl hostRequest = new HostRequestImpl(apiConfig);
 
-        HostResponse actualHostResponse = Assertions.assertDoesNotThrow(() -> hostRequest.hostResponse());
+        HostResponse actualHostResponse = Assertions.assertDoesNotThrow(() -> hostRequest.hostResponse(1, "relp"));
 
         HostResponse expectedHostResponse = new HostResponse(hostAsJsonObject);
 

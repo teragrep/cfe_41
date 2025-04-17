@@ -43,11 +43,35 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.importsql;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
 
-public interface CaptureRequest {
+import java.util.Objects;
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+public final class SQLMediaCaptureGroup {
+
+    private final String captureGroupName;
+
+    public SQLMediaCaptureGroup(final String captureGroupName) {
+        this.captureGroupName = captureGroupName;
+    }
+
+    public SQLStatementMedia asSql(final SQLStatementMedia sqlStatementMedia) {
+        return sqlStatementMedia.withLogGroup(this.captureGroupName);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SQLMediaCaptureGroup that = (SQLMediaCaptureGroup) o;
+        return Objects.equals(captureGroupName, that.captureGroupName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(captureGroupName);
+    }
 }

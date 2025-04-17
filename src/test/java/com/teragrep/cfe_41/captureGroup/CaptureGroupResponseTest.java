@@ -69,7 +69,8 @@ public class CaptureGroupResponseTest {
         JsonArray captureGroupArray = captureGroupBuilder.build();
 
         CaptureGroupResponse captureGroupResponse = new CaptureGroupResponse(captureGroupArray);
-        List<PartialCaptureResponse> actualPartialCaptureResponses = captureGroupResponse.partialCaptureResponses();
+        List<PartialCaptureGroupResponse> actualPartialCaptureGroupRespons = captureGroupResponse
+                .partialCaptureResponses();
 
         JsonObjectBuilder expectedCaptureGroupBuilder1 = Json.createObjectBuilder();
         expectedCaptureGroupBuilder1.add("capture_def_group_name", "captureGroup1");
@@ -85,23 +86,23 @@ public class CaptureGroupResponseTest {
         expectedCaptureGroupBuilder2.add("id", 1);
         JsonObject expectedCaptureGroup2 = expectedCaptureGroupBuilder2.build();
 
-        List<PartialCaptureResponse> expectedPartialCaptureResponses = new ArrayList<>();
+        List<PartialCaptureGroupResponse> expectedPartialCaptureGroupRespons = new ArrayList<>();
 
-        PartialCaptureResponse expectedPartialCapture1 = new PartialCaptureResponse(expectedCaptureGroup1);
-        PartialCaptureResponse expectedPartialCapture2 = new PartialCaptureResponse(expectedCaptureGroup2);
-        expectedPartialCaptureResponses.add(expectedPartialCapture1);
-        expectedPartialCaptureResponses.add(expectedPartialCapture2);
+        PartialCaptureGroupResponse expectedPartialCapture1 = new PartialCaptureGroupResponse(expectedCaptureGroup1);
+        PartialCaptureGroupResponse expectedPartialCapture2 = new PartialCaptureGroupResponse(expectedCaptureGroup2);
+        expectedPartialCaptureGroupRespons.add(expectedPartialCapture1);
+        expectedPartialCaptureGroupRespons.add(expectedPartialCapture2);
 
-        Assertions.assertEquals(2, actualPartialCaptureResponses.size());
+        Assertions.assertEquals(2, actualPartialCaptureGroupRespons.size());
         int loopsExecuted = 0;
-        for (PartialCaptureResponse response : actualPartialCaptureResponses) {
+        for (PartialCaptureGroupResponse response : actualPartialCaptureGroupRespons) {
             Assertions
-                    .assertEquals(expectedPartialCaptureResponses.get(loopsExecuted).groupName(), response.groupName());
+                    .assertEquals(expectedPartialCaptureGroupRespons.get(loopsExecuted).groupName(), response.groupName());
             Assertions
-                    .assertEquals(expectedPartialCaptureResponses.get(loopsExecuted).captureDefinitionId(), response.captureDefinitionId());
+                    .assertEquals(expectedPartialCaptureGroupRespons.get(loopsExecuted).captureDefinitionId(), response.captureDefinitionId());
             Assertions
-                    .assertEquals(expectedPartialCaptureResponses.get(loopsExecuted).captureGroupType(), response.captureGroupType());
-            Assertions.assertEquals(expectedPartialCaptureResponses.get(loopsExecuted).groupId(), response.groupId());
+                    .assertEquals(expectedPartialCaptureGroupRespons.get(loopsExecuted).captureGroupType(), response.captureGroupType());
+            Assertions.assertEquals(expectedPartialCaptureGroupRespons.get(loopsExecuted).id(), response.id());
             loopsExecuted++;
         }
         Assertions.assertEquals(2, loopsExecuted);

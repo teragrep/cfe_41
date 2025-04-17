@@ -49,5 +49,5 @@ import java.io.IOException;
 
 public interface CaptureStorageRequest {
 
-    CaptureStorageResponse captureStorageResponse(int captureDefinitionId) throws IOException;
+    public abstract CaptureStorageResponse captureStorageResponse(int captureDefinitionId) throws IOException;
 }

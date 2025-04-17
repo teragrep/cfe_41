@@ -43,11 +43,36 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.importsql;
 
-import java.io.IOException;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public interface CaptureRequest {
+public class SQLTemplateTest {
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(SQLTemplate.class).verify();
+    }
+
+    @Test
+    public void sqlTemplateTestStartTemplate() {
+        String expected = "START TRANSACTION;\n" + "DELETE FROM log_group;\n" + "DELETE FROM host;\n"
+                + "DELETE FROM stream;\n";
+        SQLTemplate sqlTemplate = new SQLTemplate();
+        String actual = sqlTemplate.startTemplate();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void sqlTemplateTestEndTemplate() {
+        String expected = "COMMIT;";
+
+        SQLTemplate sqlTemplate = new SQLTemplate();
+        String actual = sqlTemplate.endTemplate();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
 }

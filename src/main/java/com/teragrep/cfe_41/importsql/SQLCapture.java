@@ -43,30 +43,51 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.host;
+package com.teragrep.cfe_41.importsql;
 
 import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.RequestData;
-import com.teragrep.cfe_41.Response;
-import jakarta.json.JsonObject;
+import com.teragrep.cfe_41.capture.CaptureRequest;
+import com.teragrep.cfe_41.capture.CaptureRequestImpl;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupRequestImpl;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
+import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 
-public final class HostRequestImpl implements HostRequest {
+public final class SQLCapture {
 
-    private final ApiConfig apiConfig;
+    private final CaptureRequest captureRequest;
+    private final CaptureGroupRequest captureGroupRequest;
 
-    public HostRequestImpl(final ApiConfig apiConfig) {
-        this.apiConfig = apiConfig;
+    public SQLCapture(final ApiConfig apiConfig) {
+        this(new CaptureRequestImpl(apiConfig), new CaptureGroupRequestImpl(apiConfig));
     }
 
-    @Override
-    public HostResponse hostResponse(final int id, final String hostType) throws IOException {
-        final JsonObject jsonObject = new Response(
-                new RequestData("/host/" + hostType + "/" + id, apiConfig).doRequest()
-        ).asJsonObject();
-        return new HostResponse(jsonObject);
+    public SQLCapture(final CaptureRequest captureRequest, final CaptureGroupRequest captureGroupRequest) {
+        this.captureRequest = captureRequest;
+        this.captureGroupRequest = captureGroupRequest;
+    }
+
+    // Gets all the capture and returns a list for sql
+    public List<SQLMediaCapture> asSQLCaptures(final String captureGroupName) throws IOException {
+        final CaptureGroupResponse captureGroups = captureGroupRequest.captureGroupResponse(captureGroupName);
+        final List<PartialCaptureGroupResponse> partialCaptures = captureGroups.partialCaptureResponses();
+
+        final List<SQLMediaCapture> sqlMediaCaptures = new ArrayList<>();
+
+        // Inserts streams to sqlStatement
+        for (PartialCaptureGroupResponse captureGroup : partialCaptures) {
+            final SQLMediaCapture sqlMediaCapture = new SQLMediaCapture(
+                    captureGroupName,
+                    captureRequest.captureResponse(captureGroup.captureDefinitionId(), captureGroup.captureGroupType())
+            );
+            sqlMediaCaptures.add(sqlMediaCapture);
+        }
+        return sqlMediaCaptures;
     }
 
     @Override
@@ -74,12 +95,13 @@ public final class HostRequestImpl implements HostRequest {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final HostRequestImpl that = (HostRequestImpl) o;
-        return Objects.equals(apiConfig, that.apiConfig);
+        final SQLCapture that = (SQLCapture) o;
+        return Objects.equals(captureRequest, that.captureRequest)
+                && Objects.equals(captureGroupRequest, that.captureGroupRequest);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(apiConfig);
+        return Objects.hash(captureRequest, captureGroupRequest);
     }
 }

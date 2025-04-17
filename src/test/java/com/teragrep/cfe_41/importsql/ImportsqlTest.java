@@ -43,55 +43,32 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.sink;
+package com.teragrep.cfe_41.importsql;
 
 import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.capture.CaptureRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
+import com.teragrep.cfe_41.fakes.*;
+import com.teragrep.cfe_41.host.HostRequest;
+import com.teragrep.cfe_41.hostGroup.HostGroupRequest;
+import com.teragrep.cfe_41.linkage.LinkageRequest;
+import com.teragrep.cfe_41.media.SQLMedia;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
-import jakarta.json.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockserver.client.MockServerClient;
-import org.mockserver.integration.ClientAndServer;
 
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
-
-public class SinkRequestTest {
-
-    private static ClientAndServer mockServer;
-    private static MockServerClient mockClient;
-
-    @BeforeAll
-    public static void startMockServer() {
-        mockServer = ClientAndServer.startClientAndServer(1080);
-        mockClient = new MockServerClient("localhost", 1080);
-    }
-
-    @AfterAll
-    public static void stopMockServer() {
-        mockServer.stop();
-    }
+public class ImportsqlTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(SinkRequest.class).verify();
+        EqualsVerifier.forClass(Importsql.class).verify();
     }
 
     @Test
-    public void testSinkRequest() {
-
-        JsonArrayBuilder builder = Json.createArrayBuilder();
-        builder
-                .add(Json.createObjectBuilder().add("flow", "flow1").add("protocol", "protocol1").add("ip_address", "ip_address1").add("port", "port1").add("id", 1));
-        JsonArray expectedSink = builder.build();
-
-        mockClient
-                .when(request().withMethod("GET").withPath("/sink"))
-                .respond(response().withStatusCode(200).withBody(expectedSink.toString()));
+    public void importsqlTest() {
 
         String[] args = new String[] {
                 "url=http://localhost:1080", "test=test"
@@ -101,14 +78,33 @@ public class SinkRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        SinkRequest fakeRequest = new SinkRequest("flow1", "protocol1", apiConfig);
+        LinkageRequest linkageRequestFake = new LinkageRequestFake();
+        HostGroupRequest hostGroupRequestFake = new HostGroupRequestFake();
+        HostRequest hostRequestFake = new HostRequestFake();
+        SQLHost sqlHost = Assertions
+                .assertDoesNotThrow(() -> new SQLHost(linkageRequestFake, hostGroupRequestFake, hostRequestFake));
 
-        SinkResponse fakeSinkResponse = Assertions.assertDoesNotThrow(() -> fakeRequest.sinkResponse());
-        // Get first object from array since it is expected that first and only object from array is the correct one.
-        SinkResponse realSinkResponse = new SinkResponse(expectedSink.get(0).asJsonObject());
+        CaptureRequest captureRequestFake = new CaptureRequestFake();
+        CaptureGroupRequest captureGroupRequestFake = new CaptureGroupRequestFake();
+        SQLCapture sqlCapture = Assertions
+                .assertDoesNotThrow(() -> new SQLCapture(captureRequestFake, captureGroupRequestFake));
 
-        Assertions.assertFalse(expectedSink.isEmpty());
-        Assertions.assertEquals(realSinkResponse, fakeSinkResponse);
+        CaptureGroupAllRequest captureGroupAllRequestFake = new CaptureGroupAllRequestFake();
 
+        Importsql importsql = new Importsql(captureGroupAllRequestFake, sqlHost, sqlCapture, apiConfig);
+
+        String actual = Assertions.assertDoesNotThrow(() -> importsql.toString());
+
+        SQLMedia expectedSql = new SQLMedia();
+        expectedSql.withLogGroup("fake-group1");
+        expectedSql.withStream("fake-group1", "fake-index", "fake-sourcetype", "fake-tag");
+        expectedSql.withHost("fake-fqhost", "fake-group1");
+        expectedSql.withLogGroup("fake-group2");
+        expectedSql.withStream("fake-group2", "fake-index", "fake-sourcetype", "fake-tag");
+        expectedSql.withHost("fake-fqhost", "fake-group2");
+        String expected = expectedSql.asSql();
+
+        Assertions.assertEquals(expected, actual);
     }
+
 }

@@ -43,11 +43,37 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.captureGroup;
 
-import java.io.IOException;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public interface CaptureRequest {
+public class PartialCaptureGroupResponseTest {
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(PartialCaptureGroupResponse.class).verify();
+    }
+
+    @Test
+    public void partialCaptureResponseTest() {
+        JsonObjectBuilder partialCaptureResponseBuilder = Json.createObjectBuilder();
+        partialCaptureResponseBuilder.add("capture_def_group_name", "captureGroup1");
+        partialCaptureResponseBuilder.add("capture_definition_id", 1);
+        partialCaptureResponseBuilder.add("capture_group_type", "relp");
+        partialCaptureResponseBuilder.add("id", 1);
+        JsonObject partialCaptureResponse = partialCaptureResponseBuilder.build();
+
+        PartialCaptureGroupResponse captureResponse = new PartialCaptureGroupResponse(partialCaptureResponse);
+
+        Assertions.assertEquals("captureGroup1", captureResponse.groupName());
+        Assertions.assertEquals(1, captureResponse.captureDefinitionId());
+        Assertions.assertEquals("relp", captureResponse.captureGroupType());
+        Assertions.assertEquals(1, captureResponse.id());
+
+    }
 }

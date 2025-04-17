@@ -46,11 +46,18 @@
 package com.teragrep.cfe_41.target;
 
 import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.capture.*;
+import com.teragrep.cfe_41.capture.CaptureRequest;
+import com.teragrep.cfe_41.capture.CaptureRequestImpl;
+import com.teragrep.cfe_41.capture.CaptureStorageRequest;
+import com.teragrep.cfe_41.capture.CaptureStorageRequestImpl;
+import com.teragrep.cfe_41.capture.CaptureStorageResponse;
+import com.teragrep.cfe_41.capture.CaptureStorage;
+import com.teragrep.cfe_41.capture.CaptureResponse;
+import com.teragrep.cfe_41.capture.PartialCaptureStorageResponse;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupRequestImpl;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -95,12 +102,12 @@ public final class TargetLookup {
 
         // get CaptureGroupResponse for specified capture group name
         final CaptureGroupResponse cgResponse = captureGroupRequest.captureGroupResponse(groupName);
-        final List<PartialCaptureResponse> partialCaptureResponses = cgResponse.partialCaptureResponses();
+        final List<PartialCaptureGroupResponse> partialCaptureGroupRespons = cgResponse.partialCaptureResponses();
 
-        for (final PartialCaptureResponse partialCaptureResponse : partialCaptureResponses) {
-            // For each PartialCaptureResponse get CaptureStorages
-            final int captureDefinitionId = partialCaptureResponse.captureDefinitionId();
-            final String captureGroupType = partialCaptureResponse.captureGroupType();
+        for (final PartialCaptureGroupResponse partialCaptureGroupResponse : partialCaptureGroupRespons) {
+            // For each PartialCaptureGroupResponse get CaptureStorages
+            final int captureDefinitionId = partialCaptureGroupResponse.captureDefinitionId();
+            final String captureGroupType = partialCaptureGroupResponse.captureGroupType();
 
             final CaptureStorageResponse csResponse = captureStorageRequest.captureStorageResponse(captureDefinitionId);
             final List<PartialCaptureStorageResponse> partialCsResponses = csResponse.partialCaptureStorageResponses();

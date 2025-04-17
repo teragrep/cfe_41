@@ -55,16 +55,14 @@ import java.util.Objects;
 
 public final class LinkageRequestImpl implements LinkageRequest {
 
-    private final String groupName;
     private final ApiConfig apiConfig;
 
-    public LinkageRequestImpl(final String groupName, final ApiConfig apiConfig) {
-        this.groupName = groupName;
+    public LinkageRequestImpl(final ApiConfig apiConfig) {
         this.apiConfig = apiConfig;
     }
 
     @Override
-    public LinkageResponse linkageResponse() throws IOException {
+    public LinkageResponse linkageResponse(final String groupName) throws IOException {
         final JsonArray a = new Response(new RequestData("/capture/groups/linkage/" + groupName, apiConfig).doRequest())
                 .asJsonArray();
         return new LinkageResponse(a);
@@ -76,11 +74,11 @@ public final class LinkageRequestImpl implements LinkageRequest {
             return false;
         }
         final LinkageRequestImpl that = (LinkageRequestImpl) o;
-        return Objects.equals(groupName, that.groupName) && Objects.equals(apiConfig, that.apiConfig);
+        return Objects.equals(apiConfig, that.apiConfig);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupName, apiConfig);
+        return Objects.hashCode(apiConfig);
     }
 }

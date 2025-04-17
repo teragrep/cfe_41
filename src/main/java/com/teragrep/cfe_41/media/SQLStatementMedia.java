@@ -43,47 +43,17 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.captureGroup;
+package com.teragrep.cfe_41.media;
 
-import jakarta.json.JsonObject;
+import org.jooq.Batch;
 
-import java.util.Objects;
+public interface SQLStatementMedia {
 
-public final class PartialCaptureResponse {
+    public abstract SQLStatementMedia withStream(String logGroupName, String directory, String stream, String tag);
 
-    private final JsonObject jsonObject;
+    public abstract SQLStatementMedia withLogGroup(String logGroupName);
 
-    public PartialCaptureResponse(final JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
-    }
+    public abstract SQLStatementMedia withHost(String hostName, String logGroupName);
 
-    public String groupName() {
-        return jsonObject.getString("capture_def_group_name");
-    }
-
-    public int captureDefinitionId() {
-        return jsonObject.getInt("capture_definition_id");
-    }
-
-    public String captureGroupType() {
-        return jsonObject.getString("capture_group_type");
-    }
-
-    public int groupId() {
-        return jsonObject.getInt("id");
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final PartialCaptureResponse that = (PartialCaptureResponse) o;
-        return Objects.equals(jsonObject, that.jsonObject);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(jsonObject);
-    }
+    public abstract Batch asSql();
 }

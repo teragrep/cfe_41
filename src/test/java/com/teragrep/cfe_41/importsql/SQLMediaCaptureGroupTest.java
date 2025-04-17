@@ -43,11 +43,33 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.importsql;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public interface CaptureRequest {
+public class SQLMediaCaptureGroupTest {
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(SQLMediaCaptureGroup.class).verify();
+    }
+
+    @Test
+    public void sqlMediaCaptureGroupTest() {
+
+        SQLMediaCaptureGroup sqlMediaCaptureGroup = new SQLMediaCaptureGroup("captureGroup1");
+
+        SQLMedia sqlMediaActual = new SQLMedia();
+        SQLMedia sqlMediaExpected = new SQLMedia();
+
+        SQLStatementMedia actual = sqlMediaCaptureGroup.asSql(sqlMediaActual);
+        SQLStatementMedia expected = sqlMediaExpected.withLogGroup("captureGroup1");
+
+        Assertions.assertEquals(actual.asSql(), expected.asSql());
+
+    }
 }

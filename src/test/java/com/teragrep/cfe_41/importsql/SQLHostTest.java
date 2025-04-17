@@ -43,11 +43,56 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.importsql;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.fakes.HostFake;
+import com.teragrep.cfe_41.fakes.HostGroupRequestFake;
+import com.teragrep.cfe_41.fakes.HostRequestFake;
+import com.teragrep.cfe_41.fakes.LinkageRequestFake;
+import com.teragrep.cfe_41.host.Host;
+import com.teragrep.cfe_41.host.HostRequest;
+import com.teragrep.cfe_41.hostGroup.HostGroupRequest;
+import com.teragrep.cfe_41.linkage.LinkageRequest;
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public interface CaptureRequest {
+import java.util.List;
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+public class SQLHostTest {
+
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(SQLHost.class).verify();
+    }
+
+    @Test
+    public void sqlHostTest() {
+        LinkageRequest linkageRequest = new LinkageRequestFake();
+        HostGroupRequest hostGroupRequest = new HostGroupRequestFake();
+        HostRequest hostRequest = new HostRequestFake();
+
+        SQLHost sqlHost = new SQLHost(linkageRequest, hostGroupRequest, hostRequest);
+
+        List<SQLMediaHost> sqlMediaHostsActual = Assertions.assertDoesNotThrow(() -> sqlHost.asSQLHosts("Group1"));
+
+        Host host = new HostFake();
+
+        SQLMediaHost sqlMediaHost = new SQLMediaHost(host, "Group1");
+
+        SQLMedia sqlMediaActual = new SQLMedia();
+        SQLMedia sqlMediaExpected = new SQLMedia();
+
+        SQLStatementMedia expected = sqlMediaHost.asSql(sqlMediaExpected);
+
+        int loopsExecuted = 0;
+        for (SQLMediaHost sqlMediaHostActual : sqlMediaHostsActual) {
+            loopsExecuted++;
+            SQLStatementMedia actual = sqlMediaHostActual.asSql(sqlMediaActual);
+            Assertions.assertEquals(expected.asSql(), actual.asSql());
+        }
+        Assertions.assertEquals(1, loopsExecuted);
+    }
 }

@@ -69,7 +69,7 @@ public class CaptureGroupRequestTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(CaptureGroupRequest.class).verify();
+        EqualsVerifier.forClass(CaptureGroupRequestImpl.class).verify();
     }
 
     @BeforeAll
@@ -104,7 +104,7 @@ public class CaptureGroupRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequestImpl(apiConfig);
+        CaptureGroupRequestImpl captureGroupRequest = new CaptureGroupRequestImpl(apiConfig);
 
         CaptureGroupResponse actualCaptureGroupResponse = Assertions
                 .assertDoesNotThrow(() -> captureGroupRequest.captureGroupResponse("captureGroup1"));

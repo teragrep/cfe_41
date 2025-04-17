@@ -43,11 +43,36 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.capture;
+package com.teragrep.cfe_41.importsql;
 
-import java.io.IOException;
+import com.teragrep.cfe_41.fakes.HostFake;
+import com.teragrep.cfe_41.host.Host;
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public interface CaptureRequest {
+public class SQLMediaHostTest {
 
-    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    @Test
+    public void testContract() {
+        EqualsVerifier.forClass(SQLMediaHost.class).verify();
+    }
+
+    @Test
+    public void sqlMediaHost() {
+        Host host = new HostFake();
+        SQLMediaHost sqlMediaHost = new SQLMediaHost(host, "captureGroup1");
+
+        SQLMedia sqlMediaActual = new SQLMedia();
+        SQLMedia sqlMediaExpected = new SQLMedia();
+
+        SQLStatementMedia actual = sqlMediaHost.asSql(sqlMediaActual);
+
+        SQLStatementMedia expected = sqlMediaExpected.withHost("fake-fqhost", "captureGroup1");
+
+        Assertions.assertEquals(expected.asSql(), actual.asSql());
+    }
+
 }

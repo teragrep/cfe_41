@@ -43,37 +43,20 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.cfe_41.captureGroup;
+package com.teragrep.cfe_41.fakes;
 
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
 import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-public class PartialCaptureResponseTest {
+import java.io.IOException;
 
-    @Test
-    public void testContract() {
-        EqualsVerifier.forClass(PartialCaptureResponse.class).verify();
-    }
+public final class CaptureGroupAllRequestFake implements CaptureGroupAllRequest {
 
-    @Test
-    public void partialCaptureResponseTest() {
-        JsonObjectBuilder partialCaptureResponseBuilder = Json.createObjectBuilder();
-        partialCaptureResponseBuilder.add("capture_def_group_name", "captureGroup1");
-        partialCaptureResponseBuilder.add("capture_definition_id", 1);
-        partialCaptureResponseBuilder.add("capture_group_type", "relp");
-        partialCaptureResponseBuilder.add("id", 1);
-        JsonObject partialCaptureResponse = partialCaptureResponseBuilder.build();
-
-        PartialCaptureResponse captureResponse = new PartialCaptureResponse(partialCaptureResponse);
-
-        Assertions.assertEquals("captureGroup1", captureResponse.groupName());
-        Assertions.assertEquals(1, captureResponse.captureDefinitionId());
-        Assertions.assertEquals("relp", captureResponse.captureGroupType());
-        Assertions.assertEquals(1, captureResponse.groupId());
-
+    @Override
+    public CaptureGroupResponse captureGroupResponse() throws IOException {
+        return new CaptureGroupResponse(
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group1").add("capture_definition_id", 1).add("capture_group_type", "relp").add("id", 1)).add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group2").add("capture_definition_id", 2).add("capture_group_type", "relp").add("id", 2)).add(Json.createObjectBuilder().add("capture_def_group_name", "fake-group2").add("capture_definition_id", 3).add("capture_group_type", "relp").add("id", 3)).build()
+        );
     }
 }

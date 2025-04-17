@@ -56,7 +56,7 @@ public final class CaptureRequestFake implements CaptureRequest {
     @Override
     public CaptureResponse captureResponse(final int id, final String captureType) throws IOException {
         return new CaptureResponse(
-                Json.createObjectBuilder().add("id", id).add("tag", "fake-tag").add("retention_time", "fake-retention").add("category", "fake-category").add("application", "fake-app").add("index", "fake-index").add("source_type", "fake-source").add("protocol", "fake-protocol").add("flow", "fake-flow").build()
+                Json.createObjectBuilder().add("id", id).add("tag", "fake-tag").add("retention_time", "fake-retention").add("category", "fake-category").add("application", "fake-app").add("index", "fake-index").add("source_type", "fake-sourcetype").add("protocol", "fake-protocol").add("flow", "fake-flow").build()
         );
     }
 }

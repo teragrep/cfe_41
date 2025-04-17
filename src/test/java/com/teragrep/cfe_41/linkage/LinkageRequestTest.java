@@ -103,9 +103,10 @@ public class LinkageRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        LinkageRequestImpl linkageRequest = new LinkageRequestImpl("group1", apiConfig);
+        LinkageRequestImpl linkageRequest = new LinkageRequestImpl(apiConfig);
 
-        LinkageResponse actualLinkageResponse = Assertions.assertDoesNotThrow(() -> linkageRequest.linkageResponse());
+        LinkageResponse actualLinkageResponse = Assertions
+                .assertDoesNotThrow(() -> linkageRequest.linkageResponse("group1"));
 
         LinkageResponse expectedLinkageResponse = new LinkageResponse(linkagesArray);
 
