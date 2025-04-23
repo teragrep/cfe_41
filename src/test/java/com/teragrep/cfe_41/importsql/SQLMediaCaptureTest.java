@@ -73,7 +73,7 @@ public class SQLMediaCaptureTest {
         SQLStatementMedia expected = sqlMediaExpected
                 .withStream("captureGroup1", "fake-index", "fake-sourcetype", "fake-tag");
 
-        Assertions.assertEquals(actual.asSql(), expected.asSql());
+        Assertions.assertEquals(actual.asQueries(), expected.asQueries());
     }
 
 }

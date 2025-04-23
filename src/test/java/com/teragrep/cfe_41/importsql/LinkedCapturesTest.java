@@ -45,34 +45,55 @@
  */
 package com.teragrep.cfe_41.importsql;
 
+import com.teragrep.cfe_41.capture.Capture;
+import com.teragrep.cfe_41.capture.CaptureRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
+import com.teragrep.cfe_41.fakes.CaptureFake;
+import com.teragrep.cfe_41.fakes.CaptureGroupRequestFake;
+import com.teragrep.cfe_41.fakes.CaptureRequestFake;
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SQLTemplateTest {
+import java.util.List;
+
+public class LinkedCapturesTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(SQLTemplate.class).verify();
+        EqualsVerifier.forClass(LinkedCaptures.class).verify();
     }
 
     @Test
-    public void sqlTemplateTestStartTemplate() {
-        String expected = "START TRANSACTION;\n" + "DELETE FROM log_group;\n" + "DELETE FROM host;\n"
-                + "DELETE FROM stream;\n";
-        SQLTemplate sqlTemplate = new SQLTemplate();
-        String actual = sqlTemplate.startTemplate();
-        Assertions.assertEquals(expected, actual);
-    }
+    public void sqlCaptureTest() {
+        CaptureRequest captureRequest = new CaptureRequestFake();
+        CaptureGroupRequest captureGroup = new CaptureGroupRequestFake();
 
-    @Test
-    public void sqlTemplateTestEndTemplate() {
-        String expected = "COMMIT;";
+        LinkedCaptures linkedCaptures = new LinkedCaptures(captureRequest, captureGroup);
 
-        SQLTemplate sqlTemplate = new SQLTemplate();
-        String actual = sqlTemplate.endTemplate();
+        List<SQLMediaCapture> sqlMediaCapturesActual = Assertions
+                .assertDoesNotThrow(() -> linkedCaptures.asSqlMediaCaptures("group1"));
 
-        Assertions.assertEquals(expected, actual);
+        Capture capture = new CaptureFake();
+
+        SQLMediaCapture sqlMediaCapture = new SQLMediaCapture("group1", capture);
+
+        SQLMedia sqlMediaActual = new SQLMedia();
+        SQLMedia sqlMediaExpected = new SQLMedia();
+
+        SQLStatementMedia expected = sqlMediaCapture.asSql(sqlMediaExpected);
+
+        int loopsExecuted = 0;
+        for (SQLMediaCapture sqlMediaCaptureActual : sqlMediaCapturesActual) {
+            loopsExecuted++;
+            SQLStatementMedia actual = sqlMediaCaptureActual.asSql(sqlMediaActual);
+            actual.asQueries();
+            Assertions.assertEquals(expected.asQueries(), actual.asQueries());
+        }
+        Assertions.assertEquals(1, loopsExecuted);
+
     }
 
 }

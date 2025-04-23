@@ -102,9 +102,9 @@ public final class TargetLookup {
 
         // get CaptureGroupResponse for specified capture group name
         final CaptureGroupResponse cgResponse = captureGroupRequest.captureGroupResponse(groupName);
-        final List<PartialCaptureGroupResponse> partialCaptureGroupRespons = cgResponse.partialCaptureResponses();
+        final List<PartialCaptureGroupResponse> partialCaptureGroupResponses = cgResponse.partialCaptureResponses();
 
-        for (final PartialCaptureGroupResponse partialCaptureGroupResponse : partialCaptureGroupRespons) {
+        for (final PartialCaptureGroupResponse partialCaptureGroupResponse : partialCaptureGroupResponses) {
             // For each PartialCaptureGroupResponse get CaptureStorages
             final int captureDefinitionId = partialCaptureGroupResponse.captureDefinitionId();
             final String captureGroupType = partialCaptureGroupResponse.captureGroupType();

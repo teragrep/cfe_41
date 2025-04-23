@@ -45,7 +45,7 @@
  */
 package com.teragrep.cfe_41.media;
 
-import org.jooq.Batch;
+import java.util.List;
 
 public interface SQLStatementMedia {
 
@@ -55,5 +55,5 @@ public interface SQLStatementMedia {
 
     public abstract SQLStatementMedia withHost(String hostName, String logGroupName);
 
-    public abstract Batch asSql();
+    public abstract List<String> asQueries();
 }

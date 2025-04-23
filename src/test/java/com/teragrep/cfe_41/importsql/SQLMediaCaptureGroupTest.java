@@ -69,7 +69,7 @@ public class SQLMediaCaptureGroupTest {
         SQLStatementMedia actual = sqlMediaCaptureGroup.asSql(sqlMediaActual);
         SQLStatementMedia expected = sqlMediaExpected.withLogGroup("captureGroup1");
 
-        Assertions.assertEquals(actual.asSql(), expected.asSql());
+        Assertions.assertEquals(actual.asQueries(), expected.asQueries());
 
     }
 }

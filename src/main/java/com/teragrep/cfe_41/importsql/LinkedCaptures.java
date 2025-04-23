@@ -58,22 +58,22 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public final class SQLCapture {
+public final class LinkedCaptures {
 
     private final CaptureRequest captureRequest;
     private final CaptureGroupRequest captureGroupRequest;
 
-    public SQLCapture(final ApiConfig apiConfig) {
+    public LinkedCaptures(final ApiConfig apiConfig) {
         this(new CaptureRequestImpl(apiConfig), new CaptureGroupRequestImpl(apiConfig));
     }
 
-    public SQLCapture(final CaptureRequest captureRequest, final CaptureGroupRequest captureGroupRequest) {
+    public LinkedCaptures(final CaptureRequest captureRequest, final CaptureGroupRequest captureGroupRequest) {
         this.captureRequest = captureRequest;
         this.captureGroupRequest = captureGroupRequest;
     }
 
     // Gets all the capture and returns a list for sql
-    public List<SQLMediaCapture> asSQLCaptures(final String captureGroupName) throws IOException {
+    public List<SQLMediaCapture> asSqlMediaCaptures(final String captureGroupName) throws IOException {
         final CaptureGroupResponse captureGroups = captureGroupRequest.captureGroupResponse(captureGroupName);
         final List<PartialCaptureGroupResponse> partialCaptures = captureGroups.partialCaptureResponses();
 
@@ -95,7 +95,7 @@ public final class SQLCapture {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final SQLCapture that = (SQLCapture) o;
+        final LinkedCaptures that = (LinkedCaptures) o;
         return Objects.equals(captureRequest, that.captureRequest)
                 && Objects.equals(captureGroupRequest, that.captureGroupRequest);
     }

@@ -1,0 +1,149 @@
+/*
+ * Integration Command-line tool for Teragrep
+ * Copyright (C) 2025  Suomen Kanuuna Oy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://github.com/teragrep/teragrep/blob/main/LICENSE>.
+ *
+ *
+ * Additional permission under GNU Affero General Public License version 3
+ * section 7
+ *
+ * If you modify this Program, or any covered work, by linking or combining it
+ * with other code, such other code is not for that reason alone subject to any
+ * of the requirements of the GNU Affero GPL version 3 as long as this Program
+ * is the same Program as licensed from Suomen Kanuuna Oy without any additional
+ * modifications.
+ *
+ * Supplemented terms under GNU Affero General Public License version 3
+ * section 7
+ *
+ * Origin of the software must be attributed to Suomen Kanuuna Oy. Any modified
+ * versions must be marked as "Modified version of" The Program.
+ *
+ * Names of the licensors and authors may not be used for publicity purposes.
+ *
+ * No rights are granted for use of trade names, trademarks, or service marks
+ * which are in The Program if any.
+ *
+ * Licensee must indemnify licensors and authors for any liability that these
+ * contractual assumptions impose on licensors and authors.
+ *
+ * To the extent this program is licensed as part of the Commercial versions of
+ * Teragrep, the applicable Commercial License may apply to this file if you as
+ * a licensee so wish it.
+ */
+package com.teragrep.cfe_41.importsql;
+
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequestImpl;
+import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
+import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
+import com.teragrep.cfe_41.media.SQLMedia;
+import com.teragrep.cfe_41.media.SQLStatementMedia;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+public final class ImportsqlImpl implements Importsql {
+
+    private final CaptureGroupAllRequest captureGroupAllRequest;
+    private final LinkedHosts linkedHosts;
+    private final LinkedCaptures linkedCaptures;
+
+    public ImportsqlImpl(final ApiConfig apiConfig) {
+        this(new CaptureGroupAllRequestImpl(apiConfig), new LinkedHosts(apiConfig), new LinkedCaptures(apiConfig));
+    }
+
+    public ImportsqlImpl(
+            final CaptureGroupAllRequest captureGroupAllRequest,
+            final LinkedHosts linkedHosts,
+            final LinkedCaptures linkedCaptures
+    ) {
+        this.captureGroupAllRequest = captureGroupAllRequest;
+        this.linkedHosts = linkedHosts;
+        this.linkedCaptures = linkedCaptures;
+    }
+
+    // Returns a list of queries in String format.
+    @Override
+    public List<String> asQueriesList() {
+
+        SQLStatementMedia sqlStatementMedia = new SQLMedia();
+
+        final CaptureGroupResponse captureGroupResponse;
+        try {
+            captureGroupResponse = captureGroupAllRequest.captureGroupResponse();
+        }
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        // Get unique group names from all capture groups
+        final Set<String> captureGroupNames = new HashSet<>();
+        for (PartialCaptureGroupResponse captureGroup : captureGroupResponse.partialCaptureResponses()) {
+            captureGroupNames.add(captureGroup.groupName());
+        }
+
+        for (String captureGroupName : captureGroupNames) {
+            final SQLMediaCaptureGroup sqlMediaCaptureGroup = new SQLMediaCaptureGroup(captureGroupName);
+
+            final List<SQLMediaCapture> captures;
+            try {
+                captures = linkedCaptures.asSqlMediaCaptures(captureGroupName);
+            }
+            catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+
+            final List<SQLMediaHost> hosts;
+            try {
+                hosts = linkedHosts.asSqlMediaHosts(captureGroupName);
+            }
+            catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+
+            // Group insertion to Importsql
+            sqlStatementMedia = sqlMediaCaptureGroup.asSql(sqlStatementMedia);
+            // Streams insertion to Importsql
+            for (SQLMediaCapture c : captures) {
+                sqlStatementMedia = c.asSql(sqlStatementMedia);
+            }
+            // Hosts insertion to Importsql
+            for (SQLMediaHost h : hosts) {
+                sqlStatementMedia = h.asSql(sqlStatementMedia);
+            }
+        }
+        return sqlStatementMedia.asQueries();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ImportsqlImpl importsql = (ImportsqlImpl) o;
+        return Objects.equals(captureGroupAllRequest, importsql.captureGroupAllRequest) && Objects
+                .equals(linkedHosts, importsql.linkedHosts) && Objects.equals(linkedCaptures, importsql.linkedCaptures);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(captureGroupAllRequest, linkedHosts, linkedCaptures);
+    }
+}

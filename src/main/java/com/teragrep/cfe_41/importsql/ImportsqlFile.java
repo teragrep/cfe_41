@@ -45,54 +45,56 @@
  */
 package com.teragrep.cfe_41.importsql;
 
-import com.teragrep.cfe_41.fakes.HostFake;
-import com.teragrep.cfe_41.fakes.HostGroupRequestFake;
-import com.teragrep.cfe_41.fakes.HostRequestFake;
-import com.teragrep.cfe_41.fakes.LinkageRequestFake;
-import com.teragrep.cfe_41.host.Host;
-import com.teragrep.cfe_41.host.HostRequest;
-import com.teragrep.cfe_41.hostGroup.HostGroupRequest;
-import com.teragrep.cfe_41.linkage.LinkageRequest;
-import com.teragrep.cfe_41.media.SQLMedia;
-import com.teragrep.cfe_41.media.SQLStatementMedia;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.teragrep.cfe_41.ApiConfig;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Objects;
 
-public class SQLHostTest {
+// writes Importsql to file
+public final class ImportsqlFile {
 
-    @Test
-    public void testContract() {
-        EqualsVerifier.forClass(SQLHost.class).verify();
+    private final String folderPath;
+    private final Importsql importsql;
+
+    public ImportsqlFile(ApiConfig apiConfig) {
+        this("", new ImportsqlImpl(apiConfig));
     }
 
-    @Test
-    public void sqlHostTest() {
-        LinkageRequest linkageRequest = new LinkageRequestFake();
-        HostGroupRequest hostGroupRequest = new HostGroupRequestFake();
-        HostRequest hostRequest = new HostRequestFake();
+    public ImportsqlFile(String folderPath, Importsql importsql) {
+        this.folderPath = folderPath;
+        this.importsql = importsql;
+    }
 
-        SQLHost sqlHost = new SQLHost(linkageRequest, hostGroupRequest, hostRequest);
+    // Creates Importsql file and saves
+    public void createFile() throws IOException {
+        List<String> content = importsql.asQueriesList();
+        final File file;
 
-        List<SQLMediaHost> sqlMediaHostsActual = Assertions.assertDoesNotThrow(() -> sqlHost.asSQLHosts("Group1"));
-
-        Host host = new HostFake();
-
-        SQLMediaHost sqlMediaHost = new SQLMediaHost(host, "Group1");
-
-        SQLMedia sqlMediaActual = new SQLMedia();
-        SQLMedia sqlMediaExpected = new SQLMedia();
-
-        SQLStatementMedia expected = sqlMediaHost.asSql(sqlMediaExpected);
-
-        int loopsExecuted = 0;
-        for (SQLMediaHost sqlMediaHostActual : sqlMediaHostsActual) {
-            loopsExecuted++;
-            SQLStatementMedia actual = sqlMediaHostActual.asSql(sqlMediaActual);
-            Assertions.assertEquals(expected.asSql(), actual.asSql());
+        if (folderPath.isEmpty()) {
+            file = new File("import.sql");
         }
-        Assertions.assertEquals(1, loopsExecuted);
+        else {
+            file = new File(folderPath, "import.sql");
+        }
+
+        Files.write(file.toPath(), content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ImportsqlFile that = (ImportsqlFile) o;
+        return Objects.equals(folderPath, that.folderPath) && Objects.equals(importsql, that.importsql);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(folderPath, importsql);
     }
 }

@@ -72,7 +72,7 @@ public class SQLMediaHostTest {
 
         SQLStatementMedia expected = sqlMediaExpected.withHost("fake-fqhost", "captureGroup1");
 
-        Assertions.assertEquals(expected.asSql(), actual.asSql());
+        Assertions.assertEquals(expected.asQueries(), actual.asQueries());
     }
 
 }

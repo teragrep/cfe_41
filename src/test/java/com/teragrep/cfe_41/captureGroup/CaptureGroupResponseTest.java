@@ -69,7 +69,7 @@ public class CaptureGroupResponseTest {
         JsonArray captureGroupArray = captureGroupBuilder.build();
 
         CaptureGroupResponse captureGroupResponse = new CaptureGroupResponse(captureGroupArray);
-        List<PartialCaptureGroupResponse> actualPartialCaptureGroupRespons = captureGroupResponse
+        List<PartialCaptureGroupResponse> actualPartialCaptureGroupResponses = captureGroupResponse
                 .partialCaptureResponses();
 
         JsonObjectBuilder expectedCaptureGroupBuilder1 = Json.createObjectBuilder();
@@ -93,9 +93,9 @@ public class CaptureGroupResponseTest {
         expectedPartialCaptureGroupRespons.add(expectedPartialCapture1);
         expectedPartialCaptureGroupRespons.add(expectedPartialCapture2);
 
-        Assertions.assertEquals(2, actualPartialCaptureGroupRespons.size());
+        Assertions.assertEquals(2, actualPartialCaptureGroupResponses.size());
         int loopsExecuted = 0;
-        for (PartialCaptureGroupResponse response : actualPartialCaptureGroupRespons) {
+        for (PartialCaptureGroupResponse response : actualPartialCaptureGroupResponses) {
             Assertions
                     .assertEquals(expectedPartialCaptureGroupRespons.get(loopsExecuted).groupName(), response.groupName());
             Assertions

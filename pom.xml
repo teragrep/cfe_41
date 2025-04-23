@@ -145,6 +145,8 @@
             <exclude>eclipse-java-formatter.xml</exclude>
             <!-- log4j.xml -->
             <exclude>src/main/resources/log4j2.xml</exclude>
+            <!-- importsql -->
+            <exclude>src/test/resources/import.sql</exclude>
           </excludes>
         </configuration>
         <executions>

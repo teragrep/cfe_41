@@ -45,21 +45,15 @@
  */
 package com.teragrep.cfe_41;
 
-import com.teragrep.cfe_41.importsql.Importsql;
+import com.teragrep.cfe_41.importsql.ImportsqlFile;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import com.teragrep.cnf_01.ConfigurationException;
-import org.jooq.Batch;
-import org.jooq.DSLContext;
-import org.jooq.Queries;
-import org.jooq.SQLDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
-
-import static org.jooq.impl.DSL.using;
 
 public class Main {
 
@@ -83,8 +77,7 @@ public class Main {
     }
 
     public static void createImport(final ApiConfig apiConfig) throws IOException {
-        final Importsql importsql = new Importsql(apiConfig);
-        // Writes to file maybe in a different object or is carried to importsql responsibility. Uncertain yet
-        importsql.batch();
+        final ImportsqlFile importsqlFile = new ImportsqlFile(apiConfig);
+        importsqlFile.createFile();
     }
 }

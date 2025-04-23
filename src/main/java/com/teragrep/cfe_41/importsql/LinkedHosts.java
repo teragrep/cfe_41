@@ -64,17 +64,17 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public final class SQLHost {
+public final class LinkedHosts {
 
     private final LinkageRequest linkageRequest;
     private final HostGroupRequest hostGroupRequest;
     private final HostRequest hostRequest;
 
-    public SQLHost(final ApiConfig apiConfig) {
+    public LinkedHosts(final ApiConfig apiConfig) {
         this(new LinkageRequestImpl(apiConfig), new HostGroupRequestImpl(apiConfig), new HostRequestImpl(apiConfig));
     }
 
-    public SQLHost(
+    public LinkedHosts(
             final LinkageRequest linkageRequest,
             final HostGroupRequest hostGroupRequest,
             final HostRequest hostRequest
@@ -84,7 +84,7 @@ public final class SQLHost {
         this.hostRequest = hostRequest;
     }
 
-    public List<SQLMediaHost> asSQLHosts(final String captureGroupName) throws IOException {
+    public List<SQLMediaHost> asSqlMediaHosts(final String captureGroupName) throws IOException {
         final Set<PartialLinkageResponse> partialLinkageResponses;
         final LinkageResponse linkageResponse = linkageRequest.linkageResponse(captureGroupName);
         // Get partials which show in detail which host groups are linked with capture groups
@@ -118,9 +118,10 @@ public final class SQLHost {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final SQLHost sqlHost = (SQLHost) o;
-        return Objects.equals(linkageRequest, sqlHost.linkageRequest) && Objects
-                .equals(hostGroupRequest, sqlHost.hostGroupRequest) && Objects.equals(hostRequest, sqlHost.hostRequest);
+        final LinkedHosts linkedHosts = (LinkedHosts) o;
+        return Objects.equals(linkageRequest, linkedHosts.linkageRequest) && Objects
+                .equals(hostGroupRequest, linkedHosts.hostGroupRequest)
+                && Objects.equals(hostRequest, linkedHosts.hostRequest);
     }
 
     @Override

@@ -101,7 +101,7 @@ public class SinkRequestImplTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        SinkRequestImpl fakeRequest = new SinkRequestImpl(apiConfig);
+        SinkRequest fakeRequest = new SinkRequestImpl(apiConfig);
 
         SinkResponse fakeSinkResponse = Assertions
                 .assertDoesNotThrow(() -> fakeRequest.sinkResponse("flow1", "protocol1"));

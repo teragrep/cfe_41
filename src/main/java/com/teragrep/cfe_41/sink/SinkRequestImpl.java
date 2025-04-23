@@ -75,7 +75,7 @@ public final class SinkRequestImpl implements SinkRequest {
                 return sinkResponse;
             }
         }
-        throw new IllegalStateException("No sink found");
+        throw new IllegalArgumentException("No sink found");
     }
 
     @Override

@@ -45,12 +45,14 @@
  */
 package com.teragrep.cfe_41.importsql;
 
-import com.teragrep.cfe_41.capture.Capture;
-import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.fakes.CaptureFake;
-import com.teragrep.cfe_41.fakes.CaptureGroupRequestFake;
-import com.teragrep.cfe_41.fakes.CaptureRequestFake;
+import com.teragrep.cfe_41.fakes.HostFake;
+import com.teragrep.cfe_41.fakes.HostGroupRequestFake;
+import com.teragrep.cfe_41.fakes.HostRequestFake;
+import com.teragrep.cfe_41.fakes.LinkageRequestFake;
+import com.teragrep.cfe_41.host.Host;
+import com.teragrep.cfe_41.host.HostRequest;
+import com.teragrep.cfe_41.hostGroup.HostGroupRequest;
+import com.teragrep.cfe_41.linkage.LinkageRequest;
 import com.teragrep.cfe_41.media.SQLMedia;
 import com.teragrep.cfe_41.media.SQLStatementMedia;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -59,40 +61,40 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class SQLCaptureTest {
+public class LinkedHostsTest {
 
     @Test
     public void testContract() {
-        EqualsVerifier.forClass(SQLCapture.class).verify();
+        EqualsVerifier.forClass(LinkedHosts.class).verify();
     }
 
     @Test
-    public void sqlCaptureTest() {
-        CaptureRequest captureRequest = new CaptureRequestFake();
-        CaptureGroupRequest captureGroup = new CaptureGroupRequestFake();
+    public void sqlHostTest() {
+        LinkageRequest linkageRequest = new LinkageRequestFake();
+        HostGroupRequest hostGroupRequest = new HostGroupRequestFake();
+        HostRequest hostRequest = new HostRequestFake();
 
-        SQLCapture sqlCapture = new SQLCapture(captureRequest, captureGroup);
+        LinkedHosts linkedHosts = new LinkedHosts(linkageRequest, hostGroupRequest, hostRequest);
 
-        List<SQLMediaCapture> sqlMediaCapturesActual = Assertions
-                .assertDoesNotThrow(() -> sqlCapture.asSQLCaptures("group1"));
+        List<SQLMediaHost> sqlMediaHostsActual = Assertions
+                .assertDoesNotThrow(() -> linkedHosts.asSqlMediaHosts("Group1"));
 
-        Capture capture = new CaptureFake();
+        Host host = new HostFake();
 
-        SQLMediaCapture sqlMediaCapture = new SQLMediaCapture("group1", capture);
+        SQLMediaHost sqlMediaHost = new SQLMediaHost(host, "Group1");
 
         SQLMedia sqlMediaActual = new SQLMedia();
         SQLMedia sqlMediaExpected = new SQLMedia();
 
-        SQLStatementMedia expected = sqlMediaCapture.asSql(sqlMediaExpected);
+        SQLStatementMedia expected = sqlMediaHost.asSql(sqlMediaExpected);
 
         int loopsExecuted = 0;
-        for (SQLMediaCapture sqlMediaCaptureActual : sqlMediaCapturesActual) {
+        for (SQLMediaHost sqlMediaHostActual : sqlMediaHostsActual) {
             loopsExecuted++;
-            SQLStatementMedia actual = sqlMediaCaptureActual.asSql(sqlMediaActual);
-            Assertions.assertEquals(expected.asSql(), actual.asSql());
+            SQLStatementMedia actual = sqlMediaHostActual.asSql(sqlMediaActual);
+            actual.asQueries();
+            Assertions.assertEquals(expected.asQueries(), actual.asQueries());
         }
         Assertions.assertEquals(1, loopsExecuted);
-
     }
-
 }

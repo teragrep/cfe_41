@@ -52,7 +52,7 @@ import org.jooq.conf.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import static org.jooq.impl.DSL.using;
 import static org.jooq.impl.DSL.table;
@@ -62,8 +62,10 @@ import static org.jooq.impl.DSL.select;
 // Builds DSL Query builder and forms queries according to the method call
 public final class SQLMedia implements SQLStatementMedia {
 
-    private final Settings settings = new Settings().withRenderKeywordCase(RenderKeywordCase.UPPER);
-    private final DSLContext create = using(SQLDialect.MYSQL, settings);
+    private final Settings settings = new Settings()
+            .withRenderKeywordCase(RenderKeywordCase.UPPER)
+            .withParamType(ParamType.INLINED);
+    private final DSLContext create = using(SQLDialect.POSTGRES, settings);
     private final Table<?> logGroupTable = table("log_group");
     private final Table<?> streamTable = table("stream");
     private final Table<?> hostTable = table("host");
@@ -78,7 +80,6 @@ public final class SQLMedia implements SQLStatementMedia {
     public SQLMedia() {
         this(new ArrayList<>());
     }
-
 
     public SQLMedia(List<Query> queries) {
         this.queries = List.copyOf(queries);
@@ -99,16 +100,14 @@ public final class SQLMedia implements SQLStatementMedia {
         return withQuery(queryResult);
     }
 
-
-
+    // Build logGroup here
     @Override
     public SQLStatementMedia withLogGroup(final String logGroupName) {
         final Query queryResult = create.insertInto(logGroupTable).columns(name).values(name.as(logGroupName));
         return withQuery(queryResult);
     }
 
-
-
+    // Build host here
     @Override
     public SQLStatementMedia withHost(final String hostName, final String logGroupName) {
         final Query queryResult = create
@@ -118,21 +117,47 @@ public final class SQLMedia implements SQLStatementMedia {
         return withQuery(queryResult);
     }
 
+    // Returns List of all the queries inserted.
     @Override
-    public Batch asSql() {
-        List<String> sqlStrings = queries.stream().map(q -> q.getSQL(ParamType.INLINED)).collect(Collectors.toList());
-        for (String sqlString : sqlStrings) {
-            System.out.println(sqlString);
+    public List<String> asQueries() {
+        List<String> completeConfig = new ArrayList<>();
+        // start of the file requires clean slate and start transaction
+        completeConfig.add("START TRANSACTION;");
+        completeConfig.add("DELETE FROM log_group;");
+        completeConfig.add("DELETE FROM stream;");
+        completeConfig.add("DELETE FROM host;");
+
+        for (Query sqlString : queries) {
+            // jOOQ does not insert semicolons after queries. Thats why List<Query> is formed into List<String>
+            completeConfig.add(sqlString.getSQL(ParamType.INLINED).concat(";"));
         }
-        return create.batch(queries);
+        // File is completed when asQueries is called. Thus COMMIT is appended in the end.
+        completeConfig.add("COMMIT;");
+        return completeConfig;
     }
 
-    public SQLMedia withQuery(final Query query) {
+    private SQLStatementMedia withQuery(final Query query) {
         List<Query> newQueries = new ArrayList<>(queries);
         newQueries.add(query);
         return new SQLMedia(newQueries);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SQLMedia sqlMedia = (SQLMedia) o;
+        return Objects.equals(settings, sqlMedia.settings) && Objects.equals(create, sqlMedia.create)
+                && Objects.equals(logGroupTable, sqlMedia.logGroupTable) && Objects.equals(streamTable, sqlMedia.streamTable) && Objects.equals(hostTable, sqlMedia.hostTable) && Objects.equals(id, sqlMedia.id) && Objects.equals(gidField, sqlMedia.gidField) && Objects.equals(name, sqlMedia.name) && Objects.equals(directoryField, sqlMedia.directoryField) && Objects.equals(streamField, sqlMedia.streamField) && Objects.equals(tagField, sqlMedia.tagField) && Objects.equals(queries, sqlMedia.queries);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects
+                .hash(
+                        settings, create, logGroupTable, streamTable, hostTable, id, gidField, name, directoryField,
+                        streamField, tagField, queries
+                );
+    }
 }

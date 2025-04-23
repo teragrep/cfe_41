@@ -104,7 +104,7 @@ public class CaptureGroupRequestTest {
         // Create ApiConfig so that request can be made
         ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        CaptureGroupRequestImpl captureGroupRequest = new CaptureGroupRequestImpl(apiConfig);
+        CaptureGroupRequest captureGroupRequest = new CaptureGroupRequestImpl(apiConfig);
 
         CaptureGroupResponse actualCaptureGroupResponse = Assertions
                 .assertDoesNotThrow(() -> captureGroupRequest.captureGroupResponse("captureGroup1"));

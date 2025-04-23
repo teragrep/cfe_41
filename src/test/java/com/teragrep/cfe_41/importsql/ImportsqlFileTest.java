@@ -56,61 +56,49 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-public class ImportsqlTest {
+public class ImportsqlFileTest {
 
     @Test
-    public void testContract() {
-        EqualsVerifier.forClass(ImportsqlImpl.class).verify();
+    public void testEqualsContract() {
+        EqualsVerifier.forClass(ImportsqlFile.class);
     }
 
     @Test
-    public void importsqlTest() {
+    public void testSavingImportSqlFile() {
+        final String expectedFileLocation = "src/test/resources/import.sql";
 
-        LinkageRequest linkageRequestFake = new LinkageRequestFake();
-        HostGroupRequest hostGroupRequestFake = new HostGroupRequestFake();
-        HostRequest hostRequestFake = new HostRequestFake();
-        LinkedHosts linkedHosts = Assertions
+        final LinkageRequest linkageRequestFake = new LinkageRequestFake();
+        final HostGroupRequest hostGroupRequestFake = new HostGroupRequestFake();
+        final HostRequest hostRequestFake = new HostRequestFake();
+        final LinkedHosts linkedHosts = Assertions
                 .assertDoesNotThrow(() -> new LinkedHosts(linkageRequestFake, hostGroupRequestFake, hostRequestFake));
 
-        CaptureRequest captureRequestFake = new CaptureRequestFake();
-        CaptureGroupRequest captureGroupRequestFake = new CaptureGroupRequestFake();
-        LinkedCaptures linkedCaptures = Assertions
+        final CaptureRequest captureRequestFake = new CaptureRequestFake();
+        final CaptureGroupRequest captureGroupRequestFake = new CaptureGroupRequestFake();
+        final LinkedCaptures linkedCaptures = Assertions
                 .assertDoesNotThrow(() -> new LinkedCaptures(captureRequestFake, captureGroupRequestFake));
 
-        CaptureGroupAllRequest captureGroupAllRequestFake = new CaptureGroupAllRequestFake();
+        final CaptureGroupAllRequest captureGroupAllRequestFake = new CaptureGroupAllRequestFake();
 
-        Importsql importsql = new ImportsqlImpl(captureGroupAllRequestFake, linkedHosts, linkedCaptures);
+        final Importsql importsql = new ImportsqlImpl(captureGroupAllRequestFake, linkedHosts, linkedCaptures);
 
-        // tested aspect
-        List<String> actual = Assertions.assertDoesNotThrow(() -> importsql.asQueriesList());
+        final ImportsqlFile importsqlFile = new ImportsqlFile("src/test/resources", importsql);
 
-        List<String> expected = new ArrayList<>();
-        expected.add("START TRANSACTION;");
-        expected.add("DELETE FROM log_group;");
-        expected.add("DELETE FROM stream;");
-        expected.add("DELETE FROM host;");
-        expected.add("INSERT INTO log_group (name) VALUES (\"fake-group1\");");
-        expected
-                .add(
-                        "INSERT INTO stream (gid, directory, stream, tag) VALUES ((SELECT id FROM log_group WHERE name = \"fake-group1\"), \"fake-index\", \"fake-sourcetype\", \"fake-tag\");"
-                );
-        expected
-                .add(
-                        "INSERT INTO host (name, gid) VALUES (\"fake-fqhost\", (SELECT id FROM log_group WHERE name = \"fake-group1\"));"
-                );
-        expected.add("INSERT INTO log_group (name) VALUES (\"fake-group2\");");
-        expected
-                .add(
-                        "INSERT INTO stream (gid, directory, stream, tag) VALUES ((SELECT id FROM log_group WHERE name = \"fake-group2\"), \"fake-index\", \"fake-sourcetype\", \"fake-tag\");"
-                );
-        expected
-                .add(
-                        "INSERT INTO host (name, gid) VALUES (\"fake-fqhost\", (SELECT id FROM log_group WHERE name = \"fake-group2\"));"
-                );
-        expected.add("COMMIT;");
+        Assertions.assertDoesNotThrow(() -> importsqlFile.createFile());
+
+        final String actual = Assertions.assertDoesNotThrow(() -> Files.readString(Paths.get(expectedFileLocation)));
+
+        final String expected = "START TRANSACTION;\n" + "DELETE FROM log_group;\n" + "DELETE FROM stream;\n"
+                + "DELETE FROM host;\n" + "INSERT INTO log_group (name) VALUES (\"fake-group1\");\n"
+                + "INSERT INTO stream (gid, directory, stream, tag) VALUES ((SELECT id FROM log_group WHERE name = \"fake-group1\"), \"fake-index\", \"fake-sourcetype\", \"fake-tag\");\n"
+                + "INSERT INTO host (name, gid) VALUES (\"fake-fqhost\", (SELECT id FROM log_group WHERE name = \"fake-group1\"));\n"
+                + "INSERT INTO log_group (name) VALUES (\"fake-group2\");\n"
+                + "INSERT INTO stream (gid, directory, stream, tag) VALUES ((SELECT id FROM log_group WHERE name = \"fake-group2\"), \"fake-index\", \"fake-sourcetype\", \"fake-tag\");\n"
+                + "INSERT INTO host (name, gid) VALUES (\"fake-fqhost\", (SELECT id FROM log_group WHERE name = \"fake-group2\"));\n"
+                + "COMMIT;\n";
 
         Assertions.assertEquals(expected, actual);
     }
