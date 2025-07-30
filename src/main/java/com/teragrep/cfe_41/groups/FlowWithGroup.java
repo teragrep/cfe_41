@@ -45,14 +45,36 @@
  */
 package com.teragrep.cfe_41.groups;
 
+import com.teragrep.cfe_41.captureGroup.CaptureGroup;
 import com.teragrep.cfe_41.flow.Flow;
 
-// Object for connecting group with flow
-public class FlowWithGroup {
+import java.util.Objects;
+
+public final class FlowWithGroup {
 
     private final Flow flow;
+    private final CaptureGroup captureGroup;
 
-    public FlowWithGroup(Flow flow) {
+    public FlowWithGroup(final Flow flow, final CaptureGroup captureGroup) {
         this.flow = flow;
+        this.captureGroup = captureGroup;
+    }
+
+    public String asCombination() {
+        return flow.flowName().concat("-").concat(captureGroup.groupName());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final FlowWithGroup that = (FlowWithGroup) o;
+        return Objects.equals(flow, that.flow) && Objects.equals(captureGroup, that.captureGroup);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(flow, captureGroup);
     }
 }

@@ -64,11 +64,11 @@ public final class FlowGroups {
     private final CaptureGroupAllRequest captureGroups;
     private final CaptureRequest captureRequest;
 
-    public FlowGroups(ApiConfig apiConfig) {
+    public FlowGroups(final ApiConfig apiConfig) {
         this(new CaptureGroupAllRequestImpl(apiConfig), new CaptureRequestImpl(apiConfig));
     }
 
-    public FlowGroups(CaptureGroupAllRequestImpl captureGroups, CaptureRequest captureRequest) {
+    public FlowGroups(final CaptureGroupAllRequest captureGroups, final CaptureRequest captureRequest) {
         this.captureGroups = captureGroups;
         this.captureRequest = captureRequest;
     }
@@ -94,11 +94,11 @@ public final class FlowGroups {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        FlowGroups that = (FlowGroups) o;
+        final FlowGroups that = (FlowGroups) o;
         return Objects.equals(captureGroups, that.captureGroups) && Objects.equals(captureRequest, that.captureRequest);
     }
 

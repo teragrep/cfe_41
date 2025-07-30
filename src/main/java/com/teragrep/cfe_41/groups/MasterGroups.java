@@ -46,27 +46,62 @@
 package com.teragrep.cfe_41.groups;
 
 import com.teragrep.cfe_41.ApiConfig;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequestImpl;
+import com.teragrep.cfe_41.flow.Flow;
+import com.teragrep.cfe_41.flow.FlowRequest;
+import com.teragrep.cfe_41.flow.FlowRequestImpl;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 // Object that forms all groups in all flows
-public class MasterGroups {
+public final class MasterGroups {
 
-    private final CaptureGroupAllRequest captureGroupRequest;
+    private final ApiConfig apiConfig;
+    private final FlowRequest flowRequest;
+    private final FlowGroups flowGroups;
 
     public MasterGroups(final ApiConfig apiConfig) {
-        this(new CaptureGroupAllRequestImpl(apiConfig));
+        this(apiConfig, new FlowRequestImpl(apiConfig), new FlowGroups(apiConfig));
     }
 
-    public MasterGroups(final CaptureGroupAllRequest captureGroupRequest) {
-        this.captureGroupRequest = captureGroupRequest;
+    public MasterGroups(final ApiConfig apiConfig, final FlowRequest flowRequest, final FlowGroups flowGroups) {
+        this.apiConfig = apiConfig;
+        this.flowRequest = flowRequest;
+        this.flowGroups = flowGroups;
     }
 
     /**
      * returns complete config of master groups.json
      */
-    public String masterGroupAsFile() {
+    public PrintableFlowGroups asPrintableFlowGroups() throws IOException {
+        // Request all Flows
+        final List<Flow> flows = flowRequest.flowResponse().partialFlowResponses();
 
-        throw new RuntimeException("Not implemented yet");
+        // Instance where combinations are stored for later printing
+        final PrintableFlowGroups printableFlowGroups = new PrintableFlowGroupsImpl();
+
+        // Request combinations for all flows
+        for (final Flow flow : flows) {
+            printableFlowGroups.flowGroup().addAll(flowGroups.RequestAndReturnAllCombinations(flow));
+        }
+
+        // Return all flows with their groups
+        return printableFlowGroups;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final MasterGroups that = (MasterGroups) o;
+        return Objects.equals(apiConfig, that.apiConfig) && Objects.equals(flowRequest, that.flowRequest)
+                && Objects.equals(flowGroups, that.flowGroups);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(apiConfig, flowRequest, flowGroups);
     }
 }
