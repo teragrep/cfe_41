@@ -80,7 +80,7 @@ public final class FlowGroups {
 
         final List<FlowWithGroup> flowWithGroup = new ArrayList<>();
         // If Flows match between given Flow and Flow inside the group then append that into a list
-        for (CaptureGroup capture : captureGroupsCaptures) {
+        for (final CaptureGroup capture : captureGroupsCaptures) {
             final CaptureResponse captureResponse = captureRequest
                     .captureResponse(capture.captureDefinitionId(), capture.captureGroupType());
             // if Capture Flow matches the current Flow

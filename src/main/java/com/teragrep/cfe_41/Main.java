@@ -78,7 +78,13 @@ public class Main {
         groups(apiConfig);
     }
 
-    public static void groups(final ApiConfig apiConfig) throws IOException {
-        new MasterGroupsFile(new MasterGroups(apiConfig).asPrintableFlowGroups()).save();
+    private static void groups(final ApiConfig apiConfig) throws IOException {
+        try {
+            new MasterGroupsFile(new MasterGroups(apiConfig).asPrintableFlowGroups()).save();
+        }
+        catch (IOException e) {
+            logger.error("Error creating groups configuration <{}>", e.getMessage());
+
+        }
     }
 }
