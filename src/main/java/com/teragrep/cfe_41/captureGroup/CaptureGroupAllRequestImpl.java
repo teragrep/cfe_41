@@ -63,8 +63,8 @@ public final class CaptureGroupAllRequestImpl implements CaptureGroupAllRequest 
 
     @Override
     public CaptureGroupResponse captureGroupResponse() throws IOException {
-        final JsonArray a = new Response(new RequestData("/capture/group", apiConfig).doRequest()).asJsonArray();
-        return new CaptureGroupResponse(a);
+        final JsonArray response = new Response(new RequestData("/capture/group", apiConfig).doRequest()).asJsonArray();
+        return new CaptureGroupResponse(response);
     }
 
     @Override
