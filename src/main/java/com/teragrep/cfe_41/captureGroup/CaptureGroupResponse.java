@@ -60,10 +60,10 @@ public final class CaptureGroupResponse {
         this.jsonArray = jsonArray;
     }
 
-    public List<PartialCaptureResponse> partialCaptureResponses() {
-        final List<PartialCaptureResponse> partialCaptureResponses = new ArrayList<>();
+    public List<PartialCaptureGroupResponse> partialCaptureResponses() {
+        final List<PartialCaptureGroupResponse> partialCaptureResponses = new ArrayList<>();
         for (JsonValue key : jsonArray) {
-            partialCaptureResponses.add(new PartialCaptureResponse(key.asJsonObject()));
+            partialCaptureResponses.add(new PartialCaptureGroupResponse(key.asJsonObject()));
         }
         return partialCaptureResponses;
     }

@@ -49,9 +49,7 @@ import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cfe_41.capture.CaptureRequest;
 import com.teragrep.cfe_41.capture.CaptureRequestImpl;
 import com.teragrep.cfe_41.capture.CaptureResponse;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequestImpl;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
+import com.teragrep.cfe_41.captureGroup.*;
 import com.teragrep.cfe_41.flow.Flow;
 
 import java.io.IOException;
@@ -82,7 +80,7 @@ public final class FlowGroups {
 
         final List<FlowWithGroup> flowWithGroup = new ArrayList<>();
         // If Flows match between given Flow and Flow inside the group then append that into a list
-        for (PartialCaptureGroupResponse capture : captureGroupsCaptures) {
+        for (CaptureGroup capture : captureGroupsCaptures) {
             final CaptureResponse captureResponse = captureRequest
                     .captureResponse(capture.captureDefinitionId(), capture.captureGroupType());
             // if Capture Flow matches the current Flow

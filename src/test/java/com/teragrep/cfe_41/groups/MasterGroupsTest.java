@@ -47,15 +47,14 @@ package com.teragrep.cfe_41.groups;
 
 import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cfe_41.capture.CaptureRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroup;
 import com.teragrep.cfe_41.captureGroup.CaptureGroupAllRequest;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
 import com.teragrep.cfe_41.fakes.CaptureGroupAllRequestFake;
 import com.teragrep.cfe_41.fakes.CaptureRequestFake;
 import com.teragrep.cfe_41.fakes.FlowRequestFake;
 import com.teragrep.cfe_41.flow.Flow;
-import com.teragrep.cfe_41.flow.FlowImpl;
 import com.teragrep.cfe_41.flow.FlowRequest;
+import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import jakarta.json.Json;
 import jdk.jfr.Description;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -88,8 +87,8 @@ public final class MasterGroupsTest {
         final PrintableFlowGroups actual = Assertions.assertDoesNotThrow(masterGroups::asPrintableFlowGroups);
 
         // Creating expected data
-        final Flow flow = new FlowImpl(Json.createObjectBuilder().add("id", 1).add("name", "flow").build());
-        final CaptureGroup captureGroup = new PartialCaptureGroupResponse(
+        final Flow flow = new PartialFlowResponse(Json.createObjectBuilder().add("id", 1).add("name", "flow").build());
+        final PartialCaptureGroupResponse captureGroup = new PartialCaptureGroupResponse(
                 Json.createObjectBuilder().add("capture_def_group_name", "group").add("capture_definition_id", 1).add("capture_group_type", "relp").add("id", 1).build()
         );
 

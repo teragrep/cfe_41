@@ -65,7 +65,7 @@ public class FlowTest {
         objectBuilder1.add("id", 1).add("name", "flow1");
         JsonObject testJsonObject = objectBuilder1.build();
 
-        Flow flow = new Flow(testJsonObject);
+        Flow flow = new PartialFlowResponse(testJsonObject);
 
         Assertions.assertEquals(1, flow.flowId());
         Assertions.assertEquals("flow1", flow.flowName());

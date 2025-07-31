@@ -48,7 +48,7 @@ package com.teragrep.cfe_41.groups;
 import com.teragrep.cfe_41.captureGroup.CaptureGroup;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
 import com.teragrep.cfe_41.flow.Flow;
-import com.teragrep.cfe_41.flow.FlowImpl;
+import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jdk.jfr.Description;
@@ -76,7 +76,7 @@ public final class FlowWithGroupTest {
         final CaptureGroup captureGroup = new PartialCaptureGroupResponse(captureGroupAsJson);
 
         final JsonObject flowAsJson = Json.createObjectBuilder().add("id", 1).add("name", "flow").build();
-        final Flow flow = new FlowImpl(flowAsJson);
+        final Flow flow = new PartialFlowResponse(flowAsJson);
 
         final FlowWithGroup flowWithGroup = new FlowWithGroup(flow, captureGroup);
 

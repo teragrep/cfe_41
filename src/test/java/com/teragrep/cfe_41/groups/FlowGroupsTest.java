@@ -52,7 +52,7 @@ import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
 import com.teragrep.cfe_41.fakes.CaptureGroupAllRequestFake;
 import com.teragrep.cfe_41.fakes.CaptureRequestFake;
 import com.teragrep.cfe_41.flow.Flow;
-import com.teragrep.cfe_41.flow.FlowImpl;
+import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jdk.jfr.Description;
@@ -77,7 +77,7 @@ public final class FlowGroupsTest {
 
         // Flow instance for testing
         final JsonObject flowAsJson = Json.createObjectBuilder().add("id", 1).add("name", "fake-flow").build();
-        final Flow flow = new FlowImpl(flowAsJson);
+        final Flow flow = new PartialFlowResponse(flowAsJson);
 
         // Build first expected combination
         final JsonObject captureGroupAsJson = Json
@@ -95,7 +95,7 @@ public final class FlowGroupsTest {
                 .add("capture_def_group_name", "group2")
                 .add("capture_definition_id", 1)
                 .add("capture_group_type", "relp")
-                .add("id", 1)
+                .add("id", 2)
                 .build();
         final CaptureGroup captureGroup2 = new PartialCaptureGroupResponse(captureGroupAsJson2);
 
@@ -129,7 +129,7 @@ public final class FlowGroupsTest {
     @Description("FlowGroups can not create config if there are no matching records")
     public void FlowGroupsNoMatchTest() {
         JsonObject flowAsJson = Json.createObjectBuilder().add("id", 1).add("name", "flowWithoutGroups").build();
-        Flow flow = new FlowImpl(flowAsJson);
+        Flow flow = new PartialFlowResponse(flowAsJson);
 
         // Fake requests for actual data creation
         final CaptureGroupAllRequest captureGroupRequestFake = new CaptureGroupAllRequestFake();

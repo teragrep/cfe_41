@@ -45,41 +45,9 @@
  */
 package com.teragrep.cfe_41.flow;
 
-import jakarta.json.JsonObject;
+public interface Flow {
 
-import java.util.Objects;
+    public abstract int flowId();
 
-/*
-Flow from JsonObject
- */
-public final class Flow {
-
-    private final JsonObject jsonObject;
-
-    public Flow(final JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
-    }
-
-    public int flowId() {
-        return jsonObject.getInt("id");
-    }
-
-    public String flowName() {
-        return jsonObject.getString("name");
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Flow other = (Flow) o;
-        return Objects.equals(jsonObject, other.jsonObject);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(jsonObject);
-    }
-
+    public abstract String flowName();
 }

@@ -48,7 +48,7 @@ package com.teragrep.cfe_41.groups;
 import com.teragrep.cfe_41.captureGroup.CaptureGroup;
 import com.teragrep.cfe_41.captureGroup.PartialCaptureGroupResponse;
 import com.teragrep.cfe_41.flow.Flow;
-import com.teragrep.cfe_41.flow.FlowImpl;
+import com.teragrep.cfe_41.flow.PartialFlowResponse;
 import com.teragrep.cfe_41.media.JsonMedia;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
@@ -72,7 +72,7 @@ public final class PrintableFlowGroupsImplTest {
     @Test
     @Description("Tests that PrintableFlowGroups can print the results")
     public void PrintableFlowGroupsTestSuccessfully() {
-        final Flow flow = new FlowImpl(Json.createObjectBuilder().add("id", 1).add("name", "flow").build());
+        final Flow flow = new PartialFlowResponse(Json.createObjectBuilder().add("id", 1).add("name", "flow").build());
         final CaptureGroup captureGroup = new PartialCaptureGroupResponse(
                 Json.createObjectBuilder().add("capture_def_group_name", "group").add("capture_definition_id", 1).add("capture_group_type", "relp").add("id", 1).build()
         );

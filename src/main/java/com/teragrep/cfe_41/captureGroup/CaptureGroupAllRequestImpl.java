@@ -53,7 +53,7 @@ import jakarta.json.JsonArray;
 import java.io.IOException;
 import java.util.Objects;
 
-public class CaptureGroupAllRequestImpl implements CaptureGroupAllRequest {
+public final class CaptureGroupAllRequestImpl implements CaptureGroupAllRequest {
 
     private final ApiConfig apiConfig;
 
