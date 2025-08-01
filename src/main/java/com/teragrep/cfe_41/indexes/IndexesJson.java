@@ -47,10 +47,7 @@ package com.teragrep.cfe_41.indexes;
 
 import com.teragrep.cfe_41.ApiConfig;
 import com.teragrep.cfe_41.capture.*;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequest;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupRequestImpl;
-import com.teragrep.cfe_41.captureGroup.CaptureGroupResponse;
-import com.teragrep.cfe_41.captureGroup.PartialCaptureResponse;
+import com.teragrep.cfe_41.captureGroup.*;
 import com.teragrep.cfe_41.target.PrintableCaptures;
 
 import java.io.IOException;
@@ -93,9 +90,9 @@ public final class IndexesJson {
         PrintableCaptures rv = new PrintableIndexesCaptures();
         // get CaptureGroupResponse for specified capture group name
         final CaptureGroupResponse cgResponse = captureGroupRequest.captureGroupResponse(groupName);
-        final List<PartialCaptureResponse> partialCaptureResponses = cgResponse.partialCaptureResponses();
+        final List<PartialCaptureGroupResponse> partialCaptureResponses = cgResponse.partialCaptureResponses();
 
-        for (final PartialCaptureResponse partialCaptureResponse : partialCaptureResponses) {
+        for (final PartialCaptureGroupResponse partialCaptureResponse : partialCaptureResponses) {
             // For each PartialCaptureResponse get CaptureResponses
             final int captureDefinitionId = partialCaptureResponse.captureDefinitionId();
             final String captureGroupType = partialCaptureResponse.captureGroupType();
