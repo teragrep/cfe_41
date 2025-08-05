@@ -45,16 +45,80 @@
  */
 package com.teragrep.cfe_41.hostMeta;
 
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cnf_01.ArgsConfiguration;
+import com.teragrep.cnf_01.Configuration;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
+
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 public class HostMetaRequestImplTest {
+
+    private static ClientAndServer mockServer;
+    private static MockServerClient mockClient;
 
     @Test
     public void testContract() {
         EqualsVerifier.forClass(HostMetaRequestImpl.class).verify();
     }
 
+    @BeforeAll
+    public static void startMockServer() {
+        mockServer = ClientAndServer.startClientAndServer(1080);
+        mockClient = new MockServerClient("localhost", 1080);
+    }
 
+    @AfterAll
+    public static void stopMockServer() {
+        mockServer.stop();
+    }
+
+    @Test
+    public void hostMetaRequest() {
+        // Build the expected outcome
+        JsonObjectBuilder hostMetaBuilder = Json.createObjectBuilder();
+        hostMetaBuilder.add("id", 1);
+        hostMetaBuilder.add("arch", "fake-arch");
+        hostMetaBuilder.add("releaseVersion", "fake-relase-version");
+        hostMetaBuilder.add("flavor", "fake-flavor");
+        hostMetaBuilder.add("os", "fake-os");
+        hostMetaBuilder.add("hostName", "fake-hostname");
+        hostMetaBuilder.add("hostId", 1);
+        JsonObject hostMetaAsJsonObject = hostMetaBuilder.build();
+
+        // Mock client that simulates successful request from cfe_18
+        mockClient
+                .when(request().withMethod("GET").withPath("/host/meta/1"))
+                .respond(response().withStatusCode(200).withBody(hostMetaAsJsonObject.toString()));
+
+        String[] args = new String[] {
+                "url=http://localhost:1080", "test=test"
+        };
+        Configuration cfg = new ArgsConfiguration(args);
+
+        // Create ApiConfig so that request can be made
+        ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
+
+        HostMetaRequest hostMetaRequest = new HostMetaRequestImpl(apiConfig);
+
+        HostMeta actualHostMeta = Assertions.assertDoesNotThrow(() -> hostMetaRequest.hostMetaResponse(1));
+
+        HostMeta expectedHostMeta = new HostMetaResponse(hostMetaAsJsonObject);
+
+        Assertions.assertFalse(hostMetaAsJsonObject.isEmpty());
+
+        Assertions.assertEquals(expectedHostMeta.hashCode(), actualHostMeta.hashCode());
+
+    }
 
 }
