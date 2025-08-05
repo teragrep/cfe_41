@@ -45,5 +45,42 @@
  */
 package com.teragrep.cfe_41.hostMeta;
 
-public class HostMetaRequest {
+import com.teragrep.cfe_41.ApiConfig;
+import com.teragrep.cfe_41.RequestData;
+import com.teragrep.cfe_41.Response;
+import jakarta.json.JsonObject;
+
+import java.io.IOException;
+import java.util.Objects;
+
+public final class HostMetaRequest {
+
+    private final ApiConfig apiConfig;
+
+    public HostMetaRequest(final ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
+
+    public HostMetaResponse hostMetaResponse(final int hostId) throws IOException {
+        final JsonObject hostMeta = new Response(
+                new RequestData("/host/meta/" + hostId, apiConfig).doRequest()
+        ).asJsonObject();
+        return new HostMetaResponse(hostMeta);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        final HostMetaRequest that = (HostMetaRequest) other;
+        return Objects.equals(apiConfig, that.apiConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(apiConfig);
+    }
 }
+
+

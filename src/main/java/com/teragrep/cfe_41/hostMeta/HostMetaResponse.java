@@ -45,5 +45,48 @@
  */
 package com.teragrep.cfe_41.hostMeta;
 
-public class HostMetaResponse {
+import jakarta.json.JsonObject;
+
+public final class HostMetaResponse implements HostMeta {
+
+    private final JsonObject jsonObject;
+
+    public HostMetaResponse(final JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
+    @Override
+    public int id() {
+        return jsonObject.getInt("id");
+    }
+
+    @Override
+    public String arch() {
+        return jsonObject.getString("arch");
+    }
+
+    @Override
+    public String releaseVersion() {
+        return jsonObject.getString("releaseVersion");
+    }
+
+    @Override
+    public String flavor() {
+        return jsonObject.getString("flavor");
+    }
+
+    @Override
+    public String os() {
+        return jsonObject.getString("os");
+    }
+
+    @Override
+    public String hostName() {
+        return jsonObject.getString("hostName");
+    }
+
+    @Override
+    public int hostId() {
+        return jsonObject.getInt("hostId");
+    }
 }
