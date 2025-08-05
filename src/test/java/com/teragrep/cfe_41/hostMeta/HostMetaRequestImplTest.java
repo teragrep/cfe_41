@@ -86,7 +86,7 @@ public class HostMetaRequestImplTest {
     @Test
     public void hostMetaRequest() {
         // Build the expected outcome
-        JsonObjectBuilder hostMetaBuilder = Json.createObjectBuilder();
+        final JsonObjectBuilder hostMetaBuilder = Json.createObjectBuilder();
         hostMetaBuilder.add("id", 1);
         hostMetaBuilder.add("arch", "fake-arch");
         hostMetaBuilder.add("releaseVersion", "fake-relase-version");
@@ -94,26 +94,26 @@ public class HostMetaRequestImplTest {
         hostMetaBuilder.add("os", "fake-os");
         hostMetaBuilder.add("hostName", "fake-hostname");
         hostMetaBuilder.add("hostId", 1);
-        JsonObject hostMetaAsJsonObject = hostMetaBuilder.build();
+        final JsonObject hostMetaAsJsonObject = hostMetaBuilder.build();
 
         // Mock client that simulates successful request from cfe_18
         mockClient
                 .when(request().withMethod("GET").withPath("/host/meta/1"))
                 .respond(response().withStatusCode(200).withBody(hostMetaAsJsonObject.toString()));
 
-        String[] args = new String[] {
+        final String[] args = new String[] {
                 "url=http://localhost:1080", "test=test"
         };
-        Configuration cfg = new ArgsConfiguration(args);
+        final Configuration cfg = new ArgsConfiguration(args);
 
         // Create ApiConfig so that request can be made
-        ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
+        final ApiConfig apiConfig = Assertions.assertDoesNotThrow(() -> new ApiConfig(cfg.asMap()));
 
-        HostMetaRequest hostMetaRequest = new HostMetaRequestImpl(apiConfig);
+        final HostMetaRequest hostMetaRequest = new HostMetaRequestImpl(apiConfig);
 
-        HostMeta actualHostMeta = Assertions.assertDoesNotThrow(() -> hostMetaRequest.hostMetaResponse(1));
+        final HostMeta actualHostMeta = Assertions.assertDoesNotThrow(() -> hostMetaRequest.hostMetaResponse(1));
 
-        HostMeta expectedHostMeta = new HostMetaResponse(hostMetaAsJsonObject);
+        final HostMeta expectedHostMeta = new HostMetaResponse(hostMetaAsJsonObject);
 
         Assertions.assertFalse(hostMetaAsJsonObject.isEmpty());
 

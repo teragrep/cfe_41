@@ -62,7 +62,7 @@ public class HostMetaResponseTest {
     @Test
     public void hostMetaResponseTest() {
         // Build the expected outcome
-        JsonObjectBuilder hostMetaBuilder = Json.createObjectBuilder();
+        final JsonObjectBuilder hostMetaBuilder = Json.createObjectBuilder();
         hostMetaBuilder.add("id", 1);
         hostMetaBuilder.add("arch", "fake-arch");
         hostMetaBuilder.add("releaseVersion", "fake-relase-version");
@@ -70,10 +70,10 @@ public class HostMetaResponseTest {
         hostMetaBuilder.add("os", "fake-os");
         hostMetaBuilder.add("hostName", "fake-hostname");
         hostMetaBuilder.add("hostId", 1);
-        JsonObject hostMetaJsonObject = hostMetaBuilder.build();
+        final JsonObject hostMetaJsonObject = hostMetaBuilder.build();
 
         // Build object that needs to be tested
-        HostMeta hostMetaResponse = new HostMetaResponse(hostMetaJsonObject);
+        final HostMeta hostMetaResponse = new HostMetaResponse(hostMetaJsonObject);
 
         Assertions.assertEquals(1, hostMetaResponse.id());
         Assertions.assertEquals("fake-arch", hostMetaResponse.arch());
