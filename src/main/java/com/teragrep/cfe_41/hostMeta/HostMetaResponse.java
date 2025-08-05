@@ -47,6 +47,8 @@ package com.teragrep.cfe_41.hostMeta;
 
 import jakarta.json.JsonObject;
 
+import java.util.Objects;
+
 public final class HostMetaResponse implements HostMeta {
 
     private final JsonObject jsonObject;
@@ -88,5 +90,19 @@ public final class HostMetaResponse implements HostMeta {
     @Override
     public int hostId() {
         return jsonObject.getInt("hostId");
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        final HostMetaResponse that = (HostMetaResponse) other;
+        return Objects.equals(jsonObject, that.jsonObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(jsonObject);
     }
 }
