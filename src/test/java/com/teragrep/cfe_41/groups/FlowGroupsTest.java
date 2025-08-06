@@ -128,8 +128,8 @@ public final class FlowGroupsTest {
     @Test
     @Description("FlowGroups can not create config if there are no matching records")
     public void FlowGroupsNoMatchTest() {
-        JsonObject flowAsJson = Json.createObjectBuilder().add("id", 1).add("name", "flowWithoutGroups").build();
-        Flow flow = new PartialFlowResponse(flowAsJson);
+        final JsonObject flowAsJson = Json.createObjectBuilder().add("id", 1).add("name", "flowWithoutGroups").build();
+        final Flow flow = new PartialFlowResponse(flowAsJson);
 
         // Fake requests for actual data creation
         final CaptureGroupAllRequest captureGroupRequestFake = new CaptureGroupAllRequestFake();
