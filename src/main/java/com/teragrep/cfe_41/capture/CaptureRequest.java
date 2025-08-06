@@ -49,5 +49,5 @@ import java.io.IOException;
 
 public interface CaptureRequest {
 
-    CaptureResponse captureResponse(int id, String captureType) throws IOException;
+    public abstract CaptureResponse captureResponse(int id, String captureType) throws IOException;
 }

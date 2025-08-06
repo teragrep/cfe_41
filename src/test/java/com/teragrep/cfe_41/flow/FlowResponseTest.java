@@ -77,7 +77,7 @@ public class FlowResponseTest {
         JsonArray flowsArray = arrayBuilder.build();
 
         FlowResponse flowResponse = new FlowResponse(flowsArray);
-        List<PartialFlowResponse> actualFlowResponseList = flowResponse.partialFlowResponses();
+        List<Flow> actualFlowResponseList = flowResponse.partialFlowResponses();
 
         JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
         objectBuilder1.add("id", 1).add("name", "flow1");
@@ -93,7 +93,7 @@ public class FlowResponseTest {
 
         Assertions.assertEquals(2, actualFlowResponseList.size());
         int loopsExecuted = 0;
-        for (PartialFlowResponse response : actualFlowResponseList) {
+        for (Flow response : actualFlowResponseList) {
             Assertions.assertEquals(expectedFlowResponseList.get(loopsExecuted).flowId(), response.flowId());
             Assertions.assertEquals(expectedFlowResponseList.get(loopsExecuted).flowName(), response.flowName());
             loopsExecuted++;

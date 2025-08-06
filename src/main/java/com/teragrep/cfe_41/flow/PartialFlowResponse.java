@@ -52,7 +52,7 @@ import java.util.Objects;
 /*
 Flow from JsonObject
  */
-public final class PartialFlowResponse {
+public final class PartialFlowResponse implements Flow {
 
     private final JsonObject jsonObject;
 

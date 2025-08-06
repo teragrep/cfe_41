@@ -97,8 +97,8 @@ public final class SourcetypesFile {
             return false;
         }
         final SourcetypesFile that = (SourcetypesFile) o;
-        return Objects.equals(printableCaptures, that.printableCaptures) && Objects.equals(directoryPath, that.directoryPath)
-                && Objects.equals(captureGroupName, that.captureGroupName);
+        return Objects.equals(printableCaptures, that.printableCaptures) && Objects
+                .equals(directoryPath, that.directoryPath) && Objects.equals(captureGroupName, that.captureGroupName);
     }
 
     @Override

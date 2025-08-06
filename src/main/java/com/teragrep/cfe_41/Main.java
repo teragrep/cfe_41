@@ -45,12 +45,15 @@
  */
 package com.teragrep.cfe_41;
 
+import com.teragrep.cfe_41.groups.MasterGroups;
+import com.teragrep.cfe_41.groups.MasterGroupsFile;
 import com.teragrep.cnf_01.ArgsConfiguration;
 import com.teragrep.cnf_01.Configuration;
 import com.teragrep.cnf_01.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -72,5 +75,16 @@ public class Main {
         }
 
         final ApiConfig apiConfig = new ApiConfig(configMap);
+        groups(apiConfig);
+    }
+
+    private static void groups(final ApiConfig apiConfig) throws IOException {
+        try {
+            new MasterGroupsFile(new MasterGroups(apiConfig).asPrintableFlowGroups()).save();
+        }
+        catch (IOException e) {
+            logger.error("Error creating groups configuration <{}>", e.getMessage());
+
+        }
     }
 }
