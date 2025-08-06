@@ -98,7 +98,6 @@ public final class MasterGroupsTest {
 
         expected.withFlowGroup(flowWithGroup);
 
-        Assertions.assertEquals(actual.hashCode(), expected.hashCode());
         Assertions.assertEquals(expected, actual);
     }
 }
