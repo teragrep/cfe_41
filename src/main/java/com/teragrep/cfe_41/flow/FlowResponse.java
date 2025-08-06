@@ -67,7 +67,7 @@ public final class FlowResponse {
      */
     public List<Flow> partialFlowResponses() {
         final List<Flow> partialFlowResponses = new ArrayList<>();
-        for (JsonValue flow : jsonArray) {
+        for (final JsonValue flow : jsonArray) {
             partialFlowResponses.add(new PartialFlowResponse(flow.asJsonObject()));
         }
         return partialFlowResponses;

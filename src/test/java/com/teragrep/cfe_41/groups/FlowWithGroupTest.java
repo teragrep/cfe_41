@@ -84,8 +84,8 @@ public final class FlowWithGroupTest {
 
         final String expected = "flow-group";
 
-        Assertions.assertEquals(expected, actual);
         Assertions.assertFalse(actual.isEmpty());
+        Assertions.assertEquals(expected, actual);
     }
 
 }

@@ -62,7 +62,7 @@ public final class CaptureGroupResponse {
 
     public List<PartialCaptureGroupResponse> partialCaptureResponses() {
         final List<PartialCaptureGroupResponse> partialCaptureResponses = new ArrayList<>();
-        for (JsonValue key : jsonArray) {
+        for (final JsonValue key : jsonArray) {
             partialCaptureResponses.add(new PartialCaptureGroupResponse(key.asJsonObject()));
         }
         return partialCaptureResponses;

@@ -71,7 +71,7 @@ public final class FlowGroupsTest {
     }
 
     @Test
-    @Description("FlowGroups can succesfully return List of FlowWithGroups")
+    @Description("FlowGroups can successfully return List of FlowWithGroups")
     public void FlowGroupsSuccessfulTest() {
         final List<FlowWithGroup> expectedList = new ArrayList<>();
 
@@ -100,8 +100,8 @@ public final class FlowGroupsTest {
         final CaptureGroup captureGroup2 = new PartialCaptureGroupResponse(captureGroupAsJson2);
 
         // Created expected objects and add them to the list of expected items
-        final FlowWithGroup expected1 = Assertions.assertDoesNotThrow(() -> new FlowWithGroup(flow, captureGroup));
-        final FlowWithGroup expected2 = Assertions.assertDoesNotThrow(() -> new FlowWithGroup(flow, captureGroup2));
+        final FlowWithGroup expected1 = new FlowWithGroup(flow, captureGroup);
+        final FlowWithGroup expected2 = new FlowWithGroup(flow, captureGroup2);
         expectedList.add(expected1);
         expectedList.add(expected2);
 
@@ -112,7 +112,7 @@ public final class FlowGroupsTest {
 
         // Create actual object from fake requests
         final List<FlowWithGroup> actualList = Assertions
-                .assertDoesNotThrow(() -> flowGroups.RequestAndReturnAllCombinations(flow));
+                .assertDoesNotThrow(() -> flowGroups.requestAndReturnAllCombinations(flow));
 
         // Compare actualList against expected list
         int loopsExecuted = 0;
@@ -120,7 +120,7 @@ public final class FlowGroupsTest {
             Assertions.assertEquals(expectedList.get(loopsExecuted).asCombination(), oneFlowWithGroup.asCombination());
             loopsExecuted++;
         }
-
+        Assertions.assertEquals(2, loopsExecuted);
         // Assert that list is not empty
         Assertions.assertFalse(expectedList.isEmpty());
     }
@@ -138,7 +138,7 @@ public final class FlowGroupsTest {
 
         // Create actual object from fake requests
         final List<FlowWithGroup> actualList = Assertions
-                .assertDoesNotThrow(() -> flowGroups.RequestAndReturnAllCombinations(flow));
+                .assertDoesNotThrow(() -> flowGroups.requestAndReturnAllCombinations(flow));
 
         // Assert that list is empty because fake requests do not match flow name of "flowWithoutGroups"
         Assertions.assertTrue(actualList.isEmpty());

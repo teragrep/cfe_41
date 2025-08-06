@@ -83,7 +83,7 @@ public final class MasterGroups {
 
         // Request combinations for all flows
         for (final Flow flow : flows) {
-            printableFlowGroups.flowGroup().addAll(flowGroups.RequestAndReturnAllCombinations(flow));
+            printableFlowGroups.flowGroup().addAll(flowGroups.requestAndReturnAllCombinations(flow));
         }
 
         // Return all flows with their groups

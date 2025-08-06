@@ -71,7 +71,7 @@ public final class FlowGroups {
         this.captureRequest = captureRequest;
     }
 
-    public List<FlowWithGroup> RequestAndReturnAllCombinations(final Flow flow) throws IOException {
+    public List<FlowWithGroup> requestAndReturnAllCombinations(final Flow flow) throws IOException {
 
         // Request All Captures included in the groups
         final List<PartialCaptureGroupResponse> captureGroupsCaptures = captureGroups
@@ -80,12 +80,12 @@ public final class FlowGroups {
 
         final List<FlowWithGroup> flowWithGroup = new ArrayList<>();
         // If Flows match between given Flow and Flow inside the group then append that into a list
-        for (final CaptureGroup capture : captureGroupsCaptures) {
+        for (final CaptureGroup captureGroup : captureGroupsCaptures) {
             final CaptureResponse captureResponse = captureRequest
-                    .captureResponse(capture.captureDefinitionId(), capture.captureGroupType());
+                    .captureResponse(captureGroup.captureDefinitionId(), captureGroup.captureGroupType());
             // if Capture Flow matches the current Flow
             if (captureResponse.flow().equals(flow.flowName())) {
-                flowWithGroup.add(new FlowWithGroup(flow, capture));
+                flowWithGroup.add(new FlowWithGroup(flow, captureGroup));
             }
         }
         return flowWithGroup;
