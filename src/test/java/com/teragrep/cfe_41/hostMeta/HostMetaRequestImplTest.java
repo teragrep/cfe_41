@@ -105,6 +105,7 @@ public class HostMetaRequestImplTest {
         Assertions.assertFalse(hostMetaAsJsonObject.isEmpty());
 
         Assertions.assertEquals(expectedHostMeta.hashCode(), actualHostMeta.hashCode());
+        Assertions.assertEquals(expectedHostMeta, actualHostMeta);
         mockServer.stop();
     }
 
