@@ -52,9 +52,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
@@ -64,27 +62,16 @@ import static org.mockserver.model.HttpResponse.response;
 
 public class HostMetaRequestImplTest {
 
-    private static ClientAndServer mockServer;
-    private static MockServerClient mockClient;
-
     @Test
     public void testContract() {
         EqualsVerifier.forClass(HostMetaRequestImpl.class).verify();
     }
 
-    @BeforeAll
-    public static void startMockServer() {
-        mockServer = ClientAndServer.startClientAndServer(1080);
-        mockClient = new MockServerClient("localhost", 1080);
-    }
-
-    @AfterAll
-    public static void stopMockServer() {
-        mockServer.stop();
-    }
-
     @Test
     public void hostMetaRequest() {
+        final ClientAndServer mockServer = ClientAndServer.startClientAndServer(1080);
+        final MockServerClient mockClient = new MockServerClient("localhost", 1080);
+
         // Build the expected outcome
         final JsonObjectBuilder hostMetaBuilder = Json.createObjectBuilder();
         hostMetaBuilder.add("id", 1);
@@ -118,7 +105,7 @@ public class HostMetaRequestImplTest {
         Assertions.assertFalse(hostMetaAsJsonObject.isEmpty());
 
         Assertions.assertEquals(expectedHostMeta.hashCode(), actualHostMeta.hashCode());
-
+        mockServer.stop();
     }
 
 }
